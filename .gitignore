@@ -1,0 +1,25 @@
+# Dependencias
+node_modules/
+
+# Build output
+frontend/dist/
+
+# Archivos de entorno local
+backend/.env
+
+# Lock files
+**/pnpm-lock.yaml
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Editores
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
