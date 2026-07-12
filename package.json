@@ -1,0 +1,16 @@
+{
+  "name": "cmartinez-portfolio",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Portfolio profesional de Cristopher Martínez - Full-Stack Developer & Data Analyst",
+  "scripts": {
+    "dev": "concurrently -n \"API,WEB\" -c \"magenta,cyan\" \"pnpm run dev:backend\" \"pnpm run dev:frontend\"",
+    "dev:backend": "pnpm --filter portfolio-backend dev",
+    "dev:frontend": "pnpm --filter portfolio-frontend dev",
+    "build": "pnpm --filter portfolio-frontend build",
+    "install:all": "pnpm install"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}
