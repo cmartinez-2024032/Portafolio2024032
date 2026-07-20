@@ -16,20 +16,24 @@ export default function ProjectCell({ project, index, onClick }) {
     >
       <div className="project-cell-img">
         <div className="project-cell-overlay" />
-        <div
-          style={{
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            background: "var(--color-surf)",
-            color: "var(--color-dim-more)",
-            fontSize: "3rem",
-          }}
-        >
-          <FiCode />
-        </div>
+        {project.screenshots && project.screenshots.length > 0 ? (
+          <img src={project.screenshots[0]} alt={`Captura de ${project.title}`} loading="lazy" />
+        ) : (
+          <div
+            style={{
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "var(--color-surf)",
+              color: "var(--color-dim-more)",
+              fontSize: "3rem",
+            }}
+          >
+            <FiCode />
+          </div>
+        )}
       </div>
       <div className="project-cell-info">
         <span className="project-number">
