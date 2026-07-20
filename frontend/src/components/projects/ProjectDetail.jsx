@@ -1,8 +1,19 @@
-import { motion } from "framer-motion";
-import { FiX, FiGithub, FiExternalLink } from "react-icons/fi";
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { FiX, FiGithub, FiExternalLink, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 export default function ProjectDetail({ project, projects, onClose }) {
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    setCurrent(0);
+  }, [project]);
+
   if (!project) return null;
+
+  const shots = project.screenshots || [];
+  const prevShot = () => setCurrent((i) => (i - 1 + shots.length) % shots.length);
+  const nextShot = () => setCurrent((i) => (i + 1) % shots.length);
 
   return (
     <motion.div
@@ -27,6 +38,51 @@ export default function ProjectDetail({ project, projects, onClose }) {
           {String(projects.indexOf(project) + 1).padStart(2, "0")}
         </span>
         <h2>{project.title}</h2>
+
+        {shots.length > 0 && (
+          <div className="detail-gallery">
+            <AnimatePresence mode="wait">
+              <motion.img
+                key={shots[current]}
+                src={shots[current]}
+                alt={`Captura ${current + 1} de ${project.title}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.25 }}
+              />
+            </AnimatePresence>
+            {shots.length > 1 && (
+              <>
+                <button
+                  className="gallery-nav-btn gallery-nav-prev"
+                  onClick={prevShot}
+                  aria-label="Captura anterior"
+                >
+                  <FiChevronLeft size={16} />
+                </button>
+                <button
+                  className="gallery-nav-btn gallery-nav-next"
+                  onClick={nextShot}
+                  aria-label="Siguiente captura"
+                >
+                  <FiChevronRight size={16} />
+                </button>
+                <div className="gallery-dots">
+                  {shots.map((s, i) => (
+                    <button
+                      key={s}
+                      className={`gallery-dot ${i === current ? "gallery-dot-active" : ""}`}
+                      onClick={() => setCurrent(i)}
+                      aria-label={`Ver captura ${i + 1}`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
         <p>{project.description}</p>
 
         {project.tech && project.tech.length > 0 && (
