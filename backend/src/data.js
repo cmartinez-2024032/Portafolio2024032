@@ -70,7 +70,14 @@ export const projects = [
     category: "fullstack",
     year: "2026",
     featured: true,
-    hasScreenshots: false,
+    hasScreenshots: true,
+    screenshots: [
+      "/img/projects/kinal-gourmet/01-landing.png",
+      "/img/projects/kinal-gourmet/02-menu.png",
+      "/img/projects/kinal-gourmet/03-login.png",
+      "/img/projects/kinal-gourmet/04-admin-panel.png",
+      "/img/projects/kinal-gourmet/05-restaurantes.png",
+    ],
   },
   {
     id: 2,
