@@ -140,7 +140,10 @@ export const projects = [
     category: "frontend",
     year: "2026",
     featured: false,
-    hasScreenshots: false,
+    hasScreenshots: true,
+    screenshots: [
+      "/img/projects/react-native/01-home.png",
+    ],
   },
   {
     id: 5,
@@ -160,6 +163,13 @@ export const projects = [
     category: "frontend",
     year: "2026",
     featured: false,
-    hasScreenshots: false,
+    hasScreenshots: true,
+    screenshots: [
+      "/img/projects/agenda-web/01-login.png",
+      "/img/projects/agenda-web/02-contactos.png",
+      "/img/projects/agenda-web/03-favoritos.png",
+      "/img/projects/agenda-web/04-perfil.png",
+      "/img/projects/agenda-web/05-nuevo-contacto.png",
+    ],
   },
 ];
