@@ -2078,9 +2078,17 @@ section[id] { scroll-margin-top: 5.5rem; }
 .signal-field {
   position: fixed;
   inset: 0;
-  z-index: -1;
+  /* Transparent canvas over the solid black page; only meteors paint here.
+     z-index must be >= 0 so streaks aren't lost behind body (opacity stacking). */
+  z-index: 0;
   pointer-events: none;
-  background: var(--color-base);
+  background: transparent;
+}
+
+.forge-root > main,
+.forge-root > footer {
+  position: relative;
+  z-index: 2;
 }
 
 /* ── Cursor aura: large trailing glow behind the small cursor dot ── */
