@@ -1,17 +1,15 @@
 import { useState, useEffect } from "react";
-import { FiSun, FiMoon } from "react-icons/fi";
-import { useDarkMode } from "../hooks/useDarkMode";
 import { useScrollProgress } from "../hooks/useScrollProgress";
 import { motion } from "framer-motion";
+import { FiDownload } from "react-icons/fi";
 import { navSections } from "../data/siteConfig";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [darkMode, setDarkMode] = useDarkMode();
   const { scaleX } = useScrollProgress();
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
+    const handleScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -24,10 +22,20 @@ export default function Navbar() {
     <nav className={`main-nav ${scrolled ? "scrolled" : ""}`}>
       <div className="nav-inner">
         <div className="nav-title">
-          <a href="#hero" onClick={(e) => { e.preventDefault(); scrollTo("hero"); }}>
-            Cristopher Martínez
+          <a
+            href="#hero"
+            className="nav-logo"
+            onClick={(e) => {
+              e.preventDefault();
+              scrollTo("hero");
+            }}
+          >
+            <span className="nav-monogram">CM</span>
+            <span className="nav-logo-text">
+              <span className="nav-logo-name">Cristopher Martínez</span>
+              <span className="nav-logo-role">Full-Stack Developer</span>
+            </span>
           </a>
-          <span>Full-Stack Developer</span>
         </div>
         <div className="nav-links">
           {navSections.map((s) => (
@@ -35,13 +43,9 @@ export default function Navbar() {
               {s.label}
             </button>
           ))}
-          <button
-            onClick={() => setDarkMode(!darkMode)}
-            aria-label={darkMode ? "Activar modo claro" : "Activar modo oscuro"}
-            style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}
-          >
-            {darkMode ? <FiSun size={12} /> : <FiMoon size={12} />}
-          </button>
+          <a href="/cv/Cristopher-Martinez-CV.pdf" download className="nav-cv-btn">
+            <FiDownload size={12} /> CV
+          </a>
         </div>
       </div>
       <div className="nav-scroller">

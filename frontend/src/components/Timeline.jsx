@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import ScrollReveal from "./ScrollReveal";
 import { FiBook, FiAward, FiBriefcase } from "react-icons/fi";
 import { timelineItems } from "../data/siteConfig";
@@ -14,94 +15,53 @@ const typeIcons = {
   work: FiBriefcase,
 };
 
-function TimelineItem({ item }) {
+const EASE = [0.16, 1, 0.3, 1];
+
+function TimelineItem({ item, index }) {
   const cfg = typeConfig[item.type] || typeConfig.work;
   const Icon = typeIcons[item.type] || FiBriefcase;
+  const side = index % 2 === 0 ? "left" : "right";
 
   return (
-    <ScrollReveal>
-      <div style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start" }}>
-        <div style={{
-          position: "relative",
-          zIndex: 2,
-          flexShrink: 0,
-          width: "3rem",
-          height: "3rem",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          border: "1px solid var(--color-edge)",
-          background: "var(--color-base)",
-        }}>
-          <Icon size={14} style={{ color: cfg.color }} />
-        </div>
-        <div style={{
-          flex: 1,
-          border: "1px solid var(--color-edge)",
-          padding: "1.25rem",
-        }}>
-          <span style={{
-            fontSize: "0.65rem",
-            fontWeight: 600,
-            color: cfg.color,
-            letterSpacing: "0.15em",
-            textTransform: "uppercase",
-          }}>
+    <ScrollReveal variant={side} delay={index * 0.12} className={`timeline-row timeline-row-${side}`}>
+      <motion.div
+        className="timeline-item"
+        whileHover={{ x: side === "left" ? 10 : -10 }}
+        transition={{ duration: 0.35, ease: EASE }}
+      >
+        <div className="forge-panel timeline-card" style={{ marginBottom: 0 }}>
+          <span className="timeline-year" style={{ color: cfg.color }}>
             {item.year}
           </span>
-          <h3 style={{
-            fontFamily: "var(--font-heading)",
-            fontSize: "0.9rem",
-            color: "var(--color-fg)",
-            textTransform: "uppercase",
-            letterSpacing: "0.02em",
-            marginTop: "0.25rem",
-          }}>
-            {item.title}
-          </h3>
-          <p style={{
-            fontSize: "0.75rem",
-            color: "var(--color-dim)",
-            marginTop: "0.15rem",
-          }}>
-            {item.subtitle}
-          </p>
-          <p style={{
-            fontSize: "0.8rem",
-            color: "var(--color-dim-more)",
-            marginTop: "0.5rem",
-            lineHeight: 1.6,
-          }}>
-            {item.description}
-          </p>
+          <h3 className="timeline-title">{item.title}</h3>
+          <p className="timeline-subtitle">{item.subtitle}</p>
+          <p className="timeline-desc">{item.description}</p>
         </div>
-      </div>
+        <div className="timeline-node">
+          <Icon size={14} style={{ color: cfg.color }} />
+        </div>
+      </motion.div>
     </ScrollReveal>
   );
 }
 
 export default function Timeline() {
   return (
-    <div className="section-wrap">
+    <div className="section-wrap timeline-section">
       <ScrollReveal>
         <p className="section-comment">trayectoria</p>
-        <h2 className="section-title">Recorrido</h2>
+        <h2 className="section-title">
+          Recorrido
+          <span className="text-accent">.</span>
+        </h2>
         <p className="section-title-serif">Educación, certificaciones y experiencia</p>
       </ScrollReveal>
 
-      <div style={{ maxWidth: "700px", margin: "0 auto", position: "relative" }}>
-        <div style={{
-          position: "absolute",
-          left: "1.5rem",
-          top: 0,
-          bottom: 0,
-          width: "1px",
-          background: "var(--color-edge)",
-        }} />
-
-        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-          {timelineItems.map((item) => (
-            <TimelineItem key={item.id} item={item} />
+      <div className="timeline-track timeline-track-zigzag">
+        <div className="timeline-line" aria-hidden="true" />
+        <div className="timeline-list">
+          {timelineItems.map((item, i) => (
+            <TimelineItem key={item.id} item={item} index={i} />
           ))}
         </div>
       </div>

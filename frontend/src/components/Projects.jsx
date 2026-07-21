@@ -3,6 +3,7 @@ import { AnimatePresence } from "framer-motion";
 import { projectCategories } from "../data/siteConfig";
 import ProjectCell from "./projects/ProjectCell";
 import ProjectDetail from "./projects/ProjectDetail";
+import ScrollReveal from "./ScrollReveal";
 
 export default function Projects({ projects }) {
   const [filter, setFilter] = useState("todos");
@@ -15,12 +16,14 @@ export default function Projects({ projects }) {
     : projects.filter((p) => p.category === filter);
 
   return (
-    <section id="projects" className="section-wrap-wide">
-      <div className="section-wrap" style={{ paddingBottom: "3rem", paddingTop: "0" }}>
-        <p className="section-comment reveal">selección de trabajos</p>
-        <h2 className="section-title reveal">Proyectos</h2>
+    <section id="projects" className="section-wrap-wide projects-section">
+      <div className="section-wrap projects-header">
+        <ScrollReveal>
+          <p className="section-comment">selección de trabajos</p>
+          <h2 className="section-title">Proyectos</h2>
+        </ScrollReveal>
 
-        <div className="flex gap-2 mb-8 flex-wrap reveal">
+        <ScrollReveal delay={0.1} className="projects-filters">
           {projectCategories.map((cat) => (
             <button
               key={cat}
@@ -31,13 +34,18 @@ export default function Projects({ projects }) {
               {cat === "todos" ? "Todos" : cat}
             </button>
           ))}
-        </div>
+        </ScrollReveal>
       </div>
 
       {filtered.length > 0 ? (
-        <div className="projects-grid">
+        <div className="projects-grid projects-grid-cinema">
           {filtered.map((project, i) => (
-            <ProjectCell key={project.id} project={project} index={i} onClick={() => setSelected(project)} />
+            <ProjectCell
+              key={project.id}
+              project={project}
+              index={i}
+              onClick={() => setSelected(project)}
+            />
           ))}
         </div>
       ) : (
@@ -50,7 +58,11 @@ export default function Projects({ projects }) {
 
       <AnimatePresence>
         {selected && (
-          <ProjectDetail project={selected} projects={filtered} onClose={() => setSelected(null)} />
+          <ProjectDetail
+            project={selected}
+            projects={filtered}
+            onClose={() => setSelected(null)}
+          />
         )}
       </AnimatePresence>
     </section>

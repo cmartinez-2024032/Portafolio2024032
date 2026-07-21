@@ -4,6 +4,7 @@ export const achievements = [
 
 export const navSections = [
   { id: "intro", label: "Sobre mí" },
+  { id: "skills", label: "Stack" },
   { id: "projects", label: "Proyectos" },
   { id: "contact", label: "Contacto" },
 ];

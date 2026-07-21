@@ -24,11 +24,11 @@ export default function ProjectDetail({ project, projects, onClose }) {
       onClick={onClose}
     >
       <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 40 }}
-        transition={{ duration: 0.4, ease: [0.68, -0.55, 0.265, 1.55] }}
-        className="project-detail"
+        initial={{ opacity: 0, y: 40, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 20, scale: 0.98 }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        className="project-detail glow-gold"
         onClick={(e) => e.stopPropagation()}
       >
         <button className="close-btn" onClick={onClose} aria-label="Cerrar">
@@ -46,10 +46,11 @@ export default function ProjectDetail({ project, projects, onClose }) {
                 key={shots[current]}
                 src={shots[current]}
                 alt={`Captura ${current + 1} de ${project.title}`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                initial={{ opacity: 0, scale: 1.02 }}
+                animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.25 }}
+                whileHover={{ scale: 1.015 }}
+                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
               />
             </AnimatePresence>
             {shots.length > 1 && (

@@ -1,21 +1,34 @@
-import { FiGithub, FiLinkedin } from "react-icons/fi";
+import { FiGithub, FiLinkedin, FiMail, FiDownload } from "react-icons/fi";
 
 export default function Footer({ data }) {
   if (!data) return null;
 
   return (
-    <footer className="site-footer">
-      <p>&copy; {new Date().getFullYear()} Cristopher Martínez. Todos los derechos reservados.</p>
-      <div className="footer-links">
-        <a href={data.github} target="_blank" rel="noopener noreferrer">
-          <FiGithub size={12} style={{ marginRight: "0.35rem" }} />
-          GitHub
-        </a>
-        <a href={data.linkedin} target="_blank" rel="noopener noreferrer">
-          <FiLinkedin size={12} style={{ marginRight: "0.35rem" }} />
-          LinkedIn
-        </a>
-        <a href={`mailto:${data.email}`}>Email</a>
+    <footer className="site-footer site-footer-cinema">
+      <div className="footer-inner">
+        <div className="footer-brand">
+          <span className="nav-monogram">CM</span>
+          <p className="footer-phrase">{data.phrase}</p>
+          <p>&copy; {new Date().getFullYear()} Cristopher Martínez. Todos los derechos reservados.</p>
+        </div>
+        <div className="footer-links">
+          <a href={data.github} target="_blank" rel="noopener noreferrer">
+            <FiGithub size={13} />
+            GitHub
+          </a>
+          <a href={data.linkedin} target="_blank" rel="noopener noreferrer">
+            <FiLinkedin size={13} />
+            LinkedIn
+          </a>
+          <a href={`mailto:${data.email}`}>
+            <FiMail size={13} />
+            Email
+          </a>
+          <a href="/cv/Cristopher-Martinez-CV.pdf" download>
+            <FiDownload size={13} />
+            CV
+          </a>
+        </div>
       </div>
     </footer>
   );
