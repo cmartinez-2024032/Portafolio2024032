@@ -101,7 +101,6 @@ export default function PortalIntro({ name = "Cristopher Martínez", onComplete 
     };
   }, [applyProgress, finish]);
 
-  const first = name.split(" ")[0] || name;
   const pct = Math.round(progress * 100);
 
   return (
@@ -122,8 +121,7 @@ export default function PortalIntro({ name = "Cristopher Martínez", onComplete 
         </p>
 
         <h1 className="portal-intro-title">
-          <span>{first}</span>
-          <span className="portal-intro-title-accent">Forge</span>
+          <span>{name}</span>
         </h1>
 
         <p className="portal-intro-sub">Desplázate para atravesar el portal</p>
