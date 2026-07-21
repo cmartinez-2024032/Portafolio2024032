@@ -41,17 +41,48 @@ const useScroll = () => ({
 });
 const useTransform = (value, input, output) => output[0];
 
+function useMotionValue(initial) {
+  return { get: () => initial, set: () => {}, on: () => () => {} };
+}
+
+function useSpring(initial) {
+  return useMotionValue(initial);
+}
+
 vi.mock("framer-motion", () => ({
   motion: motionProxy,
   AnimatePresence: ({ children }) => <>{children}</>,
   useInView: (ref, options) => true,
   useScroll,
   useTransform,
+  useMotionValue,
+  useSpring,
+  useReducedMotion: () => false,
 }));
 
 globalThis.IntersectionObserver = class {
   constructor(callback) { this.callback = callback; }
-  observe() { this.callback([{ isIntersecting: true }], this); }
+  observe(target) {
+    this.callback([{
+      target,
+      isIntersecting: true,
+      intersectionRatio: 1,
+      boundingClientRect: target.getBoundingClientRect(),
+    }], this);
+  }
   unobserve() {}
   disconnect() {}
 };
+
+if (!window.matchMedia) {
+  window.matchMedia = (query) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: () => {},
+    removeListener: () => {},
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    dispatchEvent: () => false,
+  });
+}
