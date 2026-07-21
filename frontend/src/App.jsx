@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import About from "./components/About";
@@ -8,26 +9,23 @@ import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 import Marquee from "./components/Marquee";
 import CustomCursor from "./components/CustomCursor";
+import CursorAura from "./components/CursorAura";
+import Robot from "./components/robot/Robot";
 import ScrollReveal from "./components/ScrollReveal";
-import { useDarkMode } from "./hooks/useDarkMode";
+import Starfield from "./components/background/Starfield";
+import PortalIntro, { hasSeenPortal } from "./components/intro/PortalIntro";
 import { usePortfolioData } from "./hooks/useDataFetching";
 import { achievements } from "./data/siteConfig";
 
 export default function App() {
-  const [darkMode] = useDarkMode();
   const { data, loading, error } = usePortfolioData();
+  const [introDone, setIntroDone] = useState(() => hasSeenPortal());
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen" style={{ background: "var(--color-base)" }}>
-        <div style={{
-          width: "2rem",
-          height: "2rem",
-          border: "2px solid var(--color-edge)",
-          borderTopColor: "var(--color-accent)",
-          borderRadius: "50%",
-          animation: "spin 0.6s linear infinite",
-        }} />
+      <div className="boot-screen">
+        <div className="boot-orb" />
+        <p className="boot-label">Cargando portfolio</p>
       </div>
     );
   }
@@ -47,43 +45,67 @@ export default function App() {
     );
   }
 
-  const theme = darkMode ? "dark" : "light";
-
   return (
-    <div className={`${theme}`} style={{ minHeight: "100vh", background: "var(--color-base)", color: "var(--color-fg)" }}>
-      <CustomCursor />
-      <Navbar />
-      <main>
-        <Hero data={data.personal} />
+    <>
+      {!introDone && (
+        <PortalIntro
+          name={data.personal?.name}
+          onComplete={() => setIntroDone(true)}
+        />
+      )}
 
-        <section id="intro">
-          <About data={data.personal} />
-        </section>
+      <div
+        className="page-grain forge-root"
+        style={{
+          minHeight: "100vh",
+          color: "var(--color-fg)",
+          opacity: introDone ? 1 : 0,
+          pointerEvents: introDone ? "auto" : "none",
+          transition: "opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1)",
+        }}
+        aria-hidden={!introDone}
+      >
+        <Starfield />
+        <CursorAura />
+        <CustomCursor />
+        {introDone && <Robot />}
+        <Navbar />
+        <main>
+          <Hero data={data.personal} />
 
-        <section id="skills">
-          <Skills skills={data.skills} />
-        </section>
+          <section id="intro">
+            <About data={data.personal} />
+          </section>
 
-        <section id="timeline">
-          <Timeline />
-        </section>
+          <section id="skills">
+            <Skills skills={data.skills} />
+          </section>
 
-        <section id="achievements" style={{ padding: "6rem 0", overflow: "hidden" }}>
-          <div className="section-wrap" style={{ paddingBottom: "3rem" }}>
-            <p className="section-comment reveal">reconocimientos</p>
-            <h2 className="section-title reveal">Logros</h2>
-            <p className="section-title-serif reveal">Certificaciones y habilidades adquiridas</p>
-          </div>
-          <Marquee items={achievements} />
-        </section>
+          <section id="timeline">
+            <Timeline />
+          </section>
 
-        <Projects projects={data.projects} />
+          <section id="achievements" className="forge-achievements">
+            <div className="section-wrap" style={{ paddingBottom: "2.5rem" }}>
+              <ScrollReveal>
+                <p className="section-comment">reconocimientos</p>
+                <h2 className="section-title">
+                  Logros
+                  <span className="text-accent">.</span>
+                </h2>
+              </ScrollReveal>
+            </div>
+            <Marquee items={achievements} />
+          </section>
 
-        <section id="contact">
-          <Contact data={data.personal} />
-        </section>
-      </main>
-      <Footer data={data.personal} />
-    </div>
+          <Projects projects={data.projects} />
+
+          <section id="contact">
+            <Contact data={data.personal} />
+          </section>
+        </main>
+        <Footer data={data.personal} />
+      </div>
+    </>
   );
 }

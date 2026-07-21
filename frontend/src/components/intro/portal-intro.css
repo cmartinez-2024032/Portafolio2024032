@@ -1,0 +1,180 @@
+.portal-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 200000;
+  background: #050506;
+  color: var(--color-fg, #f4f1ec);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.85s;
+}
+
+.portal-intro.is-exiting {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.portal-intro-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.portal-intro-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at center, transparent 20%, rgba(5, 5, 6, 0.55) 70%, rgba(5, 5, 6, 0.92) 100%),
+    linear-gradient(180deg, rgba(5, 5, 6, 0.35) 0%, transparent 25%, transparent 70%, rgba(5, 5, 6, 0.7) 100%);
+}
+
+.portal-intro-flash {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 48%, rgba(255, 90, 54, 0.55), rgba(255, 140, 90, 0.12) 40%, transparent 70%);
+  mix-blend-mode: screen;
+}
+
+.portal-intro-ui {
+  position: relative;
+  z-index: 2;
+  width: min(92vw, 520px);
+  text-align: center;
+  padding: 2rem 1.25rem;
+  pointer-events: none;
+}
+
+.portal-intro-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--color-accent, #ff5a36);
+  margin-bottom: 1.25rem;
+}
+
+.portal-intro-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-accent, #ff5a36);
+  box-shadow: 0 0 14px rgba(255, 90, 54, 0.9);
+  animation: portalDot 1.6s ease-in-out infinite;
+}
+
+.portal-intro-title {
+  font-family: var(--font-heading, "Bebas Neue", sans-serif);
+  font-size: clamp(3.2rem, 11vw, 5.8rem);
+  line-height: 0.92;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin: 0 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.05em;
+}
+
+.portal-intro-title-accent {
+  background: linear-gradient(135deg, #ff5a36 0%, #ffb088 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.portal-intro-sub {
+  color: var(--color-dim, rgba(244, 241, 236, 0.64));
+  font-size: 0.95rem;
+  margin: 0 0 1.75rem;
+}
+
+.portal-intro-track {
+  width: min(100%, 280px);
+  height: 2px;
+  margin: 0 auto 1.75rem;
+  background: rgba(244, 241, 236, 0.12);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.portal-intro-fill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  transform-origin: left center;
+  background: linear-gradient(90deg, #ff5a36, #ffb088);
+  box-shadow: 0 0 18px rgba(255, 90, 54, 0.65);
+  will-change: transform;
+}
+
+.portal-intro-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.62rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--color-dim-more, rgba(244, 241, 236, 0.38));
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.portal-intro-hint.is-visible {
+  opacity: 1;
+  animation: portalHint 2.2s ease-in-out infinite;
+}
+
+.portal-intro-hint-line {
+  width: 1px;
+  height: 42px;
+  background: linear-gradient(180deg, var(--color-accent, #ff5a36), transparent);
+}
+
+.portal-intro-skip {
+  pointer-events: auto;
+  margin-top: 2rem;
+  background: transparent;
+  border: 1px solid rgba(255, 90, 54, 0.35);
+  color: var(--color-dim, rgba(244, 241, 236, 0.64));
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  padding: 0.7rem 1.1rem;
+  border-radius: 0.4rem;
+  transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+}
+
+.portal-intro-skip:hover,
+.portal-intro-skip:focus-visible {
+  color: #fff;
+  border-color: rgba(255, 90, 54, 0.8);
+  background: rgba(255, 90, 54, 0.12);
+  outline: none;
+}
+
+@keyframes portalDot {
+  0%, 100% { opacity: 0.45; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+@keyframes portalHint {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portal-intro-dot,
+  .portal-intro-hint {
+    animation: none !important;
+  }
+}
