@@ -1,4 +1,4 @@
-import { FiGithub, FiLinkedin, FiMail, FiDownload } from "react-icons/fi";
+import { FiGithub, FiMail, FiDownload } from "react-icons/fi";
 
 export default function Footer({ data }) {
   if (!data) return null;
@@ -12,18 +12,18 @@ export default function Footer({ data }) {
           <p>&copy; {new Date().getFullYear()} Cristopher Martínez. Todos los derechos reservados.</p>
         </div>
         <div className="footer-links">
-          <a href={data.github} target="_blank" rel="noopener noreferrer">
-            <FiGithub size={13} />
-            GitHub
-          </a>
-          <a href={data.linkedin} target="_blank" rel="noopener noreferrer">
-            <FiLinkedin size={13} />
-            LinkedIn
-          </a>
-          <a href={`mailto:${data.email}`}>
-            <FiMail size={13} />
-            Email
-          </a>
+          {data.github && (
+            <a href={data.github} target="_blank" rel="noopener noreferrer">
+              <FiGithub size={13} />
+              GitHub
+            </a>
+          )}
+          {data.email && (
+            <a href={`mailto:${data.email}`}>
+              <FiMail size={13} />
+              Email
+            </a>
+          )}
           <a href="/cv/Cristopher-Martinez-CV.pdf" download>
             <FiDownload size={13} />
             CV

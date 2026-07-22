@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { FiGithub, FiLinkedin, FiMail } from "react-icons/fi";
+import { FiGithub, FiMail } from "react-icons/fi";
 
 export default function Sidebar({ data }) {
   if (!data) return null;
@@ -15,15 +15,16 @@ export default function Sidebar({ data }) {
         social
       </span>
       <div className="w-px h-10 bg-edge" />
-      <a href={data.github} target="_blank" rel="noopener noreferrer" className="p-2 text-dim-more hover:text-accent transition-colors duration-200">
-        <FiGithub size={16} />
-      </a>
-      <a href={data.linkedin} target="_blank" rel="noopener noreferrer" className="p-2 text-dim-more hover:text-accent transition-colors duration-200">
-        <FiLinkedin size={16} />
-      </a>
-      <a href={`mailto:${data.email}`} className="p-2 text-dim-more hover:text-accent transition-colors duration-200">
-        <FiMail size={16} />
-      </a>
+      {data.github && (
+        <a href={data.github} target="_blank" rel="noopener noreferrer" className="p-2 text-dim-more hover:text-accent transition-colors duration-200">
+          <FiGithub size={16} />
+        </a>
+      )}
+      {data.email && (
+        <a href={`mailto:${data.email}`} className="p-2 text-dim-more hover:text-accent transition-colors duration-200">
+          <FiMail size={16} />
+        </a>
+      )}
       <div className="w-px h-10 bg-edge" />
     </motion.div>
   );

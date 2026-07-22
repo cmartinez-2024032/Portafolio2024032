@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import ScrollReveal from "./ScrollReveal";
 import Counter from "./Counter";
 import { useTilt } from "../hooks/useTilt";
-import { FiMapPin, FiMail, FiGithub, FiLinkedin, FiCalendar, FiBook, FiDownload } from "react-icons/fi";
+import { FiMapPin, FiMail, FiGithub, FiCalendar, FiBook, FiDownload } from "react-icons/fi";
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -97,8 +97,7 @@ export default function About({ data }) {
         <MetaRow icon={<FiCalendar />} label="Edad" value={data.age} index={1} />
         <MetaRow icon={<FiBook />} label="Formación" value={data.education} index={2} />
         <MetaRow icon={<FiGithub />} label="GitHub" value="@cmartinez-2024032" href={data.github} index={3} />
-        <MetaRow icon={<FiLinkedin />} label="LinkedIn" value="/in/cmartinez" href={data.linkedin} index={4} />
-        <MetaRow icon={<FiMail />} label="Email" value={data.email} href={`mailto:${data.email}`} index={5} />
+        <MetaRow icon={<FiMail />} label="Email" value={data.email} href={`mailto:${data.email}`} index={4} />
       </div>
     </div>
   );
