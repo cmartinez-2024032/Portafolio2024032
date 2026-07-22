@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { personal, skills, education, experience, projects } from "./data.js";
+import { handleContact } from "./contact.js";
 
 const router = Router();
 
@@ -35,5 +36,7 @@ router.get("/projects/:id", (req, res) => {
   if (!project) return res.status(404).json({ error: "Proyecto no encontrado" });
   res.json(project);
 });
+
+router.post("/contact", handleContact);
 
 export default router;
