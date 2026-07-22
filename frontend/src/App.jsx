@@ -3,19 +3,18 @@ import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import About from "./components/About";
 import Skills from "./components/Skills";
+import Abilities from "./components/Abilities";
 import Timeline from "./components/Timeline";
 import Projects from "./components/Projects";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
-import Marquee from "./components/Marquee";
+import Achievements from "./components/Achievements";
 import CustomCursor from "./components/CustomCursor";
 import CursorAura from "./components/CursorAura";
 import Robot from "./components/robot/Robot";
-import ScrollReveal from "./components/ScrollReveal";
 import Starfield from "./components/background/Starfield";
 import PortalIntro, { hasSeenPortal } from "./components/intro/PortalIntro";
 import { usePortfolioData } from "./hooks/useDataFetching";
-import { achievements } from "./data/siteConfig";
 
 export default function App() {
   const { data, loading, error } = usePortfolioData();
@@ -81,22 +80,13 @@ export default function App() {
             <Skills skills={data.skills} />
           </section>
 
+          <Abilities />
+
           <section id="timeline">
             <Timeline />
           </section>
 
-          <section id="achievements" className="forge-achievements">
-            <div className="section-wrap" style={{ paddingBottom: "2.5rem" }}>
-              <ScrollReveal>
-                <p className="section-comment">reconocimientos</p>
-                <h2 className="section-title">
-                  Logros
-                  <span className="text-accent">.</span>
-                </h2>
-              </ScrollReveal>
-            </div>
-            <Marquee items={achievements} />
-          </section>
+          <Achievements />
 
           <Projects projects={data.projects} />
 
