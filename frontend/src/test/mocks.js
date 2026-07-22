@@ -1,17 +1,17 @@
 export const mockPersonal = {
   name: "Cristopher Martínez",
-  title: "Full-Stack Developer",
+  title: "Junior Full-Stack Developer",
   phrase: "El único límite es el que tú mismo te pongas.",
   location: "Guatemala, Guatemala",
   age: "18 años",
   education: "Fundación Kinal · 2026",
-  email: "cmartinez054@gmail.com",
+  email: "dannym2407@gmail.com",
   github: "https://github.com/cmartinez-2024032",
-  linkedin: "https://linkedin.com/in/cmartinez",
+  linkedin: null,
   available: true,
   yearsCoding: 3,
-  bio: "Desarrollador Full-Stack apasionado por construir experiencias digitales completas.",
-  goals: "Mi objetivo es dominar arquitectura backend y ciberseguridad.",
+  bio: "Junior Full-Stack Developer apasionado por construir experiencias digitales completas.",
+  goals: "Mi objetivo es crecer como Junior Full-Stack y dominar arquitectura backend.",
 };
 
 export const mockSkills = [

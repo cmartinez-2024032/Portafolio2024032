@@ -33,7 +33,7 @@ export default function Navbar() {
             <span className="nav-monogram">CM</span>
             <span className="nav-logo-text">
               <span className="nav-logo-name">Cristopher Martínez</span>
-              <span className="nav-logo-role">Full-Stack Developer</span>
+              <span className="nav-logo-role">Junior Full-Stack</span>
             </span>
           </a>
         </div>

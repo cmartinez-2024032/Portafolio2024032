@@ -4,16 +4,15 @@ import {
   FiArrowDown,
   FiDownload,
   FiGithub,
-  FiLinkedin,
   FiMail,
   FiArrowUpRight,
 } from "react-icons/fi";
 import { useMagnetic } from "../hooks/useMagnetic";
 
-const TITLE = "Full-Stack Developer";
+const TITLE = "Junior Full-Stack Developer";
 const TYPING_SPEED = 42;
 const EASE = [0.16, 1, 0.3, 1];
-const KEYWORDS = ["CÓDIGO", "REACT", "NODE.JS", "C# .NET", "DISEÑO", "BACKEND"];
+const KEYWORDS = ["JUNIOR", "FULL-STACK", "REACT", "NODE.JS", "C# .NET", "BACKEND"];
 
 export default function Hero({ data }) {
   const [displayed, setDisplayed] = useState("");
@@ -198,11 +197,6 @@ export default function Hero({ data }) {
             {data?.github && (
               <a href={data.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub">
                 <FiGithub size={18} />
-              </a>
-            )}
-            {data?.linkedin && (
-              <a href={data.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
-                <FiLinkedin size={18} />
               </a>
             )}
             {data?.email && (
