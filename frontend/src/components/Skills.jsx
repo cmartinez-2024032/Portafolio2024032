@@ -3,11 +3,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import ScrollReveal from "./ScrollReveal";
 import { useTilt } from "../hooks/useTilt";
 import { skillCategories } from "../data/siteConfig";
+import { resolveTechIcon } from "../data/techIcons";
 
 const EASE = [0.16, 1, 0.3, 1];
 
 function SkillCard({ skill, index, active, onHover }) {
   const tilt = useTilt(8);
+  const resolved = resolveTechIcon(skill.name);
+  const Icon = resolved?.Icon;
+  const iconColor = resolved?.color || skill.color;
 
   return (
     <motion.button
@@ -31,7 +35,9 @@ function SkillCard({ skill, index, active, onHover }) {
       }}
     >
       <div className="forge-skill-top">
-        <span className="forge-skill-dot" />
+        <span className="forge-skill-icon" style={{ color: iconColor }} aria-hidden="true">
+          {Icon ? <Icon /> : <span className="forge-skill-dot" />}
+        </span>
         <span className="forge-skill-pct">{skill.level}%</span>
       </div>
       <h3>{skill.name}</h3>
