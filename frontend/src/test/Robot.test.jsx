@@ -10,6 +10,8 @@ describe("Robot companion", () => {
 
     expect(robot).toBeInTheDocument();
     expect(robot).toHaveAttribute("aria-hidden", "true");
+    expect(container.querySelector(".robot-speech-name")?.textContent).toBe("Ember");
+    expect(container.querySelector(".robot-speech")).toBeInTheDocument();
 
     // Desktop / jsdom: controller starts. Touch devices stay dormant.
     if (robot?.getAttribute("data-touch") === "true") {

@@ -3,8 +3,8 @@ import { useRobot } from "../../hooks/useRobot";
 import "./robot.css";
 
 /**
- * Pure visual shell for the companion drone.
- * All motion / state lives in RobotController via useRobot.
+ * Ember — visual shell for the portfolio guide drone.
+ * Motion / speech live in RobotController via useRobot.
  */
 function Robot() {
   const robotRef = useRobot();
@@ -15,12 +15,28 @@ function Robot() {
       className="robot-companion"
       data-mode="hidden"
       data-inactive="false"
+      data-speaking="false"
+      data-hover="false"
       aria-hidden="true"
+      title="Ember — guía del portafolio · clic para tip · doble clic para llamar"
     >
+      <div className="robot-speech" data-open="false" aria-live="polite">
+        <div className="robot-speech-chrome">
+          <span className="robot-speech-dot" />
+          <span className="robot-speech-name">Ember</span>
+          <span className="robot-speech-tag">guía · forge</span>
+        </div>
+        <p className="robot-speech-text" />
+        <span className="robot-speech-tail" aria-hidden="true" />
+      </div>
+
       <div className="robot-flight">
         <div className="robot-aura" />
         <div className="robot-orbit robot-orbit-back" />
         <div className="robot-beam" />
+        <div className="robot-nameplate" aria-hidden="true">
+          <span>E</span>
+        </div>
 
         <svg
           className="robot-visual"

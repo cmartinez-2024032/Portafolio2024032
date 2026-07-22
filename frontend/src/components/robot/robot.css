@@ -14,10 +14,12 @@
   transform-origin: center;
   will-change: transform, opacity;
   contain: layout style;
+  cursor: pointer;
 }
 
 .robot-companion[data-ready="true"] {
   visibility: visible;
+  pointer-events: auto;
   animation: robot-reveal 1.45s cubic-bezier(0.16, 1, 0.3, 1) 2s both;
 }
 
@@ -25,6 +27,7 @@
 .robot-companion[data-touch="true"] {
   opacity: 0 !important;
   visibility: hidden;
+  pointer-events: none !important;
   animation: none;
 }
 
@@ -34,6 +37,15 @@
   height: 100%;
   animation: robot-float 4.6s ease-in-out infinite;
   transform-origin: center;
+}
+
+/* Keep Ember almost still while explaining */
+.robot-companion[data-speaking="true"] .robot-flight {
+  animation: robot-float-speak 6.5s ease-in-out infinite;
+}
+
+.robot-companion[data-hover="true"]:not([data-speaking="true"]) .robot-flight {
+  animation-duration: 3.2s;
 }
 
 .robot-aura {
@@ -260,6 +272,163 @@
   transition: opacity 280ms ease;
 }
 
+/* Ember speech bubble */
+.robot-speech {
+  position: absolute;
+  right: calc(100% + 0.55rem);
+  top: 8%;
+  width: min(248px, 54vw);
+  padding: 0.72rem 0.85rem 0.8rem;
+  border-radius: 0.9rem;
+  background:
+    linear-gradient(145deg, rgba(28, 24, 23, 0.97), rgba(8, 8, 10, 0.98));
+  border: 1px solid rgba(255, 90, 54, 0.38);
+  box-shadow:
+    0 0 0 1px rgba(255, 176, 150, 0.1) inset,
+    0 22px 50px -24px rgba(0, 0, 0, 0.95),
+    0 0 48px rgba(255, 90, 54, 0.22);
+  backdrop-filter: blur(14px);
+  opacity: 0;
+  transform: translate3d(12px, 8px, 0) scale(0.92);
+  pointer-events: none;
+  transition:
+    opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 8;
+  overflow: hidden;
+}
+.robot-speech::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 20%,
+    rgba(255, 143, 112, 0.12) 45%,
+    transparent 70%
+  );
+  transform: translateX(-120%);
+  pointer-events: none;
+}
+.robot-speech[data-open="true"] {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+.robot-speech[data-open="true"]::before {
+  animation: ember-shimmer 2.4s ease-out 0.15s 1;
+}
+@keyframes ember-shimmer {
+  to {
+    transform: translateX(120%);
+  }
+}
+.robot-speech-chrome {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+.robot-speech-dot {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: #ff5a36;
+  box-shadow: 0 0 10px rgba(255, 90, 54, 0.9);
+  animation: robot-status 1.6s ease-in-out infinite;
+}
+.robot-speech-name {
+  font-family: var(--font-heading, "Bebas Neue", sans-serif);
+  letter-spacing: 0.14em;
+  font-size: 0.72rem;
+  color: #ff8f70;
+  text-transform: uppercase;
+}
+.robot-speech-tag {
+  margin-left: auto;
+  font-size: 0.55rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(244, 241, 236, 0.4);
+  border: 1px solid rgba(255, 90, 54, 0.2);
+  border-radius: 999px;
+  padding: 0.15rem 0.4rem;
+}
+.robot-speech-text {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: rgba(244, 241, 236, 0.9);
+}
+.robot-speech-tail {
+  position: absolute;
+  right: -6px;
+  top: 1.35rem;
+  width: 10px;
+  height: 10px;
+  background: rgba(16, 14, 14, 0.98);
+  border-right: 1px solid rgba(255, 90, 54, 0.35);
+  border-top: 1px solid rgba(255, 90, 54, 0.35);
+  transform: rotate(45deg);
+}
+.robot-nameplate {
+  position: absolute;
+  z-index: 6;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 0.35rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading, "Bebas Neue", sans-serif);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  color: #1a0603;
+  background: linear-gradient(145deg, #ff8f70, #ff5a36);
+  box-shadow: 0 0 18px rgba(255, 90, 54, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.robot-companion[data-speaking="true"] .robot-status-light {
+  animation-duration: 0.55s;
+}
+.robot-companion[data-speaking="true"] .robot-orbit {
+  animation-duration: 14s;
+  opacity: 0.45;
+}
+.robot-companion[data-speaking="true"] .robot-rotors .robot-rotor {
+  animation-duration: 2.4s;
+}
+.robot-companion[data-suspended="true"] .robot-speech {
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+@media (max-width: 720px) {
+  .robot-speech {
+    right: auto;
+    left: 50%;
+    top: auto;
+    bottom: calc(100% + 0.45rem);
+    width: min(220px, 70vw);
+    transform: translate3d(-50%, 8px, 0) scale(0.92);
+  }
+  .robot-speech[data-open="true"] {
+    transform: translate3d(-50%, 0, 0) scale(1);
+  }
+  .robot-speech-tail {
+    left: 50%;
+    right: auto;
+    top: auto;
+    bottom: -5px;
+    margin-left: -5px;
+    border-right: 1px solid rgba(255, 90, 54, 0.35);
+    border-top: none;
+    border-bottom: 1px solid rgba(255, 90, 54, 0.35);
+  }
+}
+
 /* Mode: travel / moving */
 .robot-companion[data-mode="travel"] .robot-thrust,
 .robot-companion[data-moving="true"] .robot-thrust {
@@ -345,6 +514,11 @@
 @keyframes robot-float {
   0%, 100% { transform: translate3d(0, -4px, 0); }
   50% { transform: translate3d(0, 5px, 0); }
+}
+
+@keyframes robot-float-speak {
+  0%, 100% { transform: translate3d(0, -1px, 0); }
+  50% { transform: translate3d(0, 1.5px, 0); }
 }
 
 @keyframes robot-breathe {

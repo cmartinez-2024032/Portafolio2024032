@@ -1,4 +1,12 @@
-export type RobotSection = "hero" | "intro" | "skills" | "timeline" | "achievements" | "projects" | "contact";
+export type RobotSection =
+  | "hero"
+  | "intro"
+  | "skills"
+  | "abilities"
+  | "timeline"
+  | "achievements"
+  | "projects"
+  | "contact";
 
 export type RobotPoint = {
   x: number;

@@ -39,7 +39,12 @@ const useScroll = () => ({
   scrollY: 0,
   scrollYProgress: 0,
 });
-const useTransform = (value, input, output) => output[0];
+const useTransform = (value, input, output) => {
+  // Supports useTransform(mv, [in], [out]) and useTransform([mvs], fn)
+  if (typeof input === "function") return "#0000";
+  if (Array.isArray(output)) return output[0];
+  return output ?? 0;
+};
 
 function useMotionValue(initial) {
   return { get: () => initial, set: () => {}, on: () => () => {} };

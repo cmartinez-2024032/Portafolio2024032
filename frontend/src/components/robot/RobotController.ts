@@ -14,11 +14,13 @@ import {
   type RobotPoint,
   type RobotSection,
 } from "./RobotPath";
+import { EMBER_LINES, EMBER_TIPS } from "./EmberLines";
 
 const SECTION_IDS: RobotSection[] = [
   "hero",
   "intro",
   "skills",
+  "abilities",
   "timeline",
   "achievements",
   "projects",
@@ -27,6 +29,8 @@ const SECTION_IDS: RobotSection[] = [
 
 const ROBOT_WIDTH = 104;
 const ROBOT_HEIGHT = 120;
+const SPEECH_HOLD_MS = 5600;
+const TIP_HOLD_MS = 4200;
 
 export class RobotController {
   private element: HTMLElement;
@@ -55,7 +59,18 @@ export class RobotController {
   private suspended = false;
   private pointer = { x: 0.5, y: 0.5 };
   private lastFrame = 0;
+  private speechTimer = 0;
+  private lastSpeechSection: RobotSection | null = null;
   private velocity = { x: 0, y: 0 };
+  /** While true, Ember holds position so speech stays readable. */
+  private speaking = false;
+  private speakAnchor: RobotPoint | null = null;
+  private tipIndex = 0;
+  private lastClickAt = 0;
+  private clickTimer = 0;
+  private hoverTimer = 0;
+  private idleTipTimer = 0;
+  private summonTimer = 0;
 
   constructor(element: HTMLElement, reducedMotion: boolean) {
     this.element = element;
@@ -73,6 +88,8 @@ export class RobotController {
       this.current = this.getReducedPoint();
       this.destination = { ...this.current };
       this.render();
+      this.bindInteractiveEvents();
+      window.setTimeout(() => this.speakForSection("hero"), 400);
       return;
     }
 
@@ -88,10 +105,13 @@ export class RobotController {
     this.observeSections();
     this.observeProjectModal();
     this.bindEvents();
+    this.bindInteractiveEvents();
     this.resetInactivity();
     this.updateDestination();
     setRobotMode(this.element, "idle");
     this.scheduleFrame();
+    // Intro greeting after Ember flies in
+    window.setTimeout(() => this.speakForSection("hero"), 900);
   }
 
   destroy() {
@@ -104,11 +124,19 @@ export class RobotController {
     window.removeEventListener("scroll", this.onScroll);
     window.removeEventListener("resize", this.onResize);
     document.removeEventListener("visibilitychange", this.onVisibilityChange);
+    this.element.removeEventListener("pointerenter", this.onPointerEnter);
+    this.element.removeEventListener("pointerleave", this.onPointerLeave);
+    this.element.removeEventListener("click", this.onClick);
     if (this.rafId) cancelAnimationFrame(this.rafId);
     window.clearTimeout(this.inactivityTimer);
     window.clearTimeout(this.scrollEndTimer);
     window.clearTimeout(this.modeTimer);
     window.clearTimeout(this.sequenceTimer);
+    window.clearTimeout(this.speechTimer);
+    window.clearTimeout(this.hoverTimer);
+    window.clearTimeout(this.idleTipTimer);
+    window.clearTimeout(this.summonTimer);
+    window.clearTimeout(this.clickTimer);
     clearRobotTarget(this.activeTarget);
   }
 
@@ -117,6 +145,12 @@ export class RobotController {
     window.addEventListener("scroll", this.onScroll, { passive: true });
     window.addEventListener("resize", this.onResize, { passive: true });
     document.addEventListener("visibilitychange", this.onVisibilityChange);
+  }
+
+  private bindInteractiveEvents() {
+    this.element.addEventListener("pointerenter", this.onPointerEnter);
+    this.element.addEventListener("pointerleave", this.onPointerLeave);
+    this.element.addEventListener("click", this.onClick);
   }
 
   private observeSections() {
@@ -166,6 +200,7 @@ export class RobotController {
         this.rafId = 0;
         clearRobotTarget(this.activeTarget);
         this.activeTarget = null;
+        this.endSpeech(false);
         return;
       }
 
@@ -223,11 +258,68 @@ export class RobotController {
         this.setTarget(null, "observe");
     }
 
+    // Don't chase a new route mid-sentence — settle first, then speak.
+    if (!this.speaking) {
+      this.updateDestination();
+    }
+    this.speakForSection(this.activeSection);
+    this.scheduleFrame();
+  }
+
+  private speakForSection(section: RobotSection) {
+    const line = EMBER_LINES[section];
+    if (!line) return;
+    if (this.lastSpeechSection === section && this.speaking) return;
+    this.lastSpeechSection = section;
+    this.openSpeech(line, SPEECH_HOLD_MS);
+  }
+
+  private openSpeech(line: string, holdMs: number) {
+    const bubble = this.element.querySelector<HTMLElement>(".robot-speech");
+    const textEl = this.element.querySelector<HTMLElement>(".robot-speech-text");
+    if (!bubble || !textEl) return;
+
+    // Freeze where we are so the bubble is readable.
+    this.speaking = true;
+    this.speakAnchor = {
+      x: this.current.x,
+      y: this.current.y,
+      scale: this.current.scale,
+      rotation: 0,
+    };
+    this.destination = { ...this.speakAnchor };
+    this.velocity.x = 0;
+    this.velocity.y = 0;
+    window.clearTimeout(this.sequenceTimer);
+
+    textEl.textContent = line;
+    bubble.dataset.open = "true";
+    this.element.dataset.speaking = "true";
+    this.setTemporaryMode("greet", Math.min(900, holdMs), this.activeSection === "skills" ? "analyze" : "idle");
+
+    window.clearTimeout(this.speechTimer);
+    this.speechTimer = window.setTimeout(() => this.endSpeech(true), holdMs);
+    this.scheduleFrame();
+  }
+
+  private endSpeech(resume: boolean) {
+    const bubble = this.element.querySelector<HTMLElement>(".robot-speech");
+    if (bubble) bubble.dataset.open = "false";
+    this.element.dataset.speaking = "false";
+    this.speaking = false;
+    this.speakAnchor = null;
+    window.clearTimeout(this.speechTimer);
+
+    if (!resume || this.destroyed || this.suspended) return;
+
     this.updateDestination();
+    if (this.activeSection === "skills") this.beginSkillSequence();
+    else if (this.activeSection === "projects") this.selectNearestProject();
     this.scheduleFrame();
   }
 
   private beginSkillSequence() {
+    if (this.speaking) return;
     const skills = getVisibleRobotTargets("[data-robot-skill]");
     if (!skills.length || this.activeSection !== "skills") return;
 
@@ -288,6 +380,11 @@ export class RobotController {
   }
 
   private updateDestination() {
+    if (this.speaking && this.speakAnchor) {
+      this.destination = { ...this.speakAnchor };
+      return;
+    }
+
     this.destination = resolveRobotPoint({
       section: this.activeSection,
       viewportWidth: window.innerWidth,
@@ -321,7 +418,7 @@ export class RobotController {
     const dt = this.lastFrame ? Math.min(32, now - this.lastFrame) : 16;
     this.lastFrame = now;
 
-    if (this.routeDirty && now - this.lastRouteUpdate >= 72) {
+    if (!this.speaking && this.routeDirty && now - this.lastRouteUpdate >= 72) {
       if (this.activeSection === "projects") this.selectNearestProject();
       this.updateDestination();
       this.routeDirty = false;
@@ -330,18 +427,19 @@ export class RobotController {
 
     const prevX = this.current.x;
     const prevY = this.current.y;
-    const stiffness = this.scrolling ? 0.16 : 0.11;
+    // Near-frozen while speaking so the message stays easy to read.
+    const stiffness = this.speaking ? 0.035 : this.scrolling ? 0.16 : 0.11;
     this.current.x += (this.destination.x - this.current.x) * stiffness;
     this.current.y += (this.destination.y - this.current.y) * stiffness;
-    this.current.scale += (this.destination.scale - this.current.scale) * 0.1;
+    this.current.scale += (this.destination.scale - this.current.scale) * (this.speaking ? 0.04 : 0.1);
 
     this.velocity.x = (this.current.x - prevX) / (dt || 16);
     this.velocity.y = (this.current.y - prevY) / (dt || 16);
 
-    const lean = Math.max(-10, Math.min(10, this.velocity.x * 18));
-    const pitch = Math.max(-6, Math.min(6, -this.velocity.y * 12));
+    const lean = this.speaking ? 0 : Math.max(-10, Math.min(10, this.velocity.x * 18));
+    const pitch = this.speaking ? 0 : Math.max(-6, Math.min(6, -this.velocity.y * 12));
     this.current.rotation +=
-      (this.destination.rotation + lean + pitch - this.current.rotation) * 0.12;
+      (this.destination.rotation + lean + pitch - this.current.rotation) * (this.speaking ? 0.08 : 0.12);
 
     this.updateLook();
     this.render();
@@ -354,14 +452,20 @@ export class RobotController {
       Math.abs(this.velocity.x) > 0.02 ||
       Math.abs(this.velocity.y) > 0.02;
 
-    // Keep a light idle loop so look-at / lean stay responsive.
-    if (unsettled || this.routeDirty || this.element.dataset.inactive !== "true") {
+    if (unsettled || this.routeDirty || this.speaking || this.element.dataset.inactive !== "true") {
       this.scheduleFrame();
     }
   };
 
   private updateLook() {
-    // Prefer looking at the focused element when analyzing / observing.
+    if (this.speaking) {
+      // Soft glance toward cursor only — no chase.
+      const lookX = (this.pointer.x - 0.5) * 0.35;
+      const lookY = (this.pointer.y - 0.5) * 0.25;
+      setRobotLook(this.element, lookX, lookY);
+      return;
+    }
+
     if (
       this.focusElement &&
       (this.element.dataset.mode === "analyze" ||
@@ -388,7 +492,8 @@ export class RobotController {
 
   private render() {
     const traveling =
-      Math.hypot(this.velocity.x, this.velocity.y) > 0.08 || this.scrolling;
+      !this.speaking &&
+      (Math.hypot(this.velocity.x, this.velocity.y) > 0.08 || this.scrolling);
     this.element.dataset.moving = traveling ? "true" : "false";
     this.element.style.transform = `translate3d(${this.current.x.toFixed(2)}px, ${this.current.y.toFixed(2)}px, 0) scale(${this.current.scale.toFixed(3)}) rotate(${this.current.rotation.toFixed(2)}deg)`;
   }
@@ -396,12 +501,108 @@ export class RobotController {
   private resetInactivity() {
     setRobotActivity(this.element, false);
     window.clearTimeout(this.inactivityTimer);
+    window.clearTimeout(this.idleTipTimer);
     this.inactivityTimer = window.setTimeout(() => {
       if (this.destroyed) return;
       setRobotActivity(this.element, true);
       setRobotLook(this.element, 0, 0);
+      // After a longer idle, offer a soft tip.
+      this.idleTipTimer = window.setTimeout(() => {
+        if (this.destroyed || this.speaking || this.suspended) return;
+        this.speakTip();
+      }, 5200);
     }, ROBOT_TIMING.inactivityDelay);
     this.scheduleFrame();
+  }
+
+  private speakTip() {
+    const tip = EMBER_TIPS[this.tipIndex % EMBER_TIPS.length];
+    this.tipIndex += 1;
+    this.lastSpeechSection = null;
+    this.openSpeech(tip, TIP_HOLD_MS);
+  }
+
+  private onPointerEnter = () => {
+    if (this.suspended || this.reducedMotion) return;
+    this.element.dataset.hover = "true";
+    window.clearTimeout(this.hoverTimer);
+    if (!this.speaking) {
+      this.setTemporaryMode("greet", 720, this.element.dataset.mode === "analyze" ? "analyze" : "idle");
+    }
+  };
+
+  private onPointerLeave = () => {
+    this.element.dataset.hover = "false";
+  };
+
+  private onClick = (event: MouseEvent) => {
+    if (this.suspended) return;
+    event.stopPropagation();
+    this.resetInactivity();
+
+    const now = performance.now();
+    const isDouble = now - this.lastClickAt < 320;
+    this.lastClickAt = now;
+
+    if (isDouble && !this.reducedMotion) {
+      window.clearTimeout(this.clickTimer);
+      this.summonNearCursor(event.clientX, event.clientY);
+      return;
+    }
+
+    window.clearTimeout(this.clickTimer);
+    this.clickTimer = window.setTimeout(() => {
+      if (this.destroyed || this.suspended) return;
+      if (this.speaking) {
+        this.endSpeech(true);
+        return;
+      }
+      this.speakTip();
+    }, 280);
+  };
+
+  private summonNearCursor(clientX: number, clientY: number) {
+    const scale = this.current.scale || 0.95;
+    const target: RobotPoint = {
+      x: Math.max(
+        18,
+        Math.min(window.innerWidth - ROBOT_WIDTH * scale - 18, clientX - ROBOT_WIDTH * scale * 0.5),
+      ),
+      y: Math.max(
+        82,
+        Math.min(
+          window.innerHeight - ROBOT_HEIGHT * scale - 18,
+          clientY - ROBOT_HEIGHT * scale * 0.45,
+        ),
+      ),
+      scale,
+      rotation: 0,
+    };
+
+    window.clearTimeout(this.speechTimer);
+    const bubble = this.element.querySelector<HTMLElement>(".robot-speech");
+    const textEl = this.element.querySelector<HTMLElement>(".robot-speech-text");
+
+    // Fly to the cursor, then hold there while speaking.
+    this.speaking = false;
+    this.speakAnchor = null;
+    this.destination = target;
+    this.setTemporaryMode("greet", 900, "idle");
+    this.scheduleFrame();
+
+    window.clearTimeout(this.summonTimer);
+    this.summonTimer = window.setTimeout(() => {
+      if (this.destroyed) return;
+      this.speakAnchor = { ...target };
+      this.speaking = true;
+      this.destination = { ...target };
+      if (bubble && textEl) {
+        textEl.textContent = "¡Aquí estoy! Vuelvo a mi ruta en un segundo.";
+        bubble.dataset.open = "true";
+        this.element.dataset.speaking = "true";
+      }
+      this.speechTimer = window.setTimeout(() => this.endSpeech(true), 2800);
+    }, 480);
   }
 
   private onPointerMove = (event: PointerEvent) => {
@@ -414,6 +615,18 @@ export class RobotController {
     const scrollY = window.scrollY;
     this.scrollDirection = scrollY >= this.previousScrollY ? 1 : -1;
     this.previousScrollY = scrollY;
+
+    // While explaining, stay put — only remember scroll direction for later.
+    if (this.speaking) {
+      window.clearTimeout(this.scrollEndTimer);
+      this.scrollEndTimer = window.setTimeout(() => {
+        if (this.destroyed || this.speaking) return;
+        this.scrolling = false;
+        this.applySectionBehavior();
+      }, 220);
+      return;
+    }
+
     this.scrolling = true;
 
     if (this.activeSection !== "skills" && this.activeSection !== "projects") {
@@ -436,7 +649,7 @@ export class RobotController {
       this.render();
       return;
     }
-    this.updateDestination();
+    if (!this.speaking) this.updateDestination();
     this.scheduleFrame();
   };
 
@@ -446,7 +659,7 @@ export class RobotController {
       this.rafId = 0;
       return;
     }
-    this.updateDestination();
+    if (!this.speaking) this.updateDestination();
     this.scheduleFrame();
   };
 }
