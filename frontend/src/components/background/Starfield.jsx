@@ -37,15 +37,21 @@ export default function Starfield() {
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReduced) return;
 
+    // Phones/tablets: cheaper canvas (dpr 1), fewer meteors, ~30fps throttle.
+    const lowPower = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+    const maxMeteors = lowPower ? 4 : 10;
+    const frameStep = lowPower ? 33 : 0; // ms between draws (0 = every frame)
+
     let raf = null;
     let w = 0;
     let h = 0;
     let t = 0;
+    let last = 0;
     let meteors = [];
     let nextAt = rand(8, 20);
 
     function resize() {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const dpr = lowPower ? 1 : Math.min(window.devicePixelRatio || 1, 2);
       w = window.innerWidth;
       h = window.innerHeight;
       canvas.width = w * dpr;
@@ -55,11 +61,15 @@ export default function Starfield() {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
-    function draw() {
+    function draw(now) {
+      raf = requestAnimationFrame(draw);
+      if (frameStep && now - last < frameStep) return;
+      last = now || 0;
+
       t += 1;
       ctx.clearRect(0, 0, w, h);
 
-      if (t > nextAt && meteors.length < 10) {
+      if (t > nextAt && meteors.length < maxMeteors) {
         const burst = 1 + Math.floor(Math.random() * 3); // 1–3 per wave
         for (let i = 0; i < burst; i++) meteors.push(spawnMeteor(w, h));
         nextAt = t + rand(14, 38); // ~0.25–0.6s between waves
@@ -98,13 +108,11 @@ export default function Starfield() {
         ctx.fillStyle = `rgba(255,140,90,${fade * 0.22})`;
         ctx.fill();
       }
-
-      raf = requestAnimationFrame(draw);
     }
 
     resize();
-    for (let i = 0; i < 4; i++) meteors.push(spawnMeteor(w, h));
-    draw();
+    for (let i = 0; i < (lowPower ? 2 : 4); i++) meteors.push(spawnMeteor(w, h));
+    raf = requestAnimationFrame(draw);
     window.addEventListener("resize", resize);
 
     return () => {

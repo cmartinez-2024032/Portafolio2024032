@@ -9,12 +9,14 @@ const WHITE = 0xf4f1ec;
  * Driven entirely by a 0..1 progress value (scroll / wheel).
  */
 export function createPortalScene(canvas) {
+  const isMobile = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
   const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const lightScene = prefersReduced || isMobile;
+  const dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2);
 
   const renderer = new THREE.WebGLRenderer({
     canvas,
-    antialias: true,
+    antialias: !isMobile,
     alpha: false,
     powerPreference: "high-performance",
   });
@@ -90,7 +92,7 @@ export function createPortalScene(canvas) {
   root.add(halo);
 
   // Dust particles along the tunnel
-  const COUNT = prefersReduced ? 80 : 220;
+  const COUNT = lightScene ? 80 : 220;
   const positions = new Float32Array(COUNT * 3);
   const speeds = new Float32Array(COUNT);
   for (let i = 0; i < COUNT; i++) {
@@ -116,7 +118,7 @@ export function createPortalScene(canvas) {
   root.add(dust);
 
   // Outer stars
-  const STAR_COUNT = prefersReduced ? 60 : 160;
+  const STAR_COUNT = lightScene ? 60 : 160;
   const starPos = new Float32Array(STAR_COUNT * 3);
   for (let i = 0; i < STAR_COUNT; i++) {
     starPos[i * 3] = (Math.random() - 0.5) * 28;

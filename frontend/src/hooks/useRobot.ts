@@ -1,15 +1,6 @@
 import { useEffect, useRef } from "react";
 import { RobotController } from "../components/robot/RobotController";
 
-/**
- * Only hide on real phone/tablet primaries — not Windows hybrids that
- * falsely report maxTouchPoints while still being mouse-first desktops.
- */
-function isCoarseTouchPrimary() {
-  if (typeof window === "undefined") return false;
-  return window.matchMedia("(hover: none) and (pointer: coarse)").matches;
-}
-
 export function useRobot() {
   const robotRef = useRef<HTMLElement | null>(null);
 
@@ -17,12 +8,9 @@ export function useRobot() {
     const element = robotRef.current;
     if (!element) return;
 
-    if (isCoarseTouchPrimary()) {
-      element.dataset.touch = "true";
-      element.dataset.ready = "false";
-      return;
-    }
-
+    // Ember runs everywhere now — desktop and touch alike. Touch devices
+    // drive it via taps + scroll/section tracking (pointer events fire on
+    // touch), so behaviour matches the desktop experience.
     element.dataset.touch = "false";
     const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     let controller = new RobotController(element, motionQuery.matches);
