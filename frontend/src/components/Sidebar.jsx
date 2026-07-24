@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { FiGithub, FiMail } from "react-icons/fi";
+import { FiGithub, FiLinkedin, FiMail } from "react-icons/fi";
 
 export default function Sidebar({ data }) {
   if (!data) return null;
@@ -18,6 +18,11 @@ export default function Sidebar({ data }) {
       {data.github && (
         <a href={data.github} target="_blank" rel="noopener noreferrer" className="p-2 text-dim-more hover:text-accent transition-colors duration-200">
           <FiGithub size={16} />
+        </a>
+      )}
+      {data.linkedin && (
+        <a href={data.linkedin} target="_blank" rel="noopener noreferrer" className="p-2 text-dim-more hover:text-accent transition-colors duration-200">
+          <FiLinkedin size={16} />
         </a>
       )}
       {data.email && (

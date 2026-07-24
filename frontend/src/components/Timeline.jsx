@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import ScrollReveal from "./ScrollReveal";
 import { FiBook, FiAward, FiBriefcase } from "react-icons/fi";
 import { timelineItems } from "../data/siteConfig";
+import { useLanguage } from "../i18n/LanguageContext";
 
 const typeConfig = {
   education: { color: "var(--color-accent)", label: "edu" },
@@ -46,15 +47,17 @@ function TimelineItem({ item, index }) {
 }
 
 export default function Timeline() {
+  const { t } = useLanguage();
+
   return (
     <div className="section-wrap timeline-section">
       <ScrollReveal>
-        <p className="section-comment">trayectoria</p>
+        <p className="section-comment">{t.timeline.comment}</p>
         <h2 className="section-title">
-          Recorrido
+          {t.timeline.title}
           <span className="text-accent">.</span>
         </h2>
-        <p className="section-title-serif">Educación, certificaciones y experiencia</p>
+        <p className="section-title-serif">{t.timeline.serif}</p>
       </ScrollReveal>
 
       <div className="timeline-track timeline-track-zigzag">

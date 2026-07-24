@@ -51,15 +51,15 @@ function Robot() {
               <stop offset="1" stopColor="#070708" />
             </linearGradient>
             <linearGradient id="robot-edge-gradient" x1="20" y1="18" x2="108" y2="120">
-              <stop offset="0" stopColor="#ffb396" stopOpacity="0.95" />
-              <stop offset="0.5" stopColor="#ff5a36" stopOpacity="0.35" />
-              <stop offset="1" stopColor="#ff5a36" stopOpacity="0.08" />
+              <stop offset="0" stopColor="#9ec5ff" stopOpacity="0.95" />
+              <stop offset="0.5" stopColor="#6aa8ff" stopOpacity="0.35" />
+              <stop offset="1" stopColor="#6aa8ff" stopOpacity="0.08" />
             </linearGradient>
             <radialGradient id="robot-core-gradient" cx="50%" cy="50%" r="50%">
               <stop offset="0" stopColor="#fff7f2" />
-              <stop offset="0.35" stopColor="#ffb29d" />
-              <stop offset="0.75" stopColor="#ff5a36" />
-              <stop offset="1" stopColor="#8f1f0c" />
+              <stop offset="0.35" stopColor="#9ec5ff" />
+              <stop offset="0.75" stopColor="#6aa8ff" />
+              <stop offset="1" stopColor="#1e3a8a" />
             </radialGradient>
             <filter id="robot-core-glow" x="-120%" y="-120%" width="340%" height="340%">
               <feGaussianBlur stdDeviation="3.5" result="blur" />

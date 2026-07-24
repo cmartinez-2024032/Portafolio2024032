@@ -2,7 +2,8 @@ import { motion } from "framer-motion";
 import ScrollReveal from "./ScrollReveal";
 import Counter from "./Counter";
 import { useTilt } from "../hooks/useTilt";
-import { FiMapPin, FiMail, FiGithub, FiCalendar, FiBook, FiDownload } from "react-icons/fi";
+import { FiMapPin, FiMail, FiGithub, FiLinkedin, FiCalendar, FiBook, FiDownload } from "react-icons/fi";
+import { useLanguage } from "../i18n/LanguageContext";
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -35,19 +36,23 @@ function MetaRow({ icon, label, value, href, index }) {
 
 export default function About({ data }) {
   const tilt = useTilt(6);
+  const { t, locale } = useLanguage();
 
   if (!data) return null;
+
+  const bio = locale === "en" ? t.personalFallback.bio : data.bio;
+  const goals = locale === "en" ? t.personalFallback.goals : data.goals;
+  const phrase = locale === "en" ? t.personalFallback.phrase : data.phrase;
 
   return (
     <div className="section-wrap forge-about">
       <ScrollReveal className="forge-bento-kicker">
-        <p className="section-comment">introducción</p>
+        <p className="section-comment">{t.about.comment}</p>
         <h2 className="section-title">
-          Sobre
-          <br />
-          <span className="text-accent">mí</span>
+          {t.about.title}
+          <span className="text-accent">.</span>
         </h2>
-        <p className="forge-about-kicker">{data.phrase}</p>
+        <p className="forge-about-kicker">{phrase}</p>
       </ScrollReveal>
 
       <motion.div
@@ -63,21 +68,21 @@ export default function About({ data }) {
         transition={{ duration: 0.7, ease: EASE }}
       >
         <span className="forge-panel-tag">{data.title}</span>
-        <p className="forge-about-bio">{data.bio}</p>
-        <p className="forge-about-goals">&ldquo;{data.goals}&rdquo;</p>
+        <p className="forge-about-bio">{bio}</p>
+        <p className="forge-about-goals">&ldquo;{goals}&rdquo;</p>
         <a href="/cv/Cristopher-Martinez-CV.pdf" download className="btn-forge btn-forge-cv">
-          Descargar CV <FiDownload size={14} />
+          {t.hero.ctaCv} <FiDownload size={14} />
         </a>
       </motion.div>
 
       <div className="forge-bento-stats">
         <div className="forge-strip-item">
           <span><Counter value={data.yearsCoding} /></span>
-          <small>Años programando</small>
+          <small>{locale === "en" ? "Years coding" : "Años programando"}</small>
         </div>
         <div className="forge-strip-item">
           <span><Counter value={data.age} /></span>
-          <small>Edad</small>
+          <small>{t.about.age}</small>
         </div>
       </div>
 
@@ -89,15 +94,24 @@ export default function About({ data }) {
         transition={{ duration: 0.6, ease: EASE }}
       >
         <span className="forge-status-dot" />
-        {data.available ? "Disponible para oportunidades" : "Ocupado"}
+        {data.available ? t.hero.eyebrow : locale === "en" ? "Busy" : "Ocupado"}
       </motion.div>
 
       <div className="forge-bento-meta">
-        <MetaRow icon={<FiMapPin />} label="Ubicación" value={data.location} index={0} />
-        <MetaRow icon={<FiCalendar />} label="Edad" value={data.age} index={1} />
-        <MetaRow icon={<FiBook />} label="Formación" value={data.education} index={2} />
+        <MetaRow icon={<FiMapPin />} label={t.about.location} value={data.location} index={0} />
+        <MetaRow icon={<FiCalendar />} label={t.about.age} value={data.age} index={1} />
+        <MetaRow icon={<FiBook />} label={t.about.education} value={data.education} index={2} />
         <MetaRow icon={<FiGithub />} label="GitHub" value="@cmartinez-2024032" href={data.github} index={3} />
-        <MetaRow icon={<FiMail />} label="Email" value={data.email} href={`mailto:${data.email}`} index={4} />
+        {data.linkedin && (
+          <MetaRow icon={<FiLinkedin />} label="LinkedIn" value="/in/daniel-martínez" href={data.linkedin} index={4} />
+        )}
+        <MetaRow
+          icon={<FiMail />}
+          label={t.about.email}
+          value={data.email}
+          href={`mailto:${data.email}`}
+          index={data.linkedin ? 5 : 4}
+        />
       </div>
     </div>
   );

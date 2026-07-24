@@ -1,24 +1,27 @@
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import ScrollReveal from "./ScrollReveal";
 import Marquee from "./Marquee";
-import { achievements, featuredAchievement } from "../data/siteConfig";
+import { useLanguage } from "../i18n/LanguageContext";
 
 const EASE = [0.16, 1, 0.3, 1];
 
 export default function Achievements() {
-  const item = featuredAchievement;
+  const { t } = useLanguage();
+  const item = t.featuredAchievement;
+  const [activePhoto, setActivePhoto] = useState(0);
   if (!item) return null;
 
   return (
     <section id="achievements" className="forge-achievements">
       <div className="section-wrap achievements-wrap">
         <ScrollReveal>
-          <p className="section-comment">reconocimientos</p>
+          <p className="section-comment">{t.achievements.comment}</p>
           <h2 className="section-title">
-            Logros
+            {t.achievements.title}
             <span className="text-accent">.</span>
           </h2>
-          <p className="section-title-serif">Hackathons, formación y trabajo en equipo</p>
+          <p className="section-title-serif">{t.achievements.serif}</p>
         </ScrollReveal>
 
         <motion.article
@@ -68,29 +71,54 @@ export default function Achievements() {
             </ul>
           )}
 
-          <div className="aditus-photos">
-            {item.photos?.map((photo, i) => (
-              <motion.figure
-                key={photo.src}
-                className="aditus-photo"
-                initial={{ opacity: 0, y: 36, scale: 0.96 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                viewport={{ once: true, margin: "-40px" }}
-                transition={{ delay: 0.12 + i * 0.12, duration: 0.7, ease: EASE }}
-                whileHover={{ y: -8, transition: { duration: 0.35 } }}
-              >
-                <div className="aditus-photo-frame">
-                  <img src={photo.src} alt={photo.alt} loading="lazy" decoding="async" />
-                  <div className="aditus-photo-shine" aria-hidden="true" />
-                </div>
-                <figcaption>{photo.caption}</figcaption>
-              </motion.figure>
-            ))}
-          </div>
+          {item.photos?.length > 0 && (
+            <div className="aditus-cinema">
+              <div className="aditus-cinema-stage">
+                <AnimatePresence mode="wait">
+                  <motion.figure
+                    key={item.photos[activePhoto].src}
+                    className="aditus-cinema-frame"
+                    initial={{ opacity: 0, scale: 1.04, filter: "blur(8px)" }}
+                    animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                    exit={{ opacity: 0, scale: 0.98, filter: "blur(6px)" }}
+                    transition={{ duration: 0.55, ease: EASE }}
+                  >
+                    <motion.img
+                      src={item.photos[activePhoto].src}
+                      alt={item.photos[activePhoto].alt}
+                      loading="lazy"
+                      decoding="async"
+                      initial={{ scale: 1.08 }}
+                      animate={{ scale: 1 }}
+                      transition={{ duration: 4.5, ease: "linear" }}
+                    />
+                    <div className="aditus-cinema-veil" aria-hidden="true" />
+                    <figcaption>{item.photos[activePhoto].caption}</figcaption>
+                  </motion.figure>
+                </AnimatePresence>
+              </div>
+
+              <div className="aditus-cinema-thumbs" role="tablist">
+                {item.photos.map((photo, i) => (
+                  <button
+                    key={photo.src}
+                    type="button"
+                    role="tab"
+                    aria-selected={activePhoto === i}
+                    className={`aditus-cinema-thumb ${activePhoto === i ? "is-active" : ""}`}
+                    onClick={() => setActivePhoto(i)}
+                  >
+                    <img src={photo.src} alt="" loading="lazy" />
+                    <span>{photo.caption}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </motion.article>
       </div>
 
-      {achievements?.length > 0 && <Marquee items={achievements} />}
+      {t.achievementsMarquee?.length > 0 && <Marquee items={t.achievementsMarquee} />}
     </section>
   );
 }

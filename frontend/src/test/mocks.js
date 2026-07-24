@@ -7,7 +7,7 @@ export const mockPersonal = {
   education: "Fundación Kinal · 2026",
   email: "dannym2407@gmail.com",
   github: "https://github.com/cmartinez-2024032",
-  linkedin: null,
+  linkedin: "https://www.linkedin.com/in/daniel-mart%C3%ADnez-9182933b6/",
   available: true,
   yearsCoding: 3,
   bio: "Junior Full-Stack Developer apasionado por construir experiencias digitales completas.",

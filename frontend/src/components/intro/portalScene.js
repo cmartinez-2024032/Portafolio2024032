@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
-const EMBER = 0xff5a36;
-const EMBER_SOFT = 0xff8f70;
+const EMBER = 0x6aa8ff;
+const EMBER_SOFT = 0x9ec5ff;
 const WHITE = 0xf4f1ec;
 
 /**

@@ -4,17 +4,20 @@ import {
   FiArrowDown,
   FiDownload,
   FiGithub,
+  FiLinkedin,
   FiMail,
   FiArrowUpRight,
 } from "react-icons/fi";
 import { useMagnetic } from "../hooks/useMagnetic";
+import { useLanguage } from "../i18n/LanguageContext";
 
-const TITLE = "Junior Full-Stack Developer";
 const TYPING_SPEED = 42;
 const EASE = [0.16, 1, 0.3, 1];
 const KEYWORDS = ["JUNIOR", "FULL-STACK", "REACT", "NODE.JS", "C# .NET", "BACKEND"];
 
 export default function Hero({ data }) {
+  const { t, locale } = useLanguage();
+  const TITLE = t.hero.title;
   const [displayed, setDisplayed] = useState("");
   const [typingDone, setTypingDone] = useState(false);
   const sectionRef = useRef(null);
@@ -33,6 +36,7 @@ export default function Hero({ data }) {
   const startTyping = useCallback(() => {
     let i = 0;
     setDisplayed("");
+    setTypingDone(false);
     const interval = setInterval(() => {
       i++;
       setDisplayed(TITLE.slice(0, i));
@@ -42,19 +46,22 @@ export default function Hero({ data }) {
       }
     }, TYPING_SPEED);
     return () => clearInterval(interval);
-  }, []);
+  }, [TITLE]);
 
   useEffect(() => {
     const timer = setTimeout(startTyping, 500);
     return () => clearTimeout(timer);
-  }, [startTyping]);
+  }, [startTyping, locale]);
 
   const name = data?.name || "Cristopher Martínez";
   const parts = name.split(" ");
   const firstName = parts[0] || name;
   const lastName = parts.slice(1).join(" ");
   const photo = data?.photo || null;
-  const phrase = data?.phrase || "Código que transforma ideas en soluciones.";
+  const phrase =
+    locale === "en"
+      ? t.personalFallback.phrase
+      : data?.phrase || t.hero.phraseFallback;
 
   return (
     <section id="hero" className="forge-hero" ref={sectionRef}>
@@ -90,7 +97,7 @@ export default function Hero({ data }) {
           transition={{ duration: 0.7, ease: EASE }}
         >
           <span className="forge-eyebrow-dot" />
-          Disponible · Guatemala
+          {t.hero.eyebrow}
         </motion.p>
 
         <h1 className="forge-name">
@@ -160,7 +167,7 @@ export default function Hero({ data }) {
                 document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" });
               }}
             >
-              Ver proyectos <FiArrowUpRight size={16} />
+              {t.hero.ctaProjects} <FiArrowUpRight size={16} />
             </motion.a>
             <motion.a
               ref={magCv.ref}
@@ -171,7 +178,7 @@ export default function Hero({ data }) {
               onMouseMove={magCv.onMouseMove}
               onMouseLeave={magCv.onMouseLeave}
             >
-              Descargar CV <FiDownload size={15} />
+              {t.hero.ctaCv} <FiDownload size={15} />
             </motion.a>
             <motion.button
               ref={magGhost.ref}
@@ -182,7 +189,7 @@ export default function Hero({ data }) {
               onMouseLeave={magGhost.onMouseLeave}
               onClick={() => document.getElementById("intro")?.scrollIntoView({ behavior: "smooth" })}
             >
-              Conóceme <FiArrowDown size={14} />
+              {t.hero.ctaContact} <FiArrowDown size={14} />
             </motion.button>
           </motion.div>
         )}
@@ -199,6 +206,11 @@ export default function Hero({ data }) {
                 <FiGithub size={18} />
               </a>
             )}
+            {data?.linkedin && (
+              <a href={data.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                <FiLinkedin size={18} />
+              </a>
+            )}
             {data?.email && (
               <a href={`mailto:${data.email}`} aria-label="Email">
                 <FiMail size={18} />
@@ -209,7 +221,7 @@ export default function Hero({ data }) {
       </motion.div>
 
       <div className="forge-scroll" aria-hidden="true">
-        <span>Scroll</span>
+        <span>{t.hero.scroll}</span>
         <span className="forge-scroll-line" />
       </div>
     </section>

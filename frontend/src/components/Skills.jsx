@@ -4,6 +4,7 @@ import ScrollReveal from "./ScrollReveal";
 import { useTilt } from "../hooks/useTilt";
 import { skillCategories } from "../data/siteConfig";
 import { resolveTechIcon } from "../data/techIcons";
+import { useLanguage } from "../i18n/LanguageContext";
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -57,6 +58,7 @@ function SkillCard({ skill, index, active, onHover }) {
 export default function Skills({ skills }) {
   const [active, setActive] = useState("Frontend");
   const [focused, setFocused] = useState(null);
+  const { t } = useLanguage();
 
   if (!skills || skills.length === 0) return null;
 
@@ -65,12 +67,12 @@ export default function Skills({ skills }) {
   return (
     <div className="section-wrap forge-skills">
       <ScrollReveal>
-        <p className="section-comment">habilidades</p>
+        <p className="section-comment">{t.skills.comment}</p>
         <h2 className="section-title">
-          Stack
+          {t.skills.title}
           <span className="text-accent">.</span>
         </h2>
-        <p className="section-title-serif">Tecnologías con las que trabajo</p>
+        <p className="section-title-serif">{t.skills.serif}</p>
       </ScrollReveal>
 
       <ScrollReveal className="skills-pills">

@@ -11,7 +11,7 @@ import {
   FiBookOpen,
 } from "react-icons/fi";
 import ScrollReveal from "./ScrollReveal";
-import { softSkills } from "../data/siteConfig";
+import { useLanguage } from "../i18n/LanguageContext";
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -28,15 +28,18 @@ const ICONS = {
 };
 
 export default function Abilities() {
+  const { t } = useLanguage();
+  const softSkills = t.softSkills;
+
   return (
     <section id="abilities" className="section-wrap abilities-section">
       <ScrollReveal>
-        <p className="section-comment">perfil humano</p>
+        <p className="section-comment">{t.abilities.comment}</p>
         <h2 className="section-title">
-          Habilidades
+          {t.abilities.title}
           <span className="text-accent">.</span>
         </h2>
-        <p className="section-title-serif">Cómo trabajo y cómo soy en equipo</p>
+        <p className="section-title-serif">{t.abilities.serif}</p>
       </ScrollReveal>
 
       <div className="abilities-grid">

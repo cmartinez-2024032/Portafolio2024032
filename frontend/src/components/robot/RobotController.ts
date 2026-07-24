@@ -14,7 +14,7 @@ import {
   type RobotPoint,
   type RobotSection,
 } from "./RobotPath";
-import { EMBER_LINES, EMBER_TIPS } from "./EmberLines";
+import { getEmberLines, getEmberTips } from "./EmberLines";
 
 const SECTION_IDS: RobotSection[] = [
   "hero",
@@ -89,6 +89,7 @@ export class RobotController {
       this.destination = { ...this.current };
       this.render();
       this.bindInteractiveEvents();
+      this.bindBehaviorEvents();
       window.setTimeout(() => this.speakForSection("hero"), 400);
       return;
     }
@@ -106,6 +107,7 @@ export class RobotController {
     this.observeProjectModal();
     this.bindEvents();
     this.bindInteractiveEvents();
+    this.bindBehaviorEvents();
     this.resetInactivity();
     this.updateDestination();
     setRobotMode(this.element, "idle");
@@ -127,6 +129,9 @@ export class RobotController {
     this.element.removeEventListener("pointerenter", this.onPointerEnter);
     this.element.removeEventListener("pointerleave", this.onPointerLeave);
     this.element.removeEventListener("click", this.onClick);
+    window.removeEventListener("forge:locale", this.onLocaleChange as EventListener);
+    window.removeEventListener("forge:contact-success", this.onContactSuccess as EventListener);
+    document.removeEventListener("selectionchange", this.onSelectionChange);
     if (this.rafId) cancelAnimationFrame(this.rafId);
     window.clearTimeout(this.inactivityTimer);
     window.clearTimeout(this.scrollEndTimer);
@@ -151,6 +156,12 @@ export class RobotController {
     this.element.addEventListener("pointerenter", this.onPointerEnter);
     this.element.addEventListener("pointerleave", this.onPointerLeave);
     this.element.addEventListener("click", this.onClick);
+  }
+
+  private bindBehaviorEvents() {
+    window.addEventListener("forge:locale", this.onLocaleChange as EventListener);
+    window.addEventListener("forge:contact-success", this.onContactSuccess as EventListener);
+    document.addEventListener("selectionchange", this.onSelectionChange);
   }
 
   private observeSections() {
@@ -267,7 +278,7 @@ export class RobotController {
   }
 
   private speakForSection(section: RobotSection) {
-    const line = EMBER_LINES[section];
+    const line = getEmberLines()[section];
     if (!line) return;
     if (this.lastSpeechSection === section && this.speaking) return;
     this.lastSpeechSection = section;
@@ -516,7 +527,8 @@ export class RobotController {
   }
 
   private speakTip() {
-    const tip = EMBER_TIPS[this.tipIndex % EMBER_TIPS.length];
+    const tips = getEmberTips();
+    const tip = tips[this.tipIndex % tips.length];
     this.tipIndex += 1;
     this.lastSpeechSection = null;
     this.openSpeech(tip, TIP_HOLD_MS);
@@ -597,7 +609,10 @@ export class RobotController {
       this.speaking = true;
       this.destination = { ...target };
       if (bubble && textEl) {
-        textEl.textContent = "¡Aquí estoy! Vuelvo a mi ruta en un segundo.";
+        textEl.textContent =
+          document.documentElement.lang === "en"
+            ? "Here I am! Back to my route in a second."
+            : "¡Aquí estoy! Vuelvo a mi ruta en un segundo.";
         bubble.dataset.open = "true";
         this.element.dataset.speaking = "true";
       }
@@ -613,6 +628,7 @@ export class RobotController {
 
   private onScroll = () => {
     const scrollY = window.scrollY;
+    const delta = Math.abs(scrollY - this.previousScrollY);
     this.scrollDirection = scrollY >= this.previousScrollY ? 1 : -1;
     this.previousScrollY = scrollY;
 
@@ -629,6 +645,12 @@ export class RobotController {
 
     this.scrolling = true;
 
+    // Fast scroll → escort boost (lean harder, travel mode)
+    if (delta > 48) {
+      this.element.dataset.escort = "true";
+      this.setMode("travel");
+    }
+
     if (this.activeSection !== "skills" && this.activeSection !== "projects") {
       this.setMode("travel");
     }
@@ -638,8 +660,48 @@ export class RobotController {
     this.scrollEndTimer = window.setTimeout(() => {
       if (this.destroyed) return;
       this.scrolling = false;
+      this.element.dataset.escort = "false";
       this.applySectionBehavior();
     }, 160);
+  };
+
+  private onLocaleChange = () => {
+    if (this.destroyed || this.suspended) return;
+    this.lastSpeechSection = null;
+    const tip =
+      document.documentElement.lang === "en"
+        ? "Language locked to English. I'll guide you from here."
+        : "Idioma en español. Sigo contigo en el recorrido.";
+    this.openSpeech(tip, 3600);
+    this.setTemporaryMode("greet", 900, "idle");
+  };
+
+  private onContactSuccess = () => {
+    if (this.destroyed || this.suspended) return;
+    this.lastSpeechSection = null;
+    const tip =
+      document.documentElement.lang === "en"
+        ? "Message sent. Nice move — Cristopher will see it soon."
+        : "Mensaje enviado. Buena jugada — Cristopher lo verá pronto.";
+    this.openSpeech(tip, 4200);
+    this.setTemporaryMode("greet", 1600, "idle");
+    this.element.dataset.celebrate = "true";
+    window.setTimeout(() => {
+      if (!this.destroyed) this.element.dataset.celebrate = "false";
+    }, 2200);
+  };
+
+  private onSelectionChange = () => {
+    if (this.destroyed || this.speaking || this.suspended) return;
+    const selection = window.getSelection()?.toString().trim() ?? "";
+    if (selection.length < 18) return;
+    // Peek interest without spamming
+    if (this.element.dataset.curious === "true") return;
+    this.element.dataset.curious = "true";
+    this.setTemporaryMode("observe", 1100, this.element.dataset.mode as RobotMode || "idle");
+    window.setTimeout(() => {
+      if (!this.destroyed) this.element.dataset.curious = "false";
+    }, 1800);
   };
 
   private onResize = () => {

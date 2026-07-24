@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { useScrollProgress } from "../hooks/useScrollProgress";
 import { motion } from "framer-motion";
-import { FiDownload } from "react-icons/fi";
-import { navSections } from "../data/siteConfig";
+import { FiDownload, FiGlobe } from "react-icons/fi";
+import { useLanguage } from "../i18n/LanguageContext";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const { scaleX } = useScrollProgress();
+  const { t, locale, setLocale } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 40);
@@ -33,16 +34,38 @@ export default function Navbar() {
             <span className="nav-monogram">CM</span>
             <span className="nav-logo-text">
               <span className="nav-logo-name">Cristopher Martínez</span>
-              <span className="nav-logo-role">Junior Full-Stack</span>
+              <span className="nav-logo-role">{t.nav.role}</span>
             </span>
           </a>
         </div>
         <div className="nav-links">
-          {navSections.map((s) => (
+          {t.nav.sections.map((s) => (
             <button key={s.id} onClick={() => scrollTo(s.id)}>
               {s.label}
             </button>
           ))}
+
+          <div className="nav-lang-toggle" role="group" aria-label={t.nav.langAria}>
+            <FiGlobe className="nav-lang-globe" aria-hidden="true" />
+            <button
+              type="button"
+              className={locale === "es" ? "is-active" : ""}
+              aria-pressed={locale === "es"}
+              onClick={() => setLocale("es")}
+            >
+              ES
+            </button>
+            <button
+              type="button"
+              className={locale === "en" ? "is-active" : ""}
+              aria-pressed={locale === "en"}
+              onClick={() => setLocale("en")}
+              data-cursor={locale === "es" ? "EN" : ""}
+            >
+              EN
+            </button>
+          </div>
+
           <a href="/cv/Cristopher-Martinez-CV.pdf" download className="nav-cv-btn">
             <FiDownload size={12} /> CV
           </a>

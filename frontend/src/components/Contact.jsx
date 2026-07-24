@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { FiGithub, FiMail, FiMapPin, FiArrowUpRight, FiDownload, FiSend } from "react-icons/fi";
+import { FiGithub, FiLinkedin, FiMail, FiMapPin, FiArrowUpRight, FiDownload, FiSend } from "react-icons/fi";
 import ScrollReveal from "./ScrollReveal";
 import { useTilt } from "../hooks/useTilt";
+import { useLanguage } from "../i18n/LanguageContext";
 
 const EASE = [0.16, 1, 0.3, 1];
 const API_BASE = import.meta.env.VITE_API_BASE || "/api";
@@ -39,8 +40,9 @@ function ContactCard({ card, index }) {
 const initialForm = { name: "", email: "", subject: "", message: "" };
 
 export default function Contact({ data }) {
+  const { t, locale } = useLanguage();
   const [form, setForm] = useState(initialForm);
-  const [status, setStatus] = useState("idle"); // idle | loading | success | error
+  const [status, setStatus] = useState("idle");
   const [feedback, setFeedback] = useState("");
 
   if (!data) return null;
@@ -50,7 +52,14 @@ export default function Contact({ data }) {
       href: data.github,
       icon: FiGithub,
       title: "GitHub",
-      desc: "@cmartinez-2024032",
+      desc: locale === "en" ? "Code & repositories" : "Código y repositorios",
+      external: true,
+    },
+    {
+      href: data.linkedin,
+      icon: FiLinkedin,
+      title: "LinkedIn",
+      desc: locale === "en" ? "Professional profile" : "Perfil profesional",
       external: true,
     },
     {
@@ -95,15 +104,16 @@ export default function Contact({ data }) {
       }
 
       if (!res.ok || payload.ok === false) {
-        throw new Error(payload.error || payload.message || "No se pudo enviar");
+        throw new Error(payload.error || payload.message || t.contact.error);
       }
 
       setStatus("success");
-      setFeedback(payload.message || "Mensaje enviado. ¡Gracias!");
+      setFeedback(payload.message || t.contact.success);
       setForm(initialForm);
+      window.dispatchEvent(new CustomEvent("forge:contact-success"));
     } catch (err) {
       setStatus("error");
-      setFeedback(err.message || "Error al enviar. Intenta de nuevo.");
+      setFeedback(err.message || t.contact.error);
     }
   }
 
@@ -118,15 +128,15 @@ export default function Contact({ data }) {
         <div className="contact-cinema-glow" aria-hidden="true" />
 
         <ScrollReveal>
-          <p className="section-comment">contacto</p>
+          <p className="section-comment">{t.contact.comment}</p>
           <h2 className="section-title">
-            Conectemos
+            {t.contact.title}
             <span className="text-accent">.</span>
           </h2>
-          <p className="section-title-serif">Hablemos sobre tu próximo proyecto</p>
+          <p className="section-title-serif">{t.contact.serif}</p>
         </ScrollReveal>
 
-        <div className="contact-grid contact-grid-cinema contact-grid-duo">
+        <div className="contact-grid contact-grid-cinema">
           {cards.map((card, i) => (
             <ContactCard key={card.title} card={card} index={i} />
           ))}
@@ -135,13 +145,13 @@ export default function Contact({ data }) {
         <ScrollReveal delay={0.12}>
           <form className="contact-form" onSubmit={onSubmit} noValidate>
             <div className="contact-form-header">
-              <h3>Enviar correo</h3>
-              <p>Déjame un mensaje y te respondo a la brevedad.</p>
+              <h3>{t.contact.send}</h3>
+              <p>{t.contact.serif}</p>
             </div>
 
             <div className="contact-form-grid">
               <label className="contact-field">
-                <span>Nombre</span>
+                <span>{t.contact.name}</span>
                 <input
                   name="name"
                   type="text"
@@ -150,12 +160,12 @@ export default function Contact({ data }) {
                   maxLength={120}
                   value={form.name}
                   onChange={onChange}
-                  placeholder="Tu nombre"
+                  placeholder={t.contact.name}
                 />
               </label>
 
               <label className="contact-field">
-                <span>Correo</span>
+                <span>{t.contact.email}</span>
                 <input
                   name="email"
                   type="email"
@@ -164,12 +174,12 @@ export default function Contact({ data }) {
                   maxLength={180}
                   value={form.email}
                   onChange={onChange}
-                  placeholder="tu@email.com"
+                  placeholder="you@email.com"
                 />
               </label>
 
               <label className="contact-field contact-field-full">
-                <span>Asunto</span>
+                <span>{t.contact.subject}</span>
                 <input
                   name="subject"
                   type="text"
@@ -177,12 +187,12 @@ export default function Contact({ data }) {
                   maxLength={200}
                   value={form.subject}
                   onChange={onChange}
-                  placeholder="¿Sobre qué quieres hablar?"
+                  placeholder={t.contact.subject}
                 />
               </label>
 
               <label className="contact-field contact-field-full">
-                <span>Mensaje</span>
+                <span>{t.contact.message}</span>
                 <textarea
                   name="message"
                   required
@@ -190,7 +200,7 @@ export default function Contact({ data }) {
                   maxLength={4000}
                   value={form.message}
                   onChange={onChange}
-                  placeholder="Cuéntame tu idea o propuesta…"
+                  placeholder={t.contact.message}
                 />
               </label>
             </div>
@@ -201,7 +211,7 @@ export default function Contact({ data }) {
                 className="btn-forge"
                 disabled={status === "loading"}
               >
-                {status === "loading" ? "Enviando…" : "Enviar mensaje"}
+                {status === "loading" ? t.contact.sending : t.contact.send}
                 <FiSend size={14} />
               </button>
               {feedback && (
@@ -219,7 +229,7 @@ export default function Contact({ data }) {
         <ScrollReveal delay={0.18}>
           <div className="contact-cta-band">
             <a href="/cv/Cristopher-Martinez-CV.pdf" download className="btn-forge btn-forge-cv">
-              Descargar CV <FiDownload size={13} />
+              {t.hero.ctaCv} <FiDownload size={13} />
             </a>
             <div className="contact-meta">
               <span>

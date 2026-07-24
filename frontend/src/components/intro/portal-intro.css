@@ -37,7 +37,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(circle at 50% 48%, rgba(255, 90, 54, 0.55), rgba(255, 140, 90, 0.12) 40%, transparent 70%);
+  background: radial-gradient(circle at 50% 48%, rgba(106, 168, 255, 0.55), rgba(158, 197, 255, 0.12) 40%, transparent 70%);
   mix-blend-mode: screen;
 }
 
@@ -58,7 +58,7 @@
   font-weight: 700;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: var(--color-accent, #ff5a36);
+  color: var(--color-accent, #6aa8ff);
   margin-bottom: 1.25rem;
 }
 
@@ -66,8 +66,8 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--color-accent, #ff5a36);
-  box-shadow: 0 0 14px rgba(255, 90, 54, 0.9);
+  background: var(--color-accent, #6aa8ff);
+  box-shadow: 0 0 14px rgba(106, 168, 255, 0.9);
   animation: portalDot 1.6s ease-in-out infinite;
 }
 
@@ -84,7 +84,7 @@
 }
 
 .portal-intro-title-accent {
-  background: linear-gradient(135deg, #ff5a36 0%, #ffb088 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #9ec5ff 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -110,8 +110,8 @@
   height: 100%;
   width: 100%;
   transform-origin: left center;
-  background: linear-gradient(90deg, #ff5a36, #ffb088);
-  box-shadow: 0 0 18px rgba(255, 90, 54, 0.65);
+  background: linear-gradient(90deg, #3b82f6, #9ec5ff);
+  box-shadow: 0 0 18px rgba(106, 168, 255, 0.65);
   will-change: transform;
 }
 
@@ -136,14 +136,14 @@
 .portal-intro-hint-line {
   width: 1px;
   height: 42px;
-  background: linear-gradient(180deg, var(--color-accent, #ff5a36), transparent);
+  background: linear-gradient(180deg, var(--color-accent, #6aa8ff), transparent);
 }
 
 .portal-intro-skip {
   pointer-events: auto;
   margin-top: 2rem;
   background: transparent;
-  border: 1px solid rgba(255, 90, 54, 0.35);
+  border: 1px solid rgba(106, 168, 255, 0.35);
   color: var(--color-dim, rgba(244, 241, 236, 0.64));
   font-size: 0.62rem;
   font-weight: 700;
@@ -157,8 +157,8 @@
 .portal-intro-skip:hover,
 .portal-intro-skip:focus-visible {
   color: #fff;
-  border-color: rgba(255, 90, 54, 0.8);
-  background: rgba(255, 90, 54, 0.12);
+  border-color: rgba(106, 168, 255, 0.8);
+  background: rgba(106, 168, 255, 0.12);
   outline: none;
 }
 

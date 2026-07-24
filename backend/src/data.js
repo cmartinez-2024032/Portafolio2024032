@@ -11,7 +11,7 @@ export const personal = {
   phrase: "Código que transforma ideas en soluciones.",
   bio: "Junior Full-Stack Developer enfocado en backend con C# .NET y Node.js. Me gusta construir APIs limpias, bien documentadas y seguras. Actualmente profundizando en arquitectura de software y patrones de diseño.",
   goals: "Busco crecer como Junior Full-Stack, dominar arquitecturas sólidas y contribuir a proyectos que resuelvan problemas reales.",
-  linkedin: null,
+  linkedin: "https://www.linkedin.com/in/daniel-mart%C3%ADnez-9182933b6/",
   github: "https://github.com/cmartinez-2024032",
   computrabajo: "https://www.computrabajo.com.gt",
 };
