@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="CM">
+  <defs>
+    <linearGradient id="cm-bg" x1="8" y1="6" x2="56" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1a2740"/>
+      <stop offset="1" stop-color="#07080c"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#cm-bg)"/>
+  <rect x="1.5" y="1.5" width="61" height="61" rx="12.5" fill="none" stroke="#6aa8ff" stroke-opacity="0.7" stroke-width="2"/>
+  <text
+    x="32"
+    y="40"
+    text-anchor="middle"
+    font-family="Bebas Neue, Arial Narrow, Impact, sans-serif"
+    font-size="28"
+    font-weight="700"
+    letter-spacing="1.5"
+    fill="#9ec5ff"
+  >CM</text>
+</svg>

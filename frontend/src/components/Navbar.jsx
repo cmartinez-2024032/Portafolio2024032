@@ -6,11 +6,26 @@ import { useLanguage } from "../i18n/LanguageContext";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const { scaleX } = useScrollProgress();
   const { t, locale, setLocale } = useLanguage();
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 40);
+    let lastY = window.scrollY;
+    const handleScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 40);
+
+      // Hide while scrolling down; reveal on scroll up or near the top.
+      if (y < 64) {
+        setHidden(false);
+      } else if (y > lastY + 6) {
+        setHidden(true);
+      } else if (y < lastY - 6) {
+        setHidden(false);
+      }
+      lastY = y;
+    };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -20,7 +35,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className={`main-nav ${scrolled ? "scrolled" : ""}`}>
+    <nav className={`main-nav ${scrolled ? "scrolled" : ""} ${hidden ? "is-hidden" : ""}`}>
       <div className="nav-inner">
         <div className="nav-title">
           <a

@@ -1531,13 +1531,21 @@ section[id] { scroll-margin-top: 5.5rem; }
   right: 0;
   z-index: 100;
   padding: 1rem;
-  transition: background 0.4s ease, backdrop-filter 0.4s ease;
+  transition:
+    transform 0.38s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.4s ease,
+    backdrop-filter 0.4s ease;
+  will-change: transform;
 }
 .main-nav.scrolled {
   background: rgba(6, 8, 13, 0.72);
   backdrop-filter: blur(16px) saturate(140%);
   -webkit-backdrop-filter: blur(16px) saturate(140%);
   border-bottom: 1px solid rgba(106, 168, 255, 0.08);
+}
+.main-nav.is-hidden {
+  transform: translateY(-110%);
+  pointer-events: none;
 }
 .main-nav .nav-inner {
   display: flex;
