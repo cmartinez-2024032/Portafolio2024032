@@ -182,7 +182,8 @@ export default function CodePortalIntro({
   // Phase machine timers — same on phone & desktop
   useEffect(() => {
     if (phase === "splash") {
-      const t = window.setTimeout(() => setPhase("power"), 1200 * slow);
+      // Hold the CM mark longer before CRT power-on
+      const t = window.setTimeout(() => setPhase("power"), 3400 * slow);
       return () => window.clearTimeout(t);
     }
     if (phase === "power") {
