@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { projectCategories } from "../data/siteConfig";
-import ProjectCell from "./projects/ProjectCell";
 import ProjectDetail from "./projects/ProjectDetail";
+import ProjectsCarousel3D from "./projects/ProjectsCarousel3D";
 import ScrollReveal from "./ScrollReveal";
 import { useLanguage } from "../i18n/LanguageContext";
 
@@ -13,9 +13,8 @@ export default function Projects({ projects }) {
 
   if (!projects || projects.length === 0) return null;
 
-  const filtered = filter === "todos"
-    ? projects
-    : projects.filter((p) => p.category === filter);
+  const filtered =
+    filter === "todos" ? projects : projects.filter((p) => p.category === filter);
 
   return (
     <section id="projects" className="section-wrap-wide projects-section">
@@ -44,16 +43,13 @@ export default function Projects({ projects }) {
       </div>
 
       {filtered.length > 0 ? (
-        <div className="projects-grid projects-grid-cinema">
-          {filtered.map((project, i) => (
-            <ProjectCell
-              key={project.id}
-              project={project}
-              index={i}
-              onClick={() => setSelected(project)}
-            />
-          ))}
-        </div>
+        <ScrollReveal delay={0.12}>
+          <ProjectsCarousel3D
+            key={filter}
+            projects={filtered}
+            onSelect={setSelected}
+          />
+        </ScrollReveal>
       ) : (
         <div className="section-wrap text-center">
           <p className="text-dim-more text-sm" style={{ letterSpacing: "0.15em" }}>
