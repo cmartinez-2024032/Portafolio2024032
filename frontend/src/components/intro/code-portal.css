@@ -1743,3 +1743,326 @@
 .code-splash-bar span {
   animation-duration: 1.45s;
 }
+
+/* -- Mobile-first premium layout --------------------- */
+.code-mobile-strip {
+  display: none;
+}
+
+.code-portal.is-mobile {
+  padding:
+    max(0.4rem, env(safe-area-inset-top))
+    max(0.55rem, env(safe-area-inset-right))
+    max(0.55rem, env(safe-area-inset-bottom))
+    max(0.55rem, env(safe-area-inset-left));
+}
+
+.code-portal.is-mobile .code-letterbox {
+  height: max(12px, env(safe-area-inset-top, 12px));
+}
+
+.code-portal.is-mobile .code-letterbox--bottom {
+  height: max(12px, env(safe-area-inset-bottom, 12px));
+}
+
+.code-portal.is-mobile .code-portal-layout {
+  grid-template-columns: 1fr;
+  width: 100%;
+  min-height: 100%;
+  padding: 0.35rem 0.15rem 0.6rem;
+  gap: 0.55rem;
+  align-content: center;
+  transform: none !important;
+}
+
+.code-portal.is-mobile .code-hud,
+.code-portal.is-mobile .code-ring,
+.code-portal.is-mobile .code-floaters,
+.code-portal.is-mobile .code-ticker,
+.code-portal.is-mobile .code-constellation,
+.code-portal.is-mobile .code-portal-rings span:nth-child(2) {
+  display: none !important;
+}
+
+.code-portal.is-mobile .code-mobile-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.3rem;
+  width: min(100%, 420px);
+  margin: 0 auto 0.2rem;
+}
+
+.code-portal.is-mobile .code-mobile-strip > span {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.12rem;
+  min-height: 42px;
+  padding: 0.3rem 0.2rem;
+  border-radius: 10px;
+  border: 1px solid rgba(106, 168, 255, 0.22);
+  background: rgba(10, 14, 22, 0.72);
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(232, 238, 248, 0.45);
+}
+
+.code-portal.is-mobile .code-mobile-strip strong {
+  font-size: 0.72rem;
+  color: #9ec5ff;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.code-portal.is-mobile .code-mobile-strip-badge {
+  color: #9af0c7 !important;
+  border-color: rgba(93, 222, 166, 0.4) !important;
+  background: rgba(93, 222, 166, 0.1) !important;
+  font-weight: 700;
+}
+
+.code-portal.is-mobile .code-portal-stage {
+  gap: 0.45rem;
+  width: 100%;
+}
+
+.code-portal.is-mobile .code-portal-eyebrow {
+  font-size: 0.56rem;
+  margin: 0;
+}
+
+.code-portal.is-mobile .code-portal-title {
+  font-size: clamp(1.55rem, 9vw, 2.35rem);
+  margin: 0;
+  max-width: 92vw;
+}
+
+.code-portal.is-mobile .code-portal-tag {
+  display: none;
+}
+
+.code-portal.is-mobile .code-id-card {
+  width: min(100%, 420px);
+  padding: 0.55rem 0.7rem;
+  border-radius: 12px;
+  gap: 0.55rem;
+}
+
+.code-portal.is-mobile .code-id-avatar {
+  width: 32px;
+  height: 32px;
+  font-size: 0.9rem;
+  border-radius: 9px;
+}
+
+.code-portal.is-mobile .code-id-card strong {
+  font-size: 0.72rem;
+  line-height: 1.15;
+}
+
+.code-portal.is-mobile .code-id-card em {
+  font-size: 0.48rem;
+  letter-spacing: 0.1em;
+}
+
+.code-portal.is-mobile .code-energy {
+  width: min(100%, 420px);
+  margin: 0.05rem 0 0.25rem;
+}
+
+.code-portal.is-mobile .code-portal-frame {
+  padding: 8px;
+  width: 100%;
+  max-width: 100%;
+}
+
+.code-portal.is-mobile .code-corner {
+  width: 11px;
+  height: 11px;
+  border-width: 1.5px;
+}
+
+.code-portal.is-mobile .code-watermark {
+  font-size: clamp(3.8rem, 28vw, 7rem);
+  opacity: 0.9;
+}
+
+.code-portal.is-mobile .code-portal-window {
+  border-radius: 14px;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 18px 50px rgba(0, 0, 0, 0.55),
+    0 0 40px rgba(106, 168, 255, 0.16);
+}
+
+.code-portal.is-mobile .code-tabs {
+  display: none;
+}
+
+.code-portal.is-mobile .code-portal-body {
+  min-height: min(38vh, 280px);
+  max-height: min(46vh, 360px);
+  padding: 0.75rem 0.8rem 0.9rem;
+  font-size: clamp(0.68rem, 3.3vw, 0.8rem);
+  line-height: 1.55;
+  -webkit-overflow-scrolling: touch;
+}
+
+.code-portal.is-mobile .code-stamp {
+  display: none;
+}
+
+.code-portal.is-mobile .code-portal-titlebar {
+  grid-template-columns: auto 1fr auto;
+  padding: 0.55rem 0.7rem;
+  gap: 0.45rem;
+}
+
+.code-portal.is-mobile .code-portal-badge {
+  display: inline-flex;
+  font-size: 0.5rem;
+}
+
+.code-portal.is-mobile .code-portal-path {
+  font-size: 0.56rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.code-portal.is-mobile .code-modules-wrap {
+  width: 100%;
+}
+
+.code-portal.is-mobile .code-modules {
+  gap: 0.3rem;
+  max-width: 100%;
+}
+
+.code-portal.is-mobile .code-module {
+  font-size: 0.5rem;
+  padding: 0.3rem 0.5rem;
+}
+
+.code-portal.is-mobile .code-phase-rail {
+  gap: 0;
+  margin-top: 0.15rem;
+  width: 100%;
+  justify-content: space-between;
+  padding: 0 0.15rem;
+}
+
+.code-portal.is-mobile .code-phase-step {
+  font-size: 0.46rem;
+  padding: 0.1rem 0.15rem;
+  gap: 0.22rem;
+}
+
+.code-portal.is-mobile .code-phase-step em {
+  width: 10px;
+}
+
+.code-portal.is-mobile .code-portal-hint {
+  font-size: 0.5rem;
+  letter-spacing: 0.16em;
+  text-align: center;
+  max-width: 90vw;
+  line-height: 1.4;
+}
+
+.code-portal.is-mobile .code-toasts {
+  left: 0.65rem;
+  right: 0.65rem;
+  bottom: max(0.7rem, env(safe-area-inset-bottom));
+  align-items: stretch;
+}
+
+.code-portal.is-mobile .code-toast {
+  justify-content: center;
+  font-size: 0.58rem;
+  padding: 0.5rem 0.7rem;
+}
+
+.code-portal.is-mobile .code-countdown span {
+  font-size: clamp(5rem, 26vw, 9rem);
+}
+
+.code-portal.is-mobile .code-online p {
+  font-size: clamp(0.7rem, 3.5vw, 1rem);
+  letter-spacing: 0.28em;
+}
+
+.code-portal.is-mobile .code-online strong {
+  font-size: clamp(1.35rem, 8vw, 2.4rem);
+  padding: 0 0.6rem;
+  text-align: center;
+}
+
+.code-portal.is-mobile .code-splash-mark {
+  font-size: clamp(4.2rem, 22vw, 7.5rem);
+}
+
+.code-portal.is-mobile .code-splash-name {
+  font-size: clamp(0.75rem, 3.5vw, 1.05rem);
+  text-align: center;
+  padding: 0 1rem;
+}
+
+.code-portal.is-mobile .code-portal-rain {
+  opacity: 0.18;
+}
+
+.code-portal.is-mobile .code-bloom {
+  width: min(95vw, 420px);
+  height: min(95vw, 420px);
+  filter: blur(14px);
+}
+
+.code-portal.is-mobile .code-portal-aurora {
+  filter: blur(12px);
+  opacity: 0.85;
+}
+
+/* Short phones */
+@media (max-height: 700px) {
+  .code-portal.is-mobile .code-portal-title {
+    font-size: clamp(1.35rem, 7vw, 1.9rem);
+  }
+  .code-portal.is-mobile .code-portal-body {
+    min-height: min(32vh, 220px);
+    max-height: min(38vh, 260px);
+  }
+  .code-portal.is-mobile .code-id-card em {
+    display: none;
+  }
+  .code-portal.is-mobile .code-phase-rail {
+    display: none;
+  }
+}
+
+@media (max-height: 560px) {
+  .code-portal.is-mobile .code-mobile-strip,
+  .code-portal.is-mobile .code-portal-eyebrow {
+    display: none;
+  }
+  .code-portal.is-mobile .code-portal-body {
+    min-height: min(40vh, 240px);
+    max-height: min(48vh, 280px);
+  }
+}
+
+/* Desktop polish extras */
+.code-portal.is-desktop .code-mobile-strip {
+  display: none !important;
+}
+
+.code-portal.is-desktop .code-portal-window {
+  transition: box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.code-portal.is-desktop .code-modules .code-module.is-on {
+  animation: codeModulePop 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}

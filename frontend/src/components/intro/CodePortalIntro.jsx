@@ -47,6 +47,7 @@ export default function CodePortalIntro({
   const [countdown, setCountdown] = useState(null);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [wave, setWave] = useState(() => Array.from({ length: 16 }, () => 0.2));
+  const [isMobile, setIsMobile] = useState(false);
 
   const [toasts, setToasts] = useState([]);
   const [scanKick, setScanKick] = useState(0);
@@ -68,7 +69,7 @@ export default function CodePortalIntro({
     setToasts((prev) => [...prev.slice(-3), { id, label }]);
     window.setTimeout(() => {
       setToasts((prev) => prev.filter((x) => x.id !== id));
-    }, 2200 * (returning ? 0.7 : 1));
+    }, 1600 * (returning ? 0.7 : 1));
   }, [returning]);
 
   const spawnBurst = useCallback((x = 0.5, y = 0.45, color = "#6aa8ff") => {
@@ -126,38 +127,51 @@ export default function CodePortalIntro({
     document.body.style.overflow = "hidden";
     const bootTimer = window.setTimeout(() => setBootIn(true), 30);
 
-    const onKey = (e) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        const p = phaseRef.current;
-        const idx = lineIndexRef.current;
-        if (p === "wipe" || p === "launch") return;
-        if (p === "splash" || p === "power") {
-          setPhase("boot");
-          return;
-        }
-        if (idx < script.length) {
-          const current = script[idx];
-          setLines((prev) => [...prev, current]);
-          setTyped("");
-          setLineIndex(idx + 1);
-          setProgress((prev) => Math.min(94, prev + 100 / (script.length + 2)));
-          unlockModule(current.module);
-          setFlashLine(idx);
-        } else if (p === "boot") {
-          setPhase("sync");
-        } else if (p === "sync") {
-          setPhase("compile");
-        } else if (p === "compile") {
-          setPhase("launch");
-        }
+    const advance = () => {
+      const p = phaseRef.current;
+      const idx = lineIndexRef.current;
+      if (p === "wipe" || p === "launch") return;
+      if (p === "splash" || p === "power") {
+        setPhase("boot");
+        return;
+      }
+      if (idx < script.length) {
+        const current = script[idx];
+        setLines((prev) => [...prev, current]);
+        setTyped("");
+        setLineIndex(idx + 1);
+        setProgress((prev) => Math.min(94, prev + 100 / (script.length + 2)));
+        unlockModule(current.module);
+        setFlashLine(idx);
+      } else if (p === "boot") {
+        setPhase("sync");
+      } else if (p === "sync") {
+        setPhase("compile");
+      } else if (p === "compile") {
+        setPhase("launch");
       }
     };
 
+    const onKey = (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        advance();
+      }
+    };
+
+    const onPointer = (e) => {
+      // Tap anywhere (except interactive) to accelerate on touch devices
+      if (e.pointerType !== "touch" && e.pointerType !== "pen") return;
+      if (e.target?.closest?.("button, a")) return;
+      advance();
+    };
+
     window.addEventListener("keydown", onKey);
+    window.addEventListener("pointerdown", onPointer, { passive: true });
     return () => {
       window.clearTimeout(bootTimer);
       window.removeEventListener("keydown", onKey);
+      window.removeEventListener("pointerdown", onPointer);
       document.body.style.overflow = "";
     };
   }, [finish, script, unlockModule]);
@@ -279,16 +293,28 @@ export default function CodePortalIntro({
     return () => window.clearInterval(id);
   }, [phase, progress]);
 
-  // Parallax tilt
+  // Parallax tilt (desktop only)
   useEffect(() => {
+    const mq = window.matchMedia("(max-width: 900px), (hover: none)");
+    const sync = () => setIsMobile(mq.matches);
+    sync();
+    mq.addEventListener?.("change", sync);
+    return () => mq.removeEventListener?.("change", sync);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) {
+      setTilt({ x: 0, y: 0 });
+      return undefined;
+    }
     const onMove = (e) => {
       const x = (e.clientX / window.innerWidth - 0.5) * 2;
       const y = (e.clientY / window.innerHeight - 0.5) * 2;
-      setTilt({ x: y * -6, y: x * 8 });
+      setTilt({ x: y * -5, y: x * 6.5 });
     };
     window.addEventListener("pointermove", onMove, { passive: true });
     return () => window.removeEventListener("pointermove", onMove);
-  }, []);
+  }, [isMobile]);
 
   // Matrix rain
   useEffect(() => {
@@ -354,7 +380,7 @@ export default function CodePortalIntro({
     const ctx = canvas.getContext("2d");
     let raf = 0;
     let disposed = false;
-    let orbs = Array.from({ length: 10 }, () => ({
+    let orbs = Array.from({ length: window.matchMedia("(max-width: 700px)").matches ? 5 : 10 }, () => ({
       x: Math.random(),
       y: Math.random(),
       r: 20 + Math.random() * 60,
@@ -453,6 +479,7 @@ export default function CodePortalIntro({
         returning ? "is-returning" : "",
         glitch ? "is-glitch" : "",
         `phase-${phase}`,
+        isMobile ? "is-mobile" : "is-desktop",
       ]
         .filter(Boolean)
         .join(" ")}
@@ -594,6 +621,19 @@ export default function CodePortalIntro({
               <em>{t.portal.tagline}</em>
             </div>
             <b>{pct}%</b>
+          </div>
+
+          <div className="code-mobile-strip" aria-hidden="true">
+            <span>
+              CPU <strong>{Math.round(stats.cpu)}%</strong>
+            </span>
+            <span>
+              MEM <strong>{Math.round(stats.mem)}%</strong>
+            </span>
+            <span>
+              NET <strong>{Math.round(stats.net)}%</strong>
+            </span>
+            <span className="code-mobile-strip-badge">{badge}</span>
           </div>
 
           <p className="code-portal-eyebrow">
