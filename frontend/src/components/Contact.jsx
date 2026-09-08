@@ -1,75 +1,22 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { FiGithub, FiLinkedin, FiMail, FiMapPin, FiArrowUpRight, FiDownload, FiSend } from "react-icons/fi";
+import { FiMapPin, FiDownload, FiSend } from "react-icons/fi";
 import ScrollReveal from "./ScrollReveal";
-import { useTilt } from "../hooks/useTilt";
+import GlassFanCards, { buildContactFanItems } from "./GlassFanCards";
 import { useLanguage } from "../i18n/LanguageContext";
 
-const EASE = [0.16, 1, 0.3, 1];
 const API_BASE = import.meta.env.VITE_API_BASE || "/api";
-
-function ContactCard({ card, index }) {
-  const Icon = card.icon;
-  const tilt = useTilt(10);
-
-  return (
-    <ScrollReveal delay={index * 0.08}>
-      <motion.a
-        ref={tilt.ref}
-        href={card.href}
-        target={card.external ? "_blank" : undefined}
-        rel={card.external ? "noopener noreferrer" : undefined}
-        className="contact-card contact-card-cinema"
-        style={tilt.style}
-        onMouseMove={tilt.onMouseMove}
-        onMouseLeave={tilt.onMouseLeave}
-        whileHover={{ y: -10, scale: 1.03 }}
-        transition={{ duration: 0.4, ease: EASE }}
-      >
-        <Icon size={24} className="icon" />
-        <h4>{card.title}</h4>
-        <p>{card.desc}</p>
-        <span className="contact-card-arrow" aria-hidden="true">
-          <FiArrowUpRight size={14} />
-        </span>
-      </motion.a>
-    </ScrollReveal>
-  );
-}
 
 const initialForm = { name: "", email: "", subject: "", message: "" };
 
 export default function Contact({ data }) {
-  const { t, locale } = useLanguage();
+  const { t } = useLanguage();
   const [form, setForm] = useState(initialForm);
   const [status, setStatus] = useState("idle");
   const [feedback, setFeedback] = useState("");
 
   if (!data) return null;
 
-  const cards = [
-    {
-      href: data.github,
-      icon: FiGithub,
-      title: "GitHub",
-      desc: locale === "en" ? "Code & repositories" : "Código y repositorios",
-      external: true,
-    },
-    {
-      href: data.linkedin,
-      icon: FiLinkedin,
-      title: "LinkedIn",
-      desc: locale === "en" ? "Professional profile" : "Perfil profesional",
-      external: true,
-    },
-    {
-      href: `mailto:${data.email}`,
-      icon: FiMail,
-      title: "Email",
-      desc: data.email,
-      external: false,
-    },
-  ].filter((c) => c.href);
+  const fanItems = buildContactFanItems(data);
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -93,7 +40,6 @@ export default function Contact({ data }) {
         return;
       }
 
-      // SMTP aún no configurado → abrir cliente de correo con el mensaje listo
       if (payload.needsSmtp && payload.mailto) {
         window.location.href = payload.mailto;
         setStatus("error");
@@ -136,11 +82,9 @@ export default function Contact({ data }) {
           <p className="section-title-serif">{t.contact.serif}</p>
         </ScrollReveal>
 
-        <div className="contact-grid contact-grid-cinema">
-          {cards.map((card, i) => (
-            <ContactCard key={card.title} card={card} index={i} />
-          ))}
-        </div>
+        <ScrollReveal delay={0.08}>
+          <GlassFanCards items={fanItems} />
+        </ScrollReveal>
 
         <ScrollReveal delay={0.12}>
           <form className="contact-form" onSubmit={onSubmit} noValidate>

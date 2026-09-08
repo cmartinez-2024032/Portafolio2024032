@@ -1,0 +1,188 @@
+.glass-fan {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 2.25rem auto 2.75rem;
+  padding: 1.5rem 0.5rem 2rem;
+}
+
+.glass-fan-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 220px;
+}
+
+.glass-fan-card {
+  position: relative;
+  width: min(160px, 28vw);
+  height: min(190px, 34vw);
+  min-width: 110px;
+  min-height: 140px;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.12), transparent 55%);
+  border: 1px solid rgba(106, 168, 255, 0.22);
+  box-shadow:
+    0 25px 40px rgba(0, 0, 0, 0.35),
+    0 0 30px rgba(106, 168, 255, 0.08);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition:
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    margin 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.35s ease,
+    box-shadow 0.35s ease,
+    background 0.35s ease;
+  border-radius: 12px;
+  margin: 0 -42px;
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  transform: rotate(calc(var(--r, 0) * 1deg));
+  text-decoration: none;
+  color: var(--color-fg, #f4f1ec);
+  overflow: hidden;
+  isolation: isolate;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.glass-fan-container:hover .glass-fan-card,
+.glass-fan-container:focus-within .glass-fan-card {
+  transform: rotate(0deg);
+  margin: 0 12px;
+}
+
+.glass-fan-card:hover,
+.glass-fan-card:focus-visible {
+  border-color: rgba(106, 168, 255, 0.55);
+  background: linear-gradient(160deg, rgba(106, 168, 255, 0.18), rgba(255, 255, 255, 0.04) 60%);
+  box-shadow:
+    0 28px 50px rgba(0, 0, 0, 0.4),
+    0 0 40px rgba(106, 168, 255, 0.25);
+  outline: none;
+  z-index: 2;
+}
+
+.glass-fan-card::before {
+  content: attr(data-text);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 42px;
+  background: rgba(106, 168, 255, 0.1);
+  border-top: 1px solid rgba(106, 168, 255, 0.18);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--color-fg, #fff);
+  font-family: var(--font-sans, "Manrope", sans-serif);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.glass-fan-icon {
+  display: grid;
+  place-items: center;
+  margin-bottom: 1.1rem;
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  color: var(--color-accent-light, #9ec5ff);
+  filter: drop-shadow(0 0 14px rgba(106, 168, 255, 0.45));
+  transition: transform 0.35s ease, color 0.35s ease;
+}
+
+.glass-fan-card:hover .glass-fan-icon,
+.glass-fan-card:focus-visible .glass-fan-icon {
+  transform: scale(1.12);
+  color: #fff;
+}
+
+/* Light theme */
+html[data-theme="light"] .glass-fan-card {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.35));
+  border-color: rgba(37, 99, 235, 0.22);
+  box-shadow:
+    0 20px 40px rgba(20, 21, 26, 0.12),
+    0 0 24px rgba(59, 130, 246, 0.08);
+  color: #14151a;
+}
+
+html[data-theme="light"] .glass-fan-card::before {
+  background: rgba(37, 99, 235, 0.08);
+  border-top-color: rgba(37, 99, 235, 0.16);
+  color: #14151a;
+}
+
+html[data-theme="light"] .glass-fan-icon {
+  color: #2563eb;
+  filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.3));
+}
+
+html[data-theme="light"] .glass-fan-card:hover,
+html[data-theme="light"] .glass-fan-card:focus-visible {
+  border-color: rgba(37, 99, 235, 0.5);
+  background: linear-gradient(160deg, rgba(239, 246, 255, 0.95), rgba(255, 255, 255, 0.7));
+  box-shadow:
+    0 24px 48px rgba(20, 21, 26, 0.14),
+    0 0 32px rgba(59, 130, 246, 0.18);
+}
+
+html[data-theme="light"] .glass-fan-card:hover .glass-fan-icon,
+html[data-theme="light"] .glass-fan-card:focus-visible .glass-fan-icon {
+  color: #1d4ed8;
+}
+
+/* Mobile: less overlap, still elegant */
+@media (max-width: 640px) {
+  .glass-fan {
+    margin: 1.5rem auto 2rem;
+    padding: 0.75rem 0 1.25rem;
+  }
+
+  .glass-fan-container {
+    min-height: 170px;
+  }
+
+  .glass-fan-card {
+    width: 100px;
+    height: 130px;
+    min-width: 96px;
+    min-height: 124px;
+    margin: 0 -28px;
+    border-radius: 10px;
+  }
+
+  .glass-fan-container:hover .glass-fan-card,
+  .glass-fan-container:focus-within .glass-fan-card {
+    margin: 0 6px;
+  }
+
+  .glass-fan-card::before {
+    height: 34px;
+    font-size: 0.55rem;
+    letter-spacing: 0.1em;
+  }
+
+  .glass-fan-icon {
+    font-size: 1.55rem;
+    margin-bottom: 0.85rem;
+  }
+}
+
+@media (hover: none) {
+  /* On touch, show cards already expanded for usability */
+  .glass-fan-card {
+    transform: rotate(0deg);
+    margin: 0 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass-fan-card {
+    transition: none;
+    transform: rotate(0deg);
+    margin: 0 10px;
+  }
+}
