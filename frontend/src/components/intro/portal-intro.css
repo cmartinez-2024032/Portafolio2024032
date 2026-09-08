@@ -43,8 +43,8 @@
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(circle at 50% 48%, transparent 8%, rgba(196, 67, 42, 0.12) 42%, rgba(5, 5, 6, 0.55) 78%),
-    repeating-conic-gradient(from 0deg at 50% 48%, transparent 0deg, rgba(255, 122, 92, 0.035) 4deg, transparent 10deg);
+    radial-gradient(circle at 50% 48%, transparent 8%, rgba(26, 54, 93, 0.12) 42%, rgba(5, 5, 6, 0.55) 78%),
+    repeating-conic-gradient(from 0deg at 50% 48%, transparent 0deg, rgba(61, 106, 163, 0.035) 4deg, transparent 10deg);
   mix-blend-mode: screen;
   opacity: 0;
   transition: opacity 0.2s linear;
@@ -55,7 +55,7 @@
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(circle at 50% 48%, rgba(255, 252, 248, 0.7), rgba(255, 122, 92, 0.35) 28%, rgba(232, 90, 60, 0.12) 55%, transparent 78%);
+    radial-gradient(circle at 50% 48%, rgba(255, 252, 248, 0.7), rgba(61, 106, 163, 0.35) 28%, rgba(43, 76, 126, 0.12) 55%, transparent 78%);
   mix-blend-mode: screen;
 }
 
@@ -77,7 +77,7 @@
   font-weight: 700;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: var(--color-accent, #e85a3c);
+  color: var(--color-accent, #2b4c7e);
   margin-bottom: 1.25rem;
 }
 
@@ -85,8 +85,8 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--color-accent, #e85a3c);
-  box-shadow: 0 0 14px rgba(232, 90, 60, 0.9);
+  background: var(--color-accent, #2b4c7e);
+  box-shadow: 0 0 14px rgba(43, 76, 126, 0.9);
   animation: portalDot 1.6s ease-in-out infinite;
 }
 
@@ -103,7 +103,7 @@
 }
 
 .portal-intro-title-accent {
-  background: linear-gradient(135deg, #e85a3c 0%, #ff7a5c 100%);
+  background: linear-gradient(135deg, #2b4c7e 0%, #3d6aa3 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -129,8 +129,8 @@
   height: 100%;
   width: 100%;
   transform-origin: left center;
-  background: linear-gradient(90deg, #e85a3c, #ff7a5c);
-  box-shadow: 0 0 18px rgba(232, 90, 60, 0.65);
+  background: linear-gradient(90deg, #2b4c7e, #3d6aa3);
+  box-shadow: 0 0 18px rgba(43, 76, 126, 0.65);
   will-change: transform;
 }
 
@@ -155,14 +155,14 @@
 .portal-intro-hint-line {
   width: 1px;
   height: 42px;
-  background: linear-gradient(180deg, var(--color-accent, #e85a3c), transparent);
+  background: linear-gradient(180deg, var(--color-accent, #2b4c7e), transparent);
 }
 
 .portal-intro-skip {
   pointer-events: auto;
   margin-top: 2rem;
   background: transparent;
-  border: 1px solid rgba(232, 90, 60, 0.35);
+  border: 1px solid rgba(43, 76, 126, 0.35);
   color: var(--color-dim, rgba(244, 241, 236, 0.64));
   font-size: 0.62rem;
   font-weight: 700;
@@ -176,8 +176,8 @@
 .portal-intro-skip:hover,
 .portal-intro-skip:focus-visible {
   color: #fff;
-  border-color: rgba(232, 90, 60, 0.8);
-  background: rgba(232, 90, 60, 0.12);
+  border-color: rgba(43, 76, 126, 0.8);
+  background: rgba(43, 76, 126, 0.12);
   outline: none;
 }
 

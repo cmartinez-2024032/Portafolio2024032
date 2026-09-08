@@ -21,10 +21,10 @@
   min-width: 110px;
   min-height: 140px;
   background: linear-gradient(160deg, rgba(255, 255, 255, 0.12), transparent 55%);
-  border: 1px solid rgba(232, 90, 60, 0.28);
+  border: 1px solid rgba(43, 76, 126, 0.28);
   box-shadow:
     0 18px 32px rgba(0, 0, 0, 0.32),
-    0 0 18px rgba(232, 90, 60, 0.06);
+    0 0 18px rgba(43, 76, 126, 0.06);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -54,11 +54,11 @@
 
 .glass-fan-card:hover,
 .glass-fan-card:focus-visible {
-  border-color: rgba(232, 90, 60, 0.55);
-  background: linear-gradient(160deg, rgba(232, 90, 60, 0.18), rgba(255, 255, 255, 0.04) 60%);
+  border-color: rgba(43, 76, 126, 0.55);
+  background: linear-gradient(160deg, rgba(43, 76, 126, 0.18), rgba(255, 255, 255, 0.04) 60%);
   box-shadow:
     0 28px 50px rgba(0, 0, 0, 0.4),
-    0 0 40px rgba(232, 90, 60, 0.25);
+    0 0 40px rgba(43, 76, 126, 0.25);
   outline: none;
   z-index: 2;
 }
@@ -70,8 +70,8 @@
   left: 0;
   width: 100%;
   height: 42px;
-  background: rgba(232, 90, 60, 0.1);
-  border-top: 1px solid rgba(232, 90, 60, 0.18);
+  background: rgba(43, 76, 126, 0.1);
+  border-top: 1px solid rgba(43, 76, 126, 0.18);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -88,8 +88,8 @@
   place-items: center;
   margin-bottom: 1.1rem;
   font-size: clamp(1.8rem, 4vw, 2.4rem);
-  color: var(--color-accent-light, #ff7a5c);
-  filter: drop-shadow(0 0 14px rgba(232, 90, 60, 0.45));
+  color: var(--color-accent-light, #3d6aa3);
+  filter: drop-shadow(0 0 14px rgba(43, 76, 126, 0.45));
   transition: transform 0.35s ease, color 0.35s ease;
 }
 
@@ -102,36 +102,36 @@
 /* Light theme */
 html[data-theme="light"] .glass-fan-card {
   background: linear-gradient(160deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.35));
-  border-color: rgba(196, 67, 42, 0.22);
+  border-color: rgba(26, 54, 93, 0.22);
   box-shadow:
     0 20px 40px rgba(20, 21, 26, 0.12),
-    0 0 24px rgba(196, 67, 42, 0.08);
+    0 0 24px rgba(26, 54, 93, 0.08);
   color: #14151a;
 }
 
 html[data-theme="light"] .glass-fan-card::before {
-  background: rgba(196, 67, 42, 0.08);
-  border-top-color: rgba(196, 67, 42, 0.16);
+  background: rgba(26, 54, 93, 0.08);
+  border-top-color: rgba(26, 54, 93, 0.16);
   color: #14151a;
 }
 
 html[data-theme="light"] .glass-fan-icon {
-  color: #c4432a;
-  filter: drop-shadow(0 0 10px rgba(196, 67, 42, 0.3));
+  color: #1a365d;
+  filter: drop-shadow(0 0 10px rgba(26, 54, 93, 0.3));
 }
 
 html[data-theme="light"] .glass-fan-card:hover,
 html[data-theme="light"] .glass-fan-card:focus-visible {
-  border-color: rgba(196, 67, 42, 0.5);
+  border-color: rgba(26, 54, 93, 0.5);
   background: linear-gradient(160deg, rgba(239, 246, 255, 0.95), rgba(255, 255, 255, 0.7));
   box-shadow:
     0 24px 48px rgba(20, 21, 26, 0.14),
-    0 0 32px rgba(196, 67, 42, 0.18);
+    0 0 32px rgba(26, 54, 93, 0.18);
 }
 
 html[data-theme="light"] .glass-fan-card:hover .glass-fan-icon,
 html[data-theme="light"] .glass-fan-card:focus-visible .glass-fan-icon {
-  color: #c4432a;
+  color: #1a365d;
 }
 
 /* Mobile: less overlap, still elegant */
