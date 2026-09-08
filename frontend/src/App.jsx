@@ -13,7 +13,7 @@ import CustomCursor from "./components/CustomCursor";
 import CursorAura from "./components/CursorAura";
 import Robot from "./components/robot/Robot";
 import Starfield from "./components/background/Starfield";
-import TunnelIntro, { hasSeenPortal, clearPortalSeen } from "./components/intro/TunnelIntro";
+import CodePortalIntro, { hasSeenPortal, clearPortalSeen } from "./components/intro/CodePortalIntro";
 import { usePortfolioData } from "./hooks/useDataFetching";
 import { useLanguage } from "./i18n/LanguageContext";
 
@@ -23,7 +23,7 @@ export default function App() {
   const [introDone, setIntroDone] = useState(() => hasSeenPortal());
   const [portalReturning, setPortalReturning] = useState(false);
 
-  // At the top of the site, scroll-up reopens the entrance tunnel.
+  // At the top of the site, scroll-up reopens the code portal.
   useEffect(() => {
     if (!introDone) return;
 
@@ -45,7 +45,6 @@ export default function App() {
       if (window.scrollY > 12 || touchY == null) return;
       const y = e.touches[0]?.clientY ?? touchY;
       const delta = y - touchY;
-      // Finger dragging down (content would scroll up) → return to tunnel
       if (delta > 28) {
         e.preventDefault();
         clearPortalSeen();
@@ -101,10 +100,9 @@ export default function App() {
   return (
     <>
       {!introDone && (
-        <TunnelIntro
+        <CodePortalIntro
           name={data.personal?.name}
           returning={portalReturning}
-          initialProgress={portalReturning ? 0.96 : 0}
           onComplete={() => {
             setPortalReturning(false);
             setIntroDone(true);
