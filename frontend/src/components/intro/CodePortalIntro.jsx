@@ -47,7 +47,10 @@ export default function CodePortalIntro({
   const [countdown, setCountdown] = useState(null);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [wave, setWave] = useState(() => Array.from({ length: 16 }, () => 0.2));
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia("(max-width: 900px), (hover: none)").matches;
+  });
 
   const [toasts, setToasts] = useState([]);
   const [scanKick, setScanKick] = useState(0);
@@ -238,17 +241,27 @@ export default function CodePortalIntro({
     }
 
     const entry = script[lineIndex];
-    const speed = returning ? 6 : entry.speed ?? 12;
+    // Mobile: a bit snappier typing so lines don't feel laggy on small screens
+    const mobileBoost = isMobile ? 0.55 : 1;
+    const speed = Math.max(4, (returning ? 6 : entry.speed ?? 12) * mobileBoost);
     let i = 0;
     let raf = 0;
     let last = performance.now();
-    const delay = returning ? 40 : entry.delay ?? 90;
+    const delay = Math.max(20, (returning ? 40 : entry.delay ?? 90) * mobileBoost);
 
     const startTimer = window.setTimeout(() => {
       const tick = (now) => {
         if (now - last >= speed) {
           last = now;
-          const step = entry.burst ? Math.min(5, entry.text.length - i) : entry.kind === "cmd" ? 2 : 1;
+          const step = entry.burst
+            ? Math.min(isMobile ? 7 : 5, entry.text.length - i)
+            : entry.kind === "cmd"
+              ? isMobile
+                ? 3
+                : 2
+              : isMobile
+                ? 2
+                : 1;
           i = Math.min(entry.text.length, i + step);
           setTyped(entry.text.slice(0, i));
           if (i >= entry.text.length) {
@@ -274,7 +287,7 @@ export default function CodePortalIntro({
       window.clearTimeout(startTimer);
       cancelAnimationFrame(raf);
     };
-  }, [lineIndex, script, phase, returning, unlockModule]);
+  }, [lineIndex, script, phase, returning, unlockModule, isMobile]);
 
   // Telemetry + waveform
   useEffect(() => {
