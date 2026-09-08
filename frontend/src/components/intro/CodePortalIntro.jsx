@@ -5,12 +5,12 @@ import "./code-portal.css";
 const STORAGE_KEY = "forge-portal-seen";
 
 const MODULES = [
-  { id: "react", label: "React", hue: 162 },
-  { id: "node", label: "Node", hue: 155 },
-  { id: "dotnet", label: ".NET", hue: 168 },
-  { id: "sql", label: "SQL", hue: 148 },
-  { id: "three", label: "Three", hue: 172 },
-  { id: "api", label: "API", hue: 158 },
+  { id: "react", label: "React", hue: 16 },
+  { id: "node", label: "Node", hue: 12 },
+  { id: "dotnet", label: ".NET", hue: 20 },
+  { id: "sql", label: "SQL", hue: 10 },
+  { id: "three", label: "Three", hue: 18 },
+  { id: "api", label: "API", hue: 14 },
 ];
 
 /**
@@ -75,7 +75,7 @@ export default function CodePortalIntro({
     }, 1600 * (returning ? 0.7 : 1));
   }, [returning]);
 
-  const spawnBurst = useCallback((x = 0.5, y = 0.45, color = "#3d8b74") => {
+  const spawnBurst = useCallback((x = 0.5, y = 0.45, color = "#b54a2a") => {
     burstsRef.current.push({
       x,
       y,
@@ -94,7 +94,7 @@ export default function CodePortalIntro({
       if (!moduleId) return;
       setActiveModules((prev) => new Set([...prev, moduleId]));
       const mod = MODULES.find((m) => m.id === moduleId);
-      spawnBurst(0.52, 0.58, `hsl(${mod?.hue ?? 162} 38% 48%)`);
+      spawnBurst(0.52, 0.58, `hsl(${mod?.hue ?? 16} 42% 48%)`);
       pushToast(`${mod?.label ?? moduleId} online`);
       setScanKick((k) => k + 1);
     },
@@ -108,9 +108,9 @@ export default function CodePortalIntro({
     setExiting(true);
     setProgress(100);
     setGlitch(true);
-    spawnBurst(0.5, 0.5, "#6aada0");
-    spawnBurst(0.35, 0.4, "#3d8b74");
-    spawnBurst(0.65, 0.55, "#7eb89a");
+    spawnBurst(0.5, 0.5, "#d06a48");
+    spawnBurst(0.35, 0.4, "#b54a2a");
+    spawnBurst(0.65, 0.55, "#9aaf8c");
     try {
       sessionStorage.setItem(STORAGE_KEY, "1");
     } catch {
@@ -192,7 +192,7 @@ export default function CodePortalIntro({
     if (phase === "sync") {
       setGlitch(true);
       setActiveModules(new Set(MODULES.map((m) => m.id)));
-      spawnBurst(0.5, 0.5, "#3d8b74");
+      spawnBurst(0.5, 0.5, "#b54a2a");
       pushToast(t.portal.syncToast);
       const a = window.setTimeout(() => setGlitch(false), 380 * slow);
       const b = window.setTimeout(() => setPhase("compile"), 800 * slow);
@@ -217,7 +217,7 @@ export default function CodePortalIntro({
     }
     if (phase === "launch") {
       setCountdown(0);
-      spawnBurst(0.5, 0.42, "#7eb89a");
+      spawnBurst(0.5, 0.42, "#9aaf8c");
       const t = window.setTimeout(finish, 900 * slow);
       return () => window.clearTimeout(t);
     }
@@ -356,7 +356,7 @@ export default function CodePortalIntro({
         const ch = glyphs[(Math.random() * glyphs.length) | 0];
         const x = i * fontSize;
         const y = cols[i] * fontSize;
-        ctx.fillStyle = i % 5 === 0 ? "rgba(106, 173, 160,0.55)" : "rgba(61, 139, 116,0.18)";
+        ctx.fillStyle = i % 5 === 0 ? "rgba(208, 106, 72,0.55)" : "rgba(181, 74, 42,0.18)";
         ctx.fillText(ch, x, y);
         if (y > h && Math.random() > 0.972) cols[i] = 0;
         else cols[i] += 0.18 + Math.random() * 0.28;
@@ -415,8 +415,8 @@ export default function CodePortalIntro({
         if (o.x < -0.1 || o.x > 1.1) o.vx *= -1;
         if (o.y < -0.1 || o.y > 1.1) o.vy *= -1;
         const g = ctx.createRadialGradient(o.x * w, o.y * h, 0, o.x * w, o.y * h, o.r);
-        g.addColorStop(0, `rgba(61, 139, 116,${o.a})`);
-        g.addColorStop(1, "rgba(61, 139, 116,0)");
+        g.addColorStop(0, `rgba(181, 74, 42,${o.a})`);
+        g.addColorStop(1, "rgba(181, 74, 42,0)");
         ctx.fillStyle = g;
         ctx.beginPath();
         ctx.arc(o.x * w, o.y * h, o.r, 0, Math.PI * 2);
