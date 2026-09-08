@@ -14,6 +14,11 @@
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
+  transition:
+    opacity 0.95s cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 0.95s,
+    filter 0.95s ease;
+  filter: blur(10px) brightness(1.35);
 }
 
 .portal-intro-canvas {
@@ -29,15 +34,28 @@
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse at center, transparent 20%, rgba(5, 5, 6, 0.55) 70%, rgba(5, 5, 6, 0.92) 100%),
-    linear-gradient(180deg, rgba(5, 5, 6, 0.35) 0%, transparent 25%, transparent 70%, rgba(5, 5, 6, 0.7) 100%);
+    radial-gradient(ellipse at center, transparent 18%, rgba(5, 5, 6, 0.5) 68%, rgba(5, 5, 6, 0.94) 100%),
+    linear-gradient(180deg, rgba(5, 5, 6, 0.4) 0%, transparent 22%, transparent 68%, rgba(5, 5, 6, 0.75) 100%);
+}
+
+.portal-intro-warp {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 48%, transparent 8%, rgba(59, 130, 246, 0.12) 42%, rgba(5, 5, 6, 0.55) 78%),
+    repeating-conic-gradient(from 0deg at 50% 48%, transparent 0deg, rgba(158, 197, 255, 0.035) 4deg, transparent 10deg);
+  mix-blend-mode: screen;
+  opacity: 0;
+  transition: opacity 0.2s linear;
 }
 
 .portal-intro-flash {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(circle at 50% 48%, rgba(106, 168, 255, 0.55), rgba(158, 197, 255, 0.12) 40%, transparent 70%);
+  background:
+    radial-gradient(circle at 50% 48%, rgba(255, 252, 248, 0.7), rgba(158, 197, 255, 0.35) 28%, rgba(106, 168, 255, 0.12) 55%, transparent 78%);
   mix-blend-mode: screen;
 }
 
@@ -48,6 +66,7 @@
   text-align: center;
   padding: 2rem 1.25rem;
   pointer-events: none;
+  transition: opacity 0.25s ease;
 }
 
 .portal-intro-eyebrow {

@@ -119,6 +119,10 @@ export default function PortalIntro({
 
   const pct = Math.round(progress * 100);
   const nearGalaxy = progress < 0.22;
+  // UI softens as you dive into the tunnel; flash blooms near the exit.
+  const uiFade = Math.max(0, 1 - Math.max(0, progress - 0.58) / 0.38);
+  const flashOpacity = Math.max(0, (progress - 0.78) * 5.2);
+  const warpVignette = Math.min(0.55, Math.max(0, progress - 0.5) * 0.9);
 
   return (
     <div
@@ -129,12 +133,17 @@ export default function PortalIntro({
 
       <div className="portal-intro-vignette" aria-hidden="true" />
       <div
+        className="portal-intro-warp"
+        style={{ opacity: warpVignette }}
+        aria-hidden="true"
+      />
+      <div
         className="portal-intro-flash"
-        style={{ opacity: Math.max(0, (progress - 0.82) * 4.5) }}
+        style={{ opacity: flashOpacity }}
         aria-hidden="true"
       />
 
-      <div className="portal-intro-ui">
+      <div className="portal-intro-ui" style={{ opacity: uiFade }}>
         <p className="portal-intro-eyebrow">
           <span className="portal-intro-dot" />
           {returning || nearGalaxy ? t.portal.eyebrowReturn : t.portal.eyebrow}
