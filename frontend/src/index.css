@@ -2820,13 +2820,33 @@ html[data-theme="light"] .nav-theme-toggle button.is-active {
   background: var(--color-base);
 }
 .boot-orb {
-  width: 3rem;
-  height: 3rem;
+  position: relative;
+  width: 3.4rem;
+  height: 3.4rem;
   border-radius: 50%;
-  border: 2px solid rgba(106, 168, 255, 0.2);
+  border: 2px solid rgba(106, 168, 255, 0.18);
   border-top-color: var(--color-accent);
   box-shadow: 0 0 40px -8px var(--color-glow);
-  animation: spin 0.7s linear infinite;
+  animation: spin 0.85s linear infinite;
+  background: radial-gradient(circle at 35% 30%, rgba(158, 197, 255, 0.25), transparent 55%);
+}
+.boot-orb::before,
+.boot-orb::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  border: 1.5px solid transparent;
+}
+.boot-orb::before {
+  inset: -8px;
+  border-top-color: rgba(158, 197, 255, 0.55);
+  border-right-color: rgba(106, 168, 255, 0.15);
+  animation: spin 1.4s linear infinite reverse;
+}
+.boot-orb::after {
+  inset: 8px;
+  border-bottom-color: rgba(106, 168, 255, 0.7);
+  animation: spin 0.55s linear infinite;
 }
 .boot-label {
   font-size: 0.65rem;
@@ -2850,6 +2870,11 @@ html[data-theme="light"] .nav-theme-toggle button.is-active {
   .hero-photo-ring,
   .hero-name-line-b,
   .forge-hero-img { animation: none; }
+  .btn-forge::after,
+  .forge-skill-card::before,
+  .boot-orb,
+  .boot-orb::before,
+  .boot-orb::after { animation: none !important; }
 }
 
 /* ═══════════════════════════════════════════
@@ -3148,6 +3173,8 @@ html[data-theme="light"] .nav-theme-toggle button.is-active {
 }
 
 .btn-forge {
+  position: relative;
+  overflow: hidden;
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
@@ -3162,11 +3189,35 @@ html[data-theme="light"] .nav-theme-toggle button.is-active {
   border: 1px solid transparent;
   border-radius: 0.35rem;
   cursor: pointer;
+  isolation: isolate;
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, background 0.35s ease, border-color 0.35s ease, color 0.35s ease;
   -webkit-tap-highlight-color: transparent;
 }
+/* Uiverse-style light sweep on hover */
+.btn-forge::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.35) 48%,
+    rgba(255, 255, 255, 0.55) 50%,
+    rgba(255, 255, 255, 0.35) 52%,
+    transparent 65%
+  );
+  transform: translateX(-130%);
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+.btn-forge > * {
+  position: relative;
+  z-index: 1;
+}
 @media (hover: hover) {
   .btn-forge:hover { transform: translateY(-3px); }
+  .btn-forge:hover::after { transform: translateX(130%); }
 }
 .btn-forge-primary {
   background: var(--color-accent);
@@ -3202,11 +3253,17 @@ html[data-theme="light"] .nav-theme-toggle button.is-active {
   }
 }
 
+html[data-theme="light"] .btn-forge-primary {
+  color: #fff;
+}
+
 .forge-socials {
   display: flex;
   gap: 0.7rem;
 }
 .forge-socials a {
+  position: relative;
+  overflow: hidden;
   width: 2.7rem;
   height: 2.7rem;
   display: flex;
@@ -3218,12 +3275,27 @@ html[data-theme="light"] .nav-theme-toggle button.is-active {
   background: rgba(11, 11, 12, 0.45);
   transition: all 0.3s ease;
 }
+.forge-socials a::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 120%, rgba(106, 168, 255, 0.45), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
 @media (hover: hover) {
   .forge-socials a:hover {
     color: var(--color-accent);
     border-color: var(--color-accent);
     transform: translateY(-3px);
+    box-shadow: 0 12px 28px -14px var(--color-glow);
   }
+  .forge-socials a:hover::before {
+    opacity: 1;
+  }
+}
+html[data-theme="light"] .forge-socials a {
+  background: rgba(255, 255, 255, 0.7);
 }
 
 .forge-scroll {
@@ -3448,19 +3520,66 @@ html[data-theme="light"] .nav-theme-toggle button.is-active {
   .forge-skill-grid { grid-template-columns: repeat(3, 1fr); }
 }
 .forge-skill-card {
+  position: relative;
   text-align: left;
   padding: 1.25rem 1.2rem;
   background: rgba(18, 18, 20, 0.7);
   border: 1px solid var(--color-edge);
   border-radius: 0.75rem;
   cursor: pointer;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   color: inherit;
+}
+/* Animated conic border (Uiverse-style) */
+.forge-skill-card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from var(--skill-angle, 0deg),
+    transparent 0%,
+    var(--skill-color, var(--color-accent)) 12%,
+    transparent 28%,
+    transparent 100%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+  animation: skillBorderSpin 3.2s linear infinite;
+  animation-play-state: paused;
+}
+@property --skill-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+@keyframes skillBorderSpin {
+  to { --skill-angle: 360deg; }
+}
+.forge-skill-card.is-active::before,
+.forge-skill-card:hover::before {
+  opacity: 1;
+  animation-play-state: running;
 }
 .forge-skill-card.is-active,
 .forge-skill-card:hover {
   border-color: color-mix(in srgb, var(--skill-color, var(--color-accent)) 55%, transparent);
   box-shadow: 0 18px 40px -24px color-mix(in srgb, var(--skill-color, var(--color-accent)) 55%, transparent);
+  transform: translateY(-4px);
+}
+html[data-theme="light"] .forge-skill-card {
+  background: rgba(255, 255, 255, 0.82);
 }
 .forge-skill-top {
   display: flex;
