@@ -182,11 +182,11 @@ export default function CodePortalIntro({
   // Phase machine timers — same on phone & desktop
   useEffect(() => {
     if (phase === "splash") {
-      const t = window.setTimeout(() => setPhase("power"), 1800 * slow);
+      const t = window.setTimeout(() => setPhase("power"), 2600 * slow);
       return () => window.clearTimeout(t);
     }
     if (phase === "power") {
-      const t = window.setTimeout(() => setPhase("boot"), 480 * slow);
+      const t = window.setTimeout(() => setPhase("boot"), 700 * slow);
       return () => window.clearTimeout(t);
     }
     if (phase === "sync") {
@@ -194,8 +194,8 @@ export default function CodePortalIntro({
       setActiveModules(new Set(MODULES.map((m) => m.id)));
       spawnBurst(0.5, 0.5, "#3d8b74");
       pushToast(t.portal.syncToast);
-      const a = window.setTimeout(() => setGlitch(false), 220 * slow);
-      const b = window.setTimeout(() => setPhase("compile"), 480 * slow);
+      const a = window.setTimeout(() => setGlitch(false), 320 * slow);
+      const b = window.setTimeout(() => setPhase("compile"), 700 * slow);
       return () => {
         window.clearTimeout(a);
         window.clearTimeout(b);
@@ -205,11 +205,11 @@ export default function CodePortalIntro({
       setGlitch(true);
       setProgress(96);
       pushToast(t.portal.buildToast);
-      const a = window.setTimeout(() => setProgress(100), 220 * slow);
+      const a = window.setTimeout(() => setProgress(100), 320 * slow);
       const b = window.setTimeout(() => {
         setGlitch(false);
         setPhase("launch");
-      }, 520 * slow);
+      }, 700 * slow);
       return () => {
         window.clearTimeout(a);
         window.clearTimeout(b);
@@ -224,9 +224,9 @@ export default function CodePortalIntro({
         spawnBurst(0.5, 0.42, n <= 0 ? "#7eb89a" : "#6aada0");
         if (n <= 0) {
           window.clearInterval(id);
-          window.setTimeout(finish, 550 * slow);
+          window.setTimeout(finish, 800 * slow);
         }
-      }, 650 * slow);
+      }, 950 * slow);
       return () => window.clearInterval(id);
     }
     return undefined;
@@ -241,21 +241,21 @@ export default function CodePortalIntro({
     }
 
     const entry = script[lineIndex];
-    const speed = returning ? 4 : Math.max(3, Math.round((entry.speed ?? 12) * 0.45));
+    const speed = returning ? 5 : Math.max(5, Math.round((entry.speed ?? 12) * 0.7));
     let i = 0;
     let raf = 0;
     let last = performance.now();
-    const delay = returning ? 20 : Math.max(25, Math.round((entry.delay ?? 90) * 0.4));
+    const delay = returning ? 30 : Math.max(40, Math.round((entry.delay ?? 90) * 0.65));
 
     const startTimer = window.setTimeout(() => {
       const tick = (now) => {
         if (now - last >= speed) {
           last = now;
           const step = entry.burst
-            ? Math.min(8, entry.text.length - i)
+            ? Math.min(6, entry.text.length - i)
             : entry.kind === "cmd"
-              ? 3
-              : 2;
+              ? 2
+              : 1;
           i = Math.min(entry.text.length, i + step);
           setTyped(entry.text.slice(0, i));
           if (i >= entry.text.length) {
