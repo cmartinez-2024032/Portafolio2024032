@@ -182,11 +182,11 @@ export default function CodePortalIntro({
   // Phase machine timers — same on phone & desktop
   useEffect(() => {
     if (phase === "splash") {
-      const t = window.setTimeout(() => setPhase("power"), 2600 * slow);
+      const t = window.setTimeout(() => setPhase("power"), 3000 * slow);
       return () => window.clearTimeout(t);
     }
     if (phase === "power") {
-      const t = window.setTimeout(() => setPhase("boot"), 700 * slow);
+      const t = window.setTimeout(() => setPhase("boot"), 800 * slow);
       return () => window.clearTimeout(t);
     }
     if (phase === "sync") {
@@ -194,8 +194,8 @@ export default function CodePortalIntro({
       setActiveModules(new Set(MODULES.map((m) => m.id)));
       spawnBurst(0.5, 0.5, "#3d8b74");
       pushToast(t.portal.syncToast);
-      const a = window.setTimeout(() => setGlitch(false), 320 * slow);
-      const b = window.setTimeout(() => setPhase("compile"), 700 * slow);
+      const a = window.setTimeout(() => setGlitch(false), 380 * slow);
+      const b = window.setTimeout(() => setPhase("compile"), 800 * slow);
       return () => {
         window.clearTimeout(a);
         window.clearTimeout(b);
@@ -205,29 +205,21 @@ export default function CodePortalIntro({
       setGlitch(true);
       setProgress(96);
       pushToast(t.portal.buildToast);
-      const a = window.setTimeout(() => setProgress(100), 320 * slow);
+      const a = window.setTimeout(() => setProgress(100), 380 * slow);
       const b = window.setTimeout(() => {
         setGlitch(false);
         setPhase("launch");
-      }, 700 * slow);
+      }, 800 * slow);
       return () => {
         window.clearTimeout(a);
         window.clearTimeout(b);
       };
     }
     if (phase === "launch") {
-      setCountdown(3);
-      let n = 3;
-      const id = window.setInterval(() => {
-        n -= 1;
-        setCountdown(n);
-        spawnBurst(0.5, 0.42, n <= 0 ? "#7eb89a" : "#6aada0");
-        if (n <= 0) {
-          window.clearInterval(id);
-          window.setTimeout(finish, 800 * slow);
-        }
-      }, 950 * slow);
-      return () => window.clearInterval(id);
+      setCountdown(0);
+      spawnBurst(0.5, 0.42, "#7eb89a");
+      const t = window.setTimeout(finish, 900 * slow);
+      return () => window.clearTimeout(t);
     }
     return undefined;
   }, [phase, slow, finish, spawnBurst, pushToast, t.portal.syncToast, t.portal.buildToast]);
@@ -241,11 +233,11 @@ export default function CodePortalIntro({
     }
 
     const entry = script[lineIndex];
-    const speed = returning ? 5 : Math.max(5, Math.round((entry.speed ?? 12) * 0.7));
+    const speed = returning ? 6 : Math.max(6, Math.round((entry.speed ?? 12) * 0.82));
     let i = 0;
     let raf = 0;
     let last = performance.now();
-    const delay = returning ? 30 : Math.max(40, Math.round((entry.delay ?? 90) * 0.65));
+    const delay = returning ? 35 : Math.max(50, Math.round((entry.delay ?? 90) * 0.78));
 
     const startTimer = window.setTimeout(() => {
       const tick = (now) => {
@@ -579,14 +571,8 @@ export default function CodePortalIntro({
         </div>
       </div>
 
-      {/* Launch countdown */}
-      {countdown != null && countdown > 0 && (
-        <div className="code-countdown" aria-hidden="true">
-          <div className="code-countdown-ring" />
-          <span key={countdown}>{countdown}</span>
-        </div>
-      )}
-      {phase === "launch" && countdown === 0 && (
+      {/* Launch flash — no 3-2-1 countdown */}
+      {phase === "launch" && (
         <div className="code-online" aria-hidden="true">
           <p>{t.portal.online}</p>
           <strong>{name}</strong>

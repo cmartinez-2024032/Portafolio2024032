@@ -316,7 +316,7 @@
   width: 100%;
   transform-origin: left;
   background: linear-gradient(90deg, #2a6354, #6aada0);
-  animation: codeSplashLoad 2.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: codeSplashLoad 2.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Countdown / online */
@@ -1741,7 +1741,7 @@
 }
 
 .code-splash-bar span {
-  animation-duration: 2.4s;
+  animation-duration: 2.8s;
 }
 
 /* -- Mobile-first premium layout --------------------- */
