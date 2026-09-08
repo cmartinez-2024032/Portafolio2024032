@@ -179,18 +179,14 @@ export default function CodePortalIntro({
     };
   }, [finish, script, unlockModule]);
 
-  // Phase machine timers
+  // Phase machine timers — same on phone & desktop
   useEffect(() => {
-    // Mobile: faster boot path; countdown stays slower for drama
-    const bootScale = (isMobile ? 0.55 : 1) * slow;
-    const countScale = (isMobile ? 1.6 : 1.15) * slow;
-
     if (phase === "splash") {
-      const t = window.setTimeout(() => setPhase("power"), 1600 * bootScale);
+      const t = window.setTimeout(() => setPhase("power"), 1200 * slow);
       return () => window.clearTimeout(t);
     }
     if (phase === "power") {
-      const t = window.setTimeout(() => setPhase("boot"), 1100 * bootScale);
+      const t = window.setTimeout(() => setPhase("boot"), 900 * slow);
       return () => window.clearTimeout(t);
     }
     if (phase === "sync") {
@@ -198,8 +194,8 @@ export default function CodePortalIntro({
       setActiveModules(new Set(MODULES.map((m) => m.id)));
       spawnBurst(0.5, 0.5, "#6aa8ff");
       pushToast(t.portal.syncToast);
-      const a = window.setTimeout(() => setGlitch(false), 480 * bootScale);
-      const b = window.setTimeout(() => setPhase("compile"), 1400 * bootScale);
+      const a = window.setTimeout(() => setGlitch(false), 400 * slow);
+      const b = window.setTimeout(() => setPhase("compile"), 900 * slow);
       return () => {
         window.clearTimeout(a);
         window.clearTimeout(b);
@@ -209,11 +205,11 @@ export default function CodePortalIntro({
       setGlitch(true);
       setProgress(96);
       pushToast(t.portal.buildToast);
-      const a = window.setTimeout(() => setProgress(100), 550 * bootScale);
+      const a = window.setTimeout(() => setProgress(100), 400 * slow);
       const b = window.setTimeout(() => {
         setGlitch(false);
         setPhase("launch");
-      }, 1400 * bootScale);
+      }, 900 * slow);
       return () => {
         window.clearTimeout(a);
         window.clearTimeout(b);
@@ -228,15 +224,15 @@ export default function CodePortalIntro({
         spawnBurst(0.5, 0.42, n <= 0 ? "#9af0c7" : "#9ec5ff");
         if (n <= 0) {
           window.clearInterval(id);
-          window.setTimeout(finish, 950 * countScale);
+          window.setTimeout(finish, 1100 * slow);
         }
-      }, 1150 * countScale);
+      }, 1300 * slow);
       return () => window.clearInterval(id);
     }
     return undefined;
-  }, [phase, slow, isMobile, finish, spawnBurst, pushToast, t.portal.syncToast, t.portal.buildToast]);
+  }, [phase, slow, finish, spawnBurst, pushToast, t.portal.syncToast, t.portal.buildToast]);
 
-  // Typing (snappy)
+  // Typing — same speed on phone and desktop
   useEffect(() => {
     if (phase !== "boot") return;
     if (lineIndex >= script.length) {
@@ -245,27 +241,21 @@ export default function CodePortalIntro({
     }
 
     const entry = script[lineIndex];
-    // Mobile: much faster console so entry to portfolio feels snappy
-    const mobileBoost = isMobile ? 0.28 : 1;
-    const speed = Math.max(2, (returning ? 6 : entry.speed ?? 12) * mobileBoost);
+    const speed = returning ? 7 : entry.speed ?? 12;
     let i = 0;
     let raf = 0;
     let last = performance.now();
-    const delay = Math.max(8, (returning ? 40 : entry.delay ?? 90) * mobileBoost);
+    const delay = returning ? 45 : entry.delay ?? 90;
 
     const startTimer = window.setTimeout(() => {
       const tick = (now) => {
         if (now - last >= speed) {
           last = now;
           const step = entry.burst
-            ? Math.min(isMobile ? 12 : 5, entry.text.length - i)
+            ? Math.min(6, entry.text.length - i)
             : entry.kind === "cmd"
-              ? isMobile
-                ? 5
-                : 2
-              : isMobile
-                ? 3
-                : 1;
+              ? 2
+              : 1;
           i = Math.min(entry.text.length, i + step);
           setTyped(entry.text.slice(0, i));
           if (i >= entry.text.length) {
@@ -277,7 +267,7 @@ export default function CodePortalIntro({
             unlockModule(entry.module);
             if (entry.glitch) {
               setGlitch(true);
-              window.setTimeout(() => setGlitch(false), isMobile ? 150 : 280);
+              window.setTimeout(() => setGlitch(false), 260);
             }
             return;
           }
@@ -291,7 +281,7 @@ export default function CodePortalIntro({
       window.clearTimeout(startTimer);
       cancelAnimationFrame(raf);
     };
-  }, [lineIndex, script, phase, returning, unlockModule, isMobile]);
+  }, [lineIndex, script, phase, returning, unlockModule]);
 
   // Telemetry + waveform
   useEffect(() => {
@@ -896,40 +886,27 @@ function buildScript(name, t, _locale, returning) {
 
   if (returning) {
     return [
-      { kind: "info", text: L.restore, speed: 7, delay: 35 },
-      { kind: "cmd", text: "forge resume --session portfolio", speed: 7, delay: 30 },
-      { kind: "out", text: L.restoreOk, speed: 6, delay: 30 },
-      { kind: "cmd", text: "hydrate modules --hot", speed: 7, delay: 30, module: "react" },
-      { kind: "ok", text: L.ready, speed: 6, delay: 30 },
-      { kind: "cmd", text: "launch --target hero", speed: 7, delay: 30 },
+      { kind: "cmd", text: "forge resume --session portfolio", speed: 8, delay: 40 },
+      { kind: "ok", text: L.restoreOk, speed: 7, delay: 35, module: "react" },
+      { kind: "cmd", text: "launch --target hero", speed: 8, delay: 40 },
+      { kind: "ok", text: L.ready, speed: 7, delay: 35 },
     ];
   }
 
   return [
-    { kind: "info", text: L.banner, speed: 10, delay: 120 },
-    { kind: "dim", text: L.kernel, speed: 6, delay: 70, burst: true },
-    { kind: "cmd", text: "forge init portfolio --secure", speed: 11, delay: 140 },
-    { kind: "out", text: L.init, speed: 8, delay: 70 },
-    { kind: "cmd", text: `load identity --user "${n}"`, speed: 10, delay: 120 },
-    { kind: "ok", text: L.identity, speed: 8, delay: 60 },
-    { kind: "cmd", text: "mount ./stack --watch", speed: 10, delay: 110, module: "react" },
-    { kind: "out", text: L.mount, speed: 8, delay: 55 },
-    { kind: "cmd", text: "import skills --from stack.json", speed: 10, delay: 110, module: "node" },
-    { kind: "out", text: L.skills, speed: 8, delay: 55, module: "dotnet" },
-    { kind: "cmd", text: "link database --engine sql", speed: 10, delay: 100, module: "sql" },
-    { kind: "ok", text: L.db, speed: 8, delay: 55 },
-    { kind: "cmd", text: "compile projects --release --optimize", speed: 9, delay: 120, module: "api", glitch: true },
-    { kind: "out", text: L.projects, speed: 8, delay: 60 },
-    { kind: "warn", text: L.warn, speed: 9, delay: 70 },
-    { kind: "cmd", text: "inject motion --lib three", speed: 9, delay: 100, module: "three" },
-    { kind: "ok", text: L.motion, speed: 8, delay: 55 },
-    { kind: "cmd", text: "audit security --quiet", speed: 9, delay: 100 },
-    { kind: "ok", text: L.audit, speed: 8, delay: 55 },
-    { kind: "cmd", text: "sync hologram --quality ultra", speed: 9, delay: 110, glitch: true },
-    { kind: "ok", text: L.hologram, speed: 8, delay: 60 },
-    { kind: "cmd", text: "launch --target hero --open", speed: 10, delay: 130 },
-    { kind: "ok", text: L.ready, speed: 8, delay: 80 },
+    { kind: "info", text: L.banner, speed: 10, delay: 100 },
+    { kind: "cmd", text: "forge init portfolio --secure", speed: 11, delay: 110 },
+    { kind: "ok", text: L.init, speed: 8, delay: 55 },
+    { kind: "cmd", text: `load identity --user "${n}"`, speed: 10, delay: 100 },
+    { kind: "ok", text: L.identity, speed: 8, delay: 50, module: "react" },
+    { kind: "cmd", text: "import skills --from stack.json", speed: 10, delay: 100, module: "node" },
+    { kind: "ok", text: L.skills, speed: 8, delay: 50, module: "dotnet" },
+    { kind: "cmd", text: "compile projects --release", speed: 10, delay: 100, module: "api", glitch: true },
+    { kind: "ok", text: L.projects, speed: 8, delay: 50, module: "sql" },
+    { kind: "cmd", text: "launch --target hero --open", speed: 10, delay: 110, module: "three" },
+    { kind: "ok", text: L.ready, speed: 8, delay: 60 },
   ];
+
 }
 
 export function hasSeenPortal() {
