@@ -105,31 +105,21 @@ export default function CodePortalIntro({
     setProgress(100);
     setGlitch(true);
     spawnBurst(0.5, 0.5, "#9ec5ff");
+    spawnBurst(0.35, 0.4, "#6aa8ff");
+    spawnBurst(0.65, 0.55, "#9af0c7");
     try {
       sessionStorage.setItem(STORAGE_KEY, "1");
     } catch {
       /* ignore */
     }
-    window.setTimeout(() => onComplete?.(), 1900);
+    window.setTimeout(() => onComplete?.(), 2100);
   }, [onComplete, spawnBurst]);
 
-  const skipAll = useCallback(() => {
-    if (completingRef.current) return;
-    setBootIn(true);
-    setLines(script);
-    setTyped("");
-    setLineIndex(script.length);
-    setProgress(100);
-    setActiveModules(new Set(MODULES.map((m) => m.id)));
-    setCountdown(null);
-    window.setTimeout(finish, 480);
-  }, [script, finish]);
-
-  // Boot + keyboard
+  // Boot + keyboard (Enter acelera; no skip)
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduced) {
-      const timer = window.setTimeout(finish, 350);
+      const timer = window.setTimeout(finish, 500);
       return () => window.clearTimeout(timer);
     }
 
@@ -137,11 +127,6 @@ export default function CodePortalIntro({
     const bootTimer = window.setTimeout(() => setBootIn(true), 30);
 
     const onKey = (e) => {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        skipAll();
-        return;
-      }
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
         const p = phaseRef.current;
@@ -175,7 +160,7 @@ export default function CodePortalIntro({
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
     };
-  }, [finish, skipAll, script, unlockModule]);
+  }, [finish, script, unlockModule]);
 
   // Phase machine timers (slowed down)
   useEffect(() => {
@@ -472,6 +457,9 @@ export default function CodePortalIntro({
         .join(" ")}
       aria-label={t.portal.aria}
     >
+      <div className="code-letterbox code-letterbox--top" aria-hidden="true" />
+      <div className="code-letterbox code-letterbox--bottom" aria-hidden="true" />
+      <div className="code-bloom" aria-hidden="true" />
       <canvas ref={rainRef} className="code-portal-rain" aria-hidden="true" />
       <canvas ref={fxRef} className="code-portal-fx" aria-hidden="true" />
       <div className="code-portal-grid" aria-hidden="true" />
@@ -536,11 +524,14 @@ export default function CodePortalIntro({
         <div className="code-splash-orbit" aria-hidden="true">
           <span />
           <span />
+          <span />
         </div>
+        <div className="code-splash-core" aria-hidden="true" />
         <div className="code-splash-mark" data-text="CM">
           CM
         </div>
         <p className="code-splash-sub">{t.portal.splash}</p>
+        <p className="code-splash-name">{name}</p>
         <div className="code-splash-bar">
           <span />
         </div>
@@ -549,12 +540,14 @@ export default function CodePortalIntro({
       {/* Launch countdown */}
       {countdown != null && countdown > 0 && (
         <div className="code-countdown" aria-hidden="true">
+          <div className="code-countdown-ring" />
           <span key={countdown}>{countdown}</span>
         </div>
       )}
       {phase === "launch" && countdown === 0 && (
         <div className="code-online" aria-hidden="true">
           <p>{t.portal.online}</p>
+          <strong>{name}</strong>
         </div>
       )}
 
@@ -593,6 +586,15 @@ export default function CodePortalIntro({
         </aside>
 
         <div className="code-portal-stage">
+          <div className="code-id-card" aria-hidden="true">
+            <span className="code-id-avatar">CM</span>
+            <div>
+              <strong>{name}</strong>
+              <em>{t.portal.tagline}</em>
+            </div>
+            <b>{pct}%</b>
+          </div>
+
           <p className="code-portal-eyebrow">
             <span className="code-portal-dot" />
             {returning ? t.portal.eyebrowReturn : t.portal.eyebrow}
@@ -602,6 +604,10 @@ export default function CodePortalIntro({
             {name}
           </h2>
           <p className="code-portal-tag">{t.portal.tagline}</p>
+
+          <div className="code-energy" aria-hidden="true">
+            <span style={{ transform: `scaleX(${progress / 100})` }} />
+          </div>
 
           <div className="code-portal-frame">
             <span className="code-corner c-tl" />
@@ -695,17 +701,25 @@ export default function CodePortalIntro({
             </div>
           </div>
 
-          <div className="code-modules" aria-hidden="true">
-            {MODULES.map((mod, i) => (
-              <span
-                key={mod.id}
-                className={`code-module ${activeModules.has(mod.id) ? "is-on" : ""}`}
-                style={{ "--mod-hue": mod.hue, "--mi": i }}
-              >
-                <i />
-                {mod.label}
-              </span>
-            ))}
+          <div className="code-modules-wrap" aria-hidden="true">
+            <svg className="code-constellation" viewBox="0 0 360 40" preserveAspectRatio="none">
+              <polyline
+                points="20,20 70,20 120,20 170,20 220,20 270,20 320,20"
+                className={activeModules.size >= 3 ? "is-lit" : ""}
+              />
+            </svg>
+            <div className="code-modules">
+              {MODULES.map((mod, i) => (
+                <span
+                  key={mod.id}
+                  className={`code-module ${activeModules.has(mod.id) ? "is-on" : ""}`}
+                  style={{ "--mod-hue": mod.hue, "--mi": i }}
+                >
+                  <i />
+                  {mod.label}
+                </span>
+              ))}
+            </div>
           </div>
 
           <div className="code-phase-rail" aria-hidden="true">
@@ -732,11 +746,6 @@ export default function CodePortalIntro({
           </div>
 
           <p className="code-portal-hint">{t.portal.hint}</p>
-          {!returning && (
-            <button type="button" className="code-portal-skip" onClick={skipAll}>
-              {t.portal.skip}
-            </button>
-          )}
         </div>
 
         <aside className="code-hud code-hud--right" aria-hidden="true">
