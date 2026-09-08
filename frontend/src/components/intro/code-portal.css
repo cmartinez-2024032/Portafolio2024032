@@ -1690,3 +1690,56 @@
   .code-constellation { display: none; }
   .code-letterbox { height: 22px; }
 }
+
+/* -- Fast typing polish ------------------------------ */
+.tok-hot {
+  color: #fff;
+  text-shadow: 0 0 10px rgba(158, 197, 255, 0.95), 0 0 18px rgba(106, 168, 255, 0.65);
+}
+
+.code-line.is-typing .code-text {
+  text-shadow: 0 0 12px rgba(106, 168, 255, 0.12);
+}
+
+.code-caret {
+  animation: codeBlink 0.7s steps(1) infinite;
+  box-shadow: 0 0 14px rgba(106, 168, 255, 1);
+}
+
+.code-portal.phase-boot .code-portal-window {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 30px 100px rgba(0, 0, 0, 0.6),
+    0 0 70px rgba(106, 168, 255, 0.18);
+}
+
+.code-portal.phase-boot .code-portal-status-dot {
+  animation: codeDot 0.7s ease-in-out infinite;
+}
+
+.code-line--ok .code-prefix {
+  filter: drop-shadow(0 0 6px rgba(93, 222, 166, 0.7));
+}
+
+.code-id-card b {
+  transition: color 0.25s ease, text-shadow 0.25s ease;
+  text-shadow: 0 0 12px rgba(106, 168, 255, 0.35);
+}
+
+.code-portal.phase-compile .code-id-card,
+.code-portal.phase-launch .code-id-card {
+  border-color: rgba(93, 222, 166, 0.4);
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.35), 0 0 40px rgba(93, 222, 166, 0.12);
+}
+
+.code-energy span {
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.code-portal-fill {
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.code-splash-bar span {
+  animation-duration: 1.45s;
+}

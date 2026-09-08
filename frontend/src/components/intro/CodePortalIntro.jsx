@@ -162,14 +162,14 @@ export default function CodePortalIntro({
     };
   }, [finish, script, unlockModule]);
 
-  // Phase machine timers (slowed down)
+  // Phase machine timers
   useEffect(() => {
     if (phase === "splash") {
-      const t = window.setTimeout(() => setPhase("power"), 2200 * slow);
+      const t = window.setTimeout(() => setPhase("power"), 1600 * slow);
       return () => window.clearTimeout(t);
     }
     if (phase === "power") {
-      const t = window.setTimeout(() => setPhase("boot"), 1600 * slow);
+      const t = window.setTimeout(() => setPhase("boot"), 1100 * slow);
       return () => window.clearTimeout(t);
     }
     if (phase === "sync") {
@@ -177,8 +177,8 @@ export default function CodePortalIntro({
       setActiveModules(new Set(MODULES.map((m) => m.id)));
       spawnBurst(0.5, 0.5, "#6aa8ff");
       pushToast(t.portal.syncToast);
-      const a = window.setTimeout(() => setGlitch(false), 700 * slow);
-      const b = window.setTimeout(() => setPhase("compile"), 2000 * slow);
+      const a = window.setTimeout(() => setGlitch(false), 480 * slow);
+      const b = window.setTimeout(() => setPhase("compile"), 1400 * slow);
       return () => {
         window.clearTimeout(a);
         window.clearTimeout(b);
@@ -188,11 +188,11 @@ export default function CodePortalIntro({
       setGlitch(true);
       setProgress(96);
       pushToast(t.portal.buildToast);
-      const a = window.setTimeout(() => setProgress(100), 900 * slow);
+      const a = window.setTimeout(() => setProgress(100), 550 * slow);
       const b = window.setTimeout(() => {
         setGlitch(false);
         setPhase("launch");
-      }, 2200 * slow);
+      }, 1400 * slow);
       return () => {
         window.clearTimeout(a);
         window.clearTimeout(b);
@@ -207,15 +207,15 @@ export default function CodePortalIntro({
         spawnBurst(0.5, 0.42, n <= 0 ? "#9af0c7" : "#9ec5ff");
         if (n <= 0) {
           window.clearInterval(id);
-          window.setTimeout(finish, 700 * slow);
+          window.setTimeout(finish, 520 * slow);
         }
-      }, 900 * slow);
+      }, 620 * slow);
       return () => window.clearInterval(id);
     }
     return undefined;
   }, [phase, slow, finish, spawnBurst, pushToast, t.portal.syncToast, t.portal.buildToast]);
 
-  // Typing (slower)
+  // Typing (snappy)
   useEffect(() => {
     if (phase !== "boot") return;
     if (lineIndex >= script.length) {
@@ -224,17 +224,18 @@ export default function CodePortalIntro({
     }
 
     const entry = script[lineIndex];
-    const speed = (returning ? 14 : entry.speed ?? 38) ;
+    const speed = returning ? 6 : entry.speed ?? 12;
     let i = 0;
     let raf = 0;
     let last = performance.now();
-    const delay = (returning ? 120 : entry.delay ?? 320);
+    const delay = returning ? 40 : entry.delay ?? 90;
 
     const startTimer = window.setTimeout(() => {
       const tick = (now) => {
         if (now - last >= speed) {
           last = now;
-          i += entry.burst ? Math.min(2, entry.text.length - i) : 1;
+          const step = entry.burst ? Math.min(5, entry.text.length - i) : entry.kind === "cmd" ? 2 : 1;
+          i = Math.min(entry.text.length, i + step);
           setTyped(entry.text.slice(0, i));
           if (i >= entry.text.length) {
             setLines((prev) => [...prev, entry]);
@@ -245,7 +246,7 @@ export default function CodePortalIntro({
             unlockModule(entry.module);
             if (entry.glitch) {
               setGlitch(true);
-              window.setTimeout(() => setGlitch(false), 420);
+              window.setTimeout(() => setGlitch(false), 280);
             }
             return;
           }
@@ -789,6 +790,10 @@ function HudMeter({ label, value, tone }) {
 
 function TerminalLine({ line, caret = false, flash = false, stamp }) {
   const kind = line.kind || "cmd";
+  const text = line.text || "";
+  const head = caret && text.length > 0 ? text.slice(0, -1) : text;
+  const tail = caret && text.length > 0 ? text.slice(-1) : "";
+
   return (
     <p className={`code-line code-line--${kind} ${flash ? "is-flash" : ""} ${caret ? "is-typing" : ""}`}>
       {stamp != null && <span className="code-stamp">{stamp}</span>}
@@ -799,7 +804,14 @@ function TerminalLine({ line, caret = false, flash = false, stamp }) {
       {kind === "info" && <span className="code-prefix">#</span>}
       {kind === "dim" && <span className="code-prefix">·</span>}
       <span className="code-text">
-        {highlight(line.text, kind)}
+        {caret ? (
+          <>
+            {kind === "cmd" ? highlight(head, kind) : head}
+            {tail && <span className="tok-hot">{tail}</span>}
+          </>
+        ) : (
+          highlight(text, kind)
+        )}
         {caret && <span className="code-caret" aria-hidden="true" />}
       </span>
     </p>
@@ -827,39 +839,39 @@ function buildScript(name, t, _locale, returning) {
 
   if (returning) {
     return [
-      { kind: "info", text: L.restore, speed: 16, delay: 90 },
-      { kind: "cmd", text: "forge resume --session portfolio", speed: 16, delay: 80 },
-      { kind: "out", text: L.restoreOk, speed: 14, delay: 80 },
-      { kind: "cmd", text: "hydrate modules --hot", speed: 16, delay: 80, module: "react" },
-      { kind: "ok", text: L.ready, speed: 14, delay: 80 },
-      { kind: "cmd", text: "launch --target hero", speed: 16, delay: 80 },
+      { kind: "info", text: L.restore, speed: 7, delay: 35 },
+      { kind: "cmd", text: "forge resume --session portfolio", speed: 7, delay: 30 },
+      { kind: "out", text: L.restoreOk, speed: 6, delay: 30 },
+      { kind: "cmd", text: "hydrate modules --hot", speed: 7, delay: 30, module: "react" },
+      { kind: "ok", text: L.ready, speed: 6, delay: 30 },
+      { kind: "cmd", text: "launch --target hero", speed: 7, delay: 30 },
     ];
   }
 
   return [
-    { kind: "info", text: L.banner, speed: 28, delay: 420 },
-    { kind: "dim", text: L.kernel, speed: 18, delay: 280, burst: true },
-    { kind: "cmd", text: "forge init portfolio --secure", speed: 40, delay: 480 },
-    { kind: "out", text: L.init, speed: 24, delay: 260 },
-    { kind: "cmd", text: `load identity --user "${n}"`, speed: 36, delay: 420 },
-    { kind: "ok", text: L.identity, speed: 22, delay: 240 },
-    { kind: "cmd", text: "mount ./stack --watch", speed: 36, delay: 400, module: "react" },
-    { kind: "out", text: L.mount, speed: 22, delay: 220 },
-    { kind: "cmd", text: "import skills --from stack.json", speed: 34, delay: 400, module: "node" },
-    { kind: "out", text: L.skills, speed: 22, delay: 220, module: "dotnet" },
-    { kind: "cmd", text: "link database --engine sql", speed: 34, delay: 380, module: "sql" },
-    { kind: "ok", text: L.db, speed: 22, delay: 220 },
-    { kind: "cmd", text: "compile projects --release --optimize", speed: 32, delay: 420, module: "api", glitch: true },
-    { kind: "out", text: L.projects, speed: 22, delay: 240 },
-    { kind: "warn", text: L.warn, speed: 26, delay: 280 },
-    { kind: "cmd", text: "inject motion --lib three", speed: 32, delay: 380, module: "three" },
-    { kind: "ok", text: L.motion, speed: 22, delay: 220 },
-    { kind: "cmd", text: "audit security --quiet", speed: 32, delay: 380 },
-    { kind: "ok", text: L.audit, speed: 22, delay: 220 },
-    { kind: "cmd", text: "sync hologram --quality ultra", speed: 32, delay: 400, glitch: true },
-    { kind: "ok", text: L.hologram, speed: 22, delay: 260 },
-    { kind: "cmd", text: "launch --target hero --open", speed: 34, delay: 450 },
-    { kind: "ok", text: L.ready, speed: 22, delay: 300 },
+    { kind: "info", text: L.banner, speed: 10, delay: 120 },
+    { kind: "dim", text: L.kernel, speed: 6, delay: 70, burst: true },
+    { kind: "cmd", text: "forge init portfolio --secure", speed: 11, delay: 140 },
+    { kind: "out", text: L.init, speed: 8, delay: 70 },
+    { kind: "cmd", text: `load identity --user "${n}"`, speed: 10, delay: 120 },
+    { kind: "ok", text: L.identity, speed: 8, delay: 60 },
+    { kind: "cmd", text: "mount ./stack --watch", speed: 10, delay: 110, module: "react" },
+    { kind: "out", text: L.mount, speed: 8, delay: 55 },
+    { kind: "cmd", text: "import skills --from stack.json", speed: 10, delay: 110, module: "node" },
+    { kind: "out", text: L.skills, speed: 8, delay: 55, module: "dotnet" },
+    { kind: "cmd", text: "link database --engine sql", speed: 10, delay: 100, module: "sql" },
+    { kind: "ok", text: L.db, speed: 8, delay: 55 },
+    { kind: "cmd", text: "compile projects --release --optimize", speed: 9, delay: 120, module: "api", glitch: true },
+    { kind: "out", text: L.projects, speed: 8, delay: 60 },
+    { kind: "warn", text: L.warn, speed: 9, delay: 70 },
+    { kind: "cmd", text: "inject motion --lib three", speed: 9, delay: 100, module: "three" },
+    { kind: "ok", text: L.motion, speed: 8, delay: 55 },
+    { kind: "cmd", text: "audit security --quiet", speed: 9, delay: 100 },
+    { kind: "ok", text: L.audit, speed: 8, delay: 55 },
+    { kind: "cmd", text: "sync hologram --quality ultra", speed: 9, delay: 110, glitch: true },
+    { kind: "ok", text: L.hologram, speed: 8, delay: 60 },
+    { kind: "cmd", text: "launch --target hero --open", speed: 10, delay: 130 },
+    { kind: "ok", text: L.ready, speed: 8, delay: 80 },
   ];
 }
 
