@@ -5,11 +5,12 @@ export const es = {
   errorBody:
     "No se pudieron cargar los datos. Asegúrate de que el backend esté corriendo en el puerto 4000.",
   portal: {
-    eyebrow: "Entrando al sistema",
-    eyebrowReturn: "Regresando a la galaxia",
-    sub: "Desplázate para atravesar el portal",
-    subReturn: "Sube para volver al origen · baja para entrar de nuevo",
+    eyebrow: "Recorriendo el túnel",
+    eyebrowReturn: "Volviendo al pasillo",
+    sub: "Desplázate para avanzar con la figura",
+    subReturn: "Sube para volver · baja para entrar de nuevo",
     hint: "Scroll",
+    hintExit: "Entrando",
     skip: "Saltar intro",
     aria: "Introducción al portafolio",
   },
@@ -206,11 +207,12 @@ export const en = {
   errorBody:
     "Could not load data. Make sure the backend is running on port 4000.",
   portal: {
-    eyebrow: "Entering the system",
-    eyebrowReturn: "Returning to the galaxy",
-    sub: "Scroll to pass through the portal",
+    eyebrow: "Walking the tunnel",
+    eyebrowReturn: "Returning to the corridor",
+    sub: "Scroll to walk forward with the figure",
     subReturn: "Scroll up to return · scroll down to enter again",
     hint: "Scroll",
+    hintExit: "Entering",
     skip: "Skip intro",
     aria: "Portfolio introduction",
   },

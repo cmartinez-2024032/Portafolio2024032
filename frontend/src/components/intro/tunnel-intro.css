@@ -1,0 +1,200 @@
+.tunnel-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 200000;
+  background: #050608;
+  color: var(--color-fg, #f4f1ec);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition:
+    opacity 0.95s cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 0.95s,
+    filter 0.95s ease;
+}
+
+.tunnel-intro.is-exiting {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  filter: blur(14px) brightness(1.55);
+}
+
+.tunnel-intro-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.tunnel-intro-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 58%, transparent 18%, rgba(5, 6, 8, 0.35) 62%, rgba(5, 6, 8, 0.88) 100%),
+    linear-gradient(180deg, rgba(5, 6, 8, 0.55) 0%, transparent 18%, transparent 72%, rgba(5, 6, 8, 0.78) 100%);
+}
+
+.tunnel-intro-flash {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 52%, rgba(255, 252, 248, 0.8), rgba(158, 197, 255, 0.38) 30%, rgba(106, 168, 255, 0.12) 55%, transparent 76%);
+  mix-blend-mode: screen;
+  opacity: 0;
+}
+
+.tunnel-intro-ui {
+  position: relative;
+  z-index: 2;
+  width: min(92vw, 560px);
+  margin: 0 auto;
+  padding: clamp(1.4rem, 4vh, 2.4rem) 1.25rem 0;
+  text-align: center;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.tunnel-intro-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--color-accent, #6aa8ff);
+  margin-bottom: 0.85rem;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.65);
+}
+
+.tunnel-intro-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-accent, #6aa8ff);
+  box-shadow: 0 0 14px rgba(106, 168, 255, 0.9);
+  animation: tunnelDot 1.6s ease-in-out infinite;
+}
+
+.tunnel-intro-title {
+  font-family: var(--font-heading, "Bebas Neue", sans-serif);
+  font-size: clamp(2.6rem, 8.5vw, 4.6rem);
+  line-height: 0.92;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin: 0 0 0.65rem;
+  text-shadow: 0 8px 36px rgba(0, 0, 0, 0.7);
+}
+
+.tunnel-intro-sub {
+  color: var(--color-dim, rgba(244, 241, 236, 0.62));
+  font-size: 0.9rem;
+  margin: 0;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.55);
+}
+
+.tunnel-intro-chrome {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+  padding: 0 1.25rem clamp(1.6rem, 5vh, 2.8rem);
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.tunnel-intro-track {
+  width: min(100%, 220px);
+  height: 2px;
+  background: rgba(244, 241, 236, 0.12);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.tunnel-intro-fill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  transform-origin: left center;
+  background: linear-gradient(90deg, #3b82f6, #9ec5ff);
+  box-shadow: 0 0 18px rgba(106, 168, 255, 0.65);
+  will-change: transform;
+}
+
+.tunnel-intro-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.6rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--color-dim-more, rgba(244, 241, 236, 0.4));
+  opacity: 0;
+  transition: opacity 0.5s ease, color 0.35s ease;
+}
+
+.tunnel-intro-hint.is-visible {
+  opacity: 1;
+  animation: tunnelHint 2.2s ease-in-out infinite;
+}
+
+.tunnel-intro-hint.is-exit {
+  color: var(--color-accent, #6aa8ff);
+  opacity: 1;
+  animation: none;
+}
+
+.tunnel-intro-hint-line {
+  width: 1px;
+  height: 36px;
+  background: linear-gradient(180deg, var(--color-accent, #6aa8ff), transparent);
+}
+
+.tunnel-intro-skip {
+  pointer-events: auto;
+  background: transparent;
+  border: 1px solid rgba(106, 168, 255, 0.32);
+  color: var(--color-dim, rgba(244, 241, 236, 0.58));
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  padding: 0.65rem 1rem;
+  border-radius: 0.4rem;
+  transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+}
+
+.tunnel-intro-skip:hover,
+.tunnel-intro-skip:focus-visible {
+  color: #fff;
+  border-color: rgba(106, 168, 255, 0.8);
+  background: rgba(106, 168, 255, 0.12);
+  outline: none;
+}
+
+@keyframes tunnelDot {
+  0%, 100% { opacity: 0.45; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+@keyframes tunnelHint {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(7px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tunnel-intro-dot,
+  .tunnel-intro-hint {
+    animation: none !important;
+  }
+}
