@@ -181,12 +181,16 @@ export default function CodePortalIntro({
 
   // Phase machine timers
   useEffect(() => {
+    // Mobile: faster boot path; countdown stays slower for drama
+    const bootScale = (isMobile ? 0.55 : 1) * slow;
+    const countScale = (isMobile ? 1.6 : 1.15) * slow;
+
     if (phase === "splash") {
-      const t = window.setTimeout(() => setPhase("power"), 1600 * slow);
+      const t = window.setTimeout(() => setPhase("power"), 1600 * bootScale);
       return () => window.clearTimeout(t);
     }
     if (phase === "power") {
-      const t = window.setTimeout(() => setPhase("boot"), 1100 * slow);
+      const t = window.setTimeout(() => setPhase("boot"), 1100 * bootScale);
       return () => window.clearTimeout(t);
     }
     if (phase === "sync") {
@@ -194,8 +198,8 @@ export default function CodePortalIntro({
       setActiveModules(new Set(MODULES.map((m) => m.id)));
       spawnBurst(0.5, 0.5, "#6aa8ff");
       pushToast(t.portal.syncToast);
-      const a = window.setTimeout(() => setGlitch(false), 480 * slow);
-      const b = window.setTimeout(() => setPhase("compile"), 1400 * slow);
+      const a = window.setTimeout(() => setGlitch(false), 480 * bootScale);
+      const b = window.setTimeout(() => setPhase("compile"), 1400 * bootScale);
       return () => {
         window.clearTimeout(a);
         window.clearTimeout(b);
@@ -205,11 +209,11 @@ export default function CodePortalIntro({
       setGlitch(true);
       setProgress(96);
       pushToast(t.portal.buildToast);
-      const a = window.setTimeout(() => setProgress(100), 550 * slow);
+      const a = window.setTimeout(() => setProgress(100), 550 * bootScale);
       const b = window.setTimeout(() => {
         setGlitch(false);
         setPhase("launch");
-      }, 1400 * slow);
+      }, 1400 * bootScale);
       return () => {
         window.clearTimeout(a);
         window.clearTimeout(b);
@@ -224,13 +228,13 @@ export default function CodePortalIntro({
         spawnBurst(0.5, 0.42, n <= 0 ? "#9af0c7" : "#9ec5ff");
         if (n <= 0) {
           window.clearInterval(id);
-          window.setTimeout(finish, 520 * slow);
+          window.setTimeout(finish, 950 * countScale);
         }
-      }, 620 * slow);
+      }, 1150 * countScale);
       return () => window.clearInterval(id);
     }
     return undefined;
-  }, [phase, slow, finish, spawnBurst, pushToast, t.portal.syncToast, t.portal.buildToast]);
+  }, [phase, slow, isMobile, finish, spawnBurst, pushToast, t.portal.syncToast, t.portal.buildToast]);
 
   // Typing (snappy)
   useEffect(() => {
@@ -241,26 +245,26 @@ export default function CodePortalIntro({
     }
 
     const entry = script[lineIndex];
-    // Mobile: a bit snappier typing so lines don't feel laggy on small screens
-    const mobileBoost = isMobile ? 0.55 : 1;
-    const speed = Math.max(4, (returning ? 6 : entry.speed ?? 12) * mobileBoost);
+    // Mobile: much faster console so entry to portfolio feels snappy
+    const mobileBoost = isMobile ? 0.28 : 1;
+    const speed = Math.max(2, (returning ? 6 : entry.speed ?? 12) * mobileBoost);
     let i = 0;
     let raf = 0;
     let last = performance.now();
-    const delay = Math.max(20, (returning ? 40 : entry.delay ?? 90) * mobileBoost);
+    const delay = Math.max(8, (returning ? 40 : entry.delay ?? 90) * mobileBoost);
 
     const startTimer = window.setTimeout(() => {
       const tick = (now) => {
         if (now - last >= speed) {
           last = now;
           const step = entry.burst
-            ? Math.min(isMobile ? 7 : 5, entry.text.length - i)
+            ? Math.min(isMobile ? 12 : 5, entry.text.length - i)
             : entry.kind === "cmd"
               ? isMobile
-                ? 3
+                ? 5
                 : 2
               : isMobile
-                ? 2
+                ? 3
                 : 1;
           i = Math.min(entry.text.length, i + step);
           setTyped(entry.text.slice(0, i));
@@ -273,7 +277,7 @@ export default function CodePortalIntro({
             unlockModule(entry.module);
             if (entry.glitch) {
               setGlitch(true);
-              window.setTimeout(() => setGlitch(false), 280);
+              window.setTimeout(() => setGlitch(false), isMobile ? 150 : 280);
             }
             return;
           }

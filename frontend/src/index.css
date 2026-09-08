@@ -4138,3 +4138,387 @@ html[data-theme="light"] .cursor-aura {
   opacity: 0.45;
 }
 
+/* ══════════════════════════════════════════════════════
+   Uiverse-inspired polish layer (ice-blue forge theme)
+   ══════════════════════════════════════════════════════ */
+
+/* Rotating shine border on primary CTAs */
+.btn-forge-primary {
+  position: relative;
+}
+.btn-forge-primary::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from var(--shine-angle, 0deg),
+    transparent 0%,
+    rgba(255, 255, 255, 0.85) 8%,
+    transparent 18%,
+    transparent 55%,
+    rgba(158, 197, 255, 0.7) 62%,
+    transparent 72%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: uiverseShineSpin 2.8s linear infinite;
+  opacity: 0.85;
+  z-index: 0;
+}
+@keyframes uiverseShineSpin {
+  to { --shine-angle: 360deg; }
+}
+@property --shine-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+/* Soft pulse glow on primary */
+@media (hover: hover) {
+  .btn-forge-primary:hover {
+    animation: uiverseBtnPulse 1.4s ease-in-out infinite;
+  }
+}
+@keyframes uiverseBtnPulse {
+  0%, 100% { box-shadow: 0 16px 40px -12px var(--color-glow); }
+  50% { box-shadow: 0 22px 55px -10px rgba(106, 168, 255, 0.65); }
+}
+
+/* Pills — Uiverse chip feel */
+.pill {
+  border-radius: 999px;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(8px);
+  background: rgba(18, 18, 20, 0.45);
+}
+.pill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.18) 50%, transparent 60%);
+  transform: translateX(-120%);
+  transition: transform 0.55s ease;
+  pointer-events: none;
+}
+@media (hover: hover) {
+  .pill:hover::after { transform: translateX(120%); }
+}
+.pill-active {
+  box-shadow: 0 10px 28px -12px var(--color-glow);
+}
+
+/* Contact cards — shine sweep + lift */
+.contact-card-cinema {
+  isolation: isolate;
+}
+.contact-card-cinema::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgba(158, 197, 255, 0.14) 48%,
+    transparent 62%
+  );
+  transform: translateX(-120%);
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  z-index: 0;
+}
+.contact-card-cinema > * {
+  position: relative;
+  z-index: 1;
+}
+@media (hover: hover) {
+  .contact-card-cinema:hover::before {
+    transform: translateX(120%);
+  }
+  .contact-card-cinema:hover .icon {
+    transform: scale(1.12);
+    filter: drop-shadow(0 0 12px rgba(106, 168, 255, 0.55));
+  }
+}
+.contact-card .icon {
+  transition: transform 0.35s ease, filter 0.35s ease;
+}
+
+/* Contact form — glowing frame */
+.contact-form {
+  position: relative;
+  overflow: hidden;
+}
+.contact-form::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from var(--form-angle, 0deg),
+    transparent 0%,
+    rgba(106, 168, 255, 0.55) 10%,
+    transparent 22%,
+    transparent 100%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: uiverseFormSpin 6s linear infinite;
+  opacity: 0.55;
+}
+@keyframes uiverseFormSpin {
+  to { --form-angle: 360deg; }
+}
+@property --form-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+.contact-field input,
+.contact-field textarea {
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease, background 0.25s ease;
+}
+.contact-field input:focus,
+.contact-field textarea:focus {
+  transform: translateY(-1px);
+  background: rgba(14, 18, 28, 0.95);
+  box-shadow:
+    0 0 0 3px rgba(106, 168, 255, 0.14),
+    0 12px 30px -18px rgba(106, 168, 255, 0.45);
+}
+
+/* Project cells — premium border + sheen */
+.project-cell {
+  position: relative;
+}
+.project-cell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(158, 197, 255, 0.08);
+  transition: box-shadow 0.35s ease;
+  z-index: 3;
+}
+@media (hover: hover) {
+  .project-cell:hover::after {
+    box-shadow:
+      inset 0 0 0 1px rgba(158, 197, 255, 0.35),
+      0 0 40px -10px rgba(106, 168, 255, 0.35);
+  }
+}
+
+/* Ability cards — hover sheen */
+.ability-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 35%, rgba(158, 197, 255, 0.1) 50%, transparent 65%);
+  transform: translateX(-130%);
+  transition: transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+@media (hover: hover) {
+  .ability-card:hover {
+    border-color: rgba(106, 168, 255, 0.45);
+    transform: translateY(-4px);
+    box-shadow: 0 24px 50px -28px rgba(106, 168, 255, 0.4);
+  }
+  .ability-card:hover::before {
+    transform: translateX(130%);
+  }
+  .ability-card:hover .ability-orb {
+    background: rgba(106, 168, 255, 0.18);
+    box-shadow: 0 0 20px rgba(106, 168, 255, 0.35);
+  }
+}
+.ability-card {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+/* About bento stats */
+.forge-bento-stats .forge-strip-item {
+  position: relative;
+  overflow: hidden;
+}
+.forge-bento-stats .forge-strip-item::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 0%, rgba(106, 168, 255, 0.18), transparent 55%);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+@media (hover: hover) {
+  .forge-bento-stats .forge-strip-item:hover {
+    border-color: rgba(106, 168, 255, 0.45);
+    transform: translateY(-3px);
+    box-shadow: 0 16px 36px -22px rgba(106, 168, 255, 0.45);
+  }
+  .forge-bento-stats .forge-strip-item:hover::after {
+    opacity: 1;
+  }
+}
+.forge-bento-stats .forge-strip-item {
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Section titles — accent underline draw */
+.section-title {
+  position: relative;
+  display: inline-block;
+}
+.section-title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -0.35rem;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-accent), transparent 75%);
+  transform: scaleX(0.35);
+  transform-origin: left;
+  opacity: 0.7;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.section-wrap:hover .section-title::after,
+.section-title:hover::after {
+  transform: scaleX(1);
+}
+
+/* Navbar glass + CV button shine */
+.main-nav.scrolled {
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  box-shadow: 0 10px 40px -24px rgba(0, 0, 0, 0.65);
+}
+.nav-cv-btn {
+  position: relative;
+  overflow: hidden;
+}
+.nav-cv-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.28) 50%, transparent 60%);
+  transform: translateX(-130%);
+  transition: transform 0.6s ease;
+  pointer-events: none;
+}
+@media (hover: hover) {
+  .nav-cv-btn:hover::after {
+    transform: translateX(130%);
+  }
+}
+
+/* Socials — ripple ring */
+.forge-socials a {
+  transition: transform 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+@media (hover: hover) {
+  .forge-socials a:hover {
+    transform: translateY(-4px) scale(1.05);
+  }
+}
+
+/* Timeline cards soft lift */
+.timeline-card {
+  transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+}
+@media (hover: hover) {
+  .timeline-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(106, 168, 255, 0.4);
+    box-shadow: 0 22px 48px -28px rgba(106, 168, 255, 0.35);
+  }
+}
+
+/* Footer brand pulse */
+.footer-brand {
+  transition: text-shadow 0.35s ease, color 0.35s ease;
+}
+@media (hover: hover) {
+  .footer-brand:hover {
+    color: var(--color-accent-light);
+    text-shadow: 0 0 24px rgba(106, 168, 255, 0.35);
+  }
+}
+
+/* Skill fill shimmer */
+.forge-skill-fill {
+  position: relative;
+  overflow: hidden;
+}
+.forge-skill-fill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+  animation: uiverseBarShine 2.2s ease-in-out infinite;
+}
+@keyframes uiverseBarShine {
+  0% { transform: translateX(-120%); }
+  100% { transform: translateX(120%); }
+}
+
+/* Hero photo frame glow */
+.forge-hero-media {
+  transition: box-shadow 0.45s ease, transform 0.45s ease;
+}
+@media (hover: hover) {
+  .forge-hero-media:hover {
+    box-shadow:
+      0 0 0 10px rgba(11, 11, 12, 0.55),
+      0 0 60px rgba(106, 168, 255, 0.35),
+      0 30px 70px -20px rgba(0, 0, 0, 0.7);
+  }
+}
+
+/* Mobile: keep effects light */
+@media (max-width: 700px), (hover: none) {
+  .btn-forge-primary::before,
+  .contact-form::before {
+    animation-duration: 4.5s;
+    opacity: 0.4;
+  }
+  .forge-skill-fill::after {
+    animation-duration: 2.8s;
+  }
+  .ability-card:hover {
+    transform: none;
+  }
+  .section-title::after {
+    transform: scaleX(0.55);
+  }
+}
+
+html[data-theme="light"] .pill {
+  background: rgba(255, 255, 255, 0.7);
+}
+html[data-theme="light"] .contact-form::before {
+  opacity: 0.7;
+}
+html[data-theme="light"] .ability-card {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.95), rgba(244, 241, 236, 0.98));
+}
+
