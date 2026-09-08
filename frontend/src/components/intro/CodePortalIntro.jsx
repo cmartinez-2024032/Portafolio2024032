@@ -350,7 +350,7 @@ export default function CodePortalIntro({
       if (disposed) return;
       raf = requestAnimationFrame(draw);
       const intens = phaseRef.current === "compile" || phaseRef.current === "launch" ? 0.08 : 0.13;
-      ctx.fillStyle = `rgba(7, 8, 11, ${intens})`;
+      ctx.fillStyle = `rgba(47, 42, 37, ${intens})`;
       ctx.fillRect(0, 0, w, h);
       for (let i = 0; i < cols.length; i++) {
         const ch = glyphs[(Math.random() * glyphs.length) | 0];
