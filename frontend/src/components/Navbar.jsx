@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useScrollProgress } from "../hooks/useScrollProgress";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiDownload, FiGlobe, FiMenu, FiX } from "react-icons/fi";
+import { FiDownload, FiGlobe, FiMenu, FiX, FiMoon, FiSun } from "react-icons/fi";
 import { useLanguage } from "../i18n/LanguageContext";
+import { useTheme } from "../i18n/ThemeContext";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -10,6 +11,7 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { scaleX } = useScrollProgress();
   const { t, locale, setLocale } = useLanguage();
+  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     let lastY = window.scrollY;
@@ -17,7 +19,6 @@ export default function Navbar() {
       const y = window.scrollY;
       setScrolled(y > 40);
 
-      // Keep bar visible while the mobile menu is open.
       if (menuOpen) {
         setHidden(false);
         lastY = y;
@@ -52,7 +53,6 @@ export default function Navbar() {
 
   const scrollTo = (id) => {
     setMenuOpen(false);
-    // Wait a tick so the menu closes before scrolling.
     window.setTimeout(() => {
       document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
     }, 60);
@@ -81,6 +81,31 @@ export default function Navbar() {
     </div>
   );
 
+  const themeToggle = (
+    <div className="nav-theme-toggle" role="group" aria-label={t.nav.themeAria}>
+      <button
+        type="button"
+        className={theme === "dark" ? "is-active" : ""}
+        aria-pressed={theme === "dark"}
+        aria-label={t.nav.themeDark}
+        onClick={() => setTheme("dark")}
+      >
+        <FiMoon size={14} aria-hidden="true" />
+        <span>{t.nav.themeDark}</span>
+      </button>
+      <button
+        type="button"
+        className={theme === "light" ? "is-active" : ""}
+        aria-pressed={theme === "light"}
+        aria-label={t.nav.themeLight}
+        onClick={() => setTheme("light")}
+      >
+        <FiSun size={14} aria-hidden="true" />
+        <span>{t.nav.themeLight}</span>
+      </button>
+    </div>
+  );
+
   return (
     <nav
       className={`main-nav ${scrolled || menuOpen ? "scrolled" : ""} ${hidden && !menuOpen ? "is-hidden" : ""} ${menuOpen ? "is-menu-open" : ""}`}
@@ -103,7 +128,6 @@ export default function Navbar() {
           </a>
         </div>
 
-        {/* Desktop / wide screens */}
         <div className="nav-links nav-links-desktop">
           {t.nav.sections.map((s) => (
             <button key={s.id} type="button" onClick={() => scrollTo(s.id)}>
@@ -111,12 +135,12 @@ export default function Navbar() {
             </button>
           ))}
           {langToggle}
+          {themeToggle}
           <a href="/cv/Cristopher-Martinez-CV.pdf" download className="nav-cv-btn">
             <FiDownload size={12} /> CV
           </a>
         </div>
 
-        {/* Mobile toggle */}
         <button
           type="button"
           className="nav-burger"
@@ -171,6 +195,7 @@ export default function Navbar() {
 
               <div className="nav-mobile-footer">
                 {langToggle}
+                {themeToggle}
                 <a href="/cv/Cristopher-Martinez-CV.pdf" download className="nav-cv-btn">
                   <FiDownload size={14} /> CV
                 </a>
