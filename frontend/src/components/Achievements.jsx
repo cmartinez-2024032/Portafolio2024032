@@ -78,9 +78,9 @@ export default function Achievements() {
                   <motion.figure
                     key={item.photos[activePhoto].src}
                     className="aditus-cinema-frame"
-                    initial={{ opacity: 0, scale: 1.04, filter: "blur(8px)" }}
-                    animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                    exit={{ opacity: 0, scale: 0.98, filter: "blur(6px)" }}
+                    initial={{ opacity: 0, scale: 1.02 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.98 }}
                     transition={{ duration: 0.55, ease: EASE }}
                   >
                     <motion.img

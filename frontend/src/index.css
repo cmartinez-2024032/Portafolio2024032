@@ -167,21 +167,19 @@ section[id] { scroll-margin-top: 5.5rem; }
     transition: width 0.22s ease, height 0.22s ease, margin 0.22s ease, background 0.22s ease, opacity 0.22s ease;
   }
   .forge-cursor-ring {
-    width: 42px;
-    height: 42px;
-    margin: -21px 0 0 -21px;
+    width: 36px;
+    height: 36px;
+    margin: -18px 0 0 -18px;
     border-radius: 50%;
-    border: 1px solid color-mix(in srgb, var(--color-accent) 55%, transparent);
-    background: color-mix(in srgb, var(--color-accent) 6%, transparent);
-    box-shadow: 0 0 28px -12px var(--color-glow);
+    border: 1px solid color-mix(in srgb, var(--color-accent) 45%, transparent);
+    background: transparent;
+    box-shadow: none;
     transition: width 0.28s cubic-bezier(0.16, 1, 0.3, 1), height 0.28s cubic-bezier(0.16, 1, 0.3, 1),
       margin 0.28s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, background 0.25s ease,
       border-radius 0.25s ease, opacity 0.25s ease;
   }
   .forge-cursor-cross {
-    position: absolute;
-    background: color-mix(in srgb, var(--color-accent) 70%, #fff);
-    opacity: 0.55;
+    display: none;
   }
   .forge-cursor-cross-h {
     width: 10px;
@@ -2897,21 +2895,10 @@ html[data-theme="light"] .nav-theme-toggle button.is-active {
   z-index: 2;
 }
 
-/* ── Cursor aura: large trailing glow behind the small cursor dot ── */
+/* Cursor aura off — screen-blend glow looked like a broken white blob */
 @media (hover: hover) and (pointer: fine) {
   .cursor-aura {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 340px;
-    height: 340px;
-    margin-left: -170px;
-    margin-top: -170px;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 1;
-    background: radial-gradient(circle, rgba(61, 139, 116, 0.14) 0%, rgba(61, 139, 116, 0.04) 45%, transparent 72%);
-    mix-blend-mode: screen;
+    display: none !important;
   }
 }
 

@@ -10,7 +10,6 @@ import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 import Achievements from "./components/Achievements";
 import CustomCursor from "./components/CustomCursor";
-import CursorAura from "./components/CursorAura";
 import Robot from "./components/robot/Robot";
 import Starfield from "./components/background/Starfield";
 import CodePortalIntro, { hasSeenPortal, clearPortalSeen } from "./components/intro/CodePortalIntro";
@@ -122,7 +121,6 @@ export default function App() {
         aria-hidden={!introDone}
       >
         <Starfield />
-        <CursorAura />
         <CustomCursor />
         {introDone && <Robot />}
         <Navbar />
