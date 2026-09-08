@@ -53,6 +53,10 @@ export default function ProjectCell({ project, index, onClick }) {
 
   useEffect(() => {
     if (shots.length < 2 || paused) return undefined;
+    // On touch devices, keep a single cover — cycling filters thrash mobile GPUs.
+    if (typeof window !== "undefined" && window.matchMedia("(hover: none)").matches) {
+      return undefined;
+    }
     const id = window.setInterval(() => {
       setShot((i) => (i + 1) % shots.length);
     }, CYCLE_MS);

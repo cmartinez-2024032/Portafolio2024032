@@ -1,15 +1,29 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { projectCategories } from "../data/siteConfig";
+import ProjectCell from "./projects/ProjectCell";
 import ProjectDetail from "./projects/ProjectDetail";
 import ProjectsCarousel3D from "./projects/ProjectsCarousel3D";
 import ScrollReveal from "./ScrollReveal";
 import { useLanguage } from "../i18n/LanguageContext";
 
+function useIsMobileLayout() {
+  const [mobile, setMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 768px), (hover: none)");
+    const sync = () => setMobile(mq.matches);
+    sync();
+    mq.addEventListener?.("change", sync);
+    return () => mq.removeEventListener?.("change", sync);
+  }, []);
+  return mobile;
+}
+
 export default function Projects({ projects }) {
   const [filter, setFilter] = useState("todos");
   const [selected, setSelected] = useState(null);
   const { t } = useLanguage();
+  const isMobile = useIsMobileLayout();
 
   if (!projects || projects.length === 0) return null;
 
@@ -43,13 +57,26 @@ export default function Projects({ projects }) {
       </div>
 
       {filtered.length > 0 ? (
-        <ScrollReveal delay={0.12}>
-          <ProjectsCarousel3D
-            key={filter}
-            projects={filtered}
-            onSelect={setSelected}
-          />
-        </ScrollReveal>
+        isMobile ? (
+          <div className="projects-grid projects-grid-cinema">
+            {filtered.map((project, i) => (
+              <ProjectCell
+                key={project.id}
+                project={project}
+                index={i}
+                onClick={() => setSelected(project)}
+              />
+            ))}
+          </div>
+        ) : (
+          <ScrollReveal delay={0.12}>
+            <ProjectsCarousel3D
+              key={filter}
+              projects={filtered}
+              onSelect={setSelected}
+            />
+          </ScrollReveal>
+        )
       ) : (
         <div className="section-wrap text-center">
           <p className="text-dim-more text-sm" style={{ letterSpacing: "0.15em" }}>

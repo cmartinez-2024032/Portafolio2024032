@@ -60,7 +60,7 @@
   height: var(--ch, 134px);
   margin: 0;
   padding: 0;
-  border: 1px solid rgba(106, 168, 255, 0.35);
+  border: 1px solid rgba(122, 150, 180, 0.35);
   border-radius: 0.65rem;
   background-color: rgba(20, 24, 36, 0.92);
   background-size: cover;
@@ -80,7 +80,7 @@
   -webkit-tap-highlight-color: transparent;
   box-shadow:
     0 12px 28px rgba(0, 0, 0, 0.45),
-    0 0 20px rgba(106, 168, 255, 0.12);
+    0 0 20px rgba(122, 150, 180, 0.12);
 }
 
 .card-3d-face::after {
@@ -108,10 +108,10 @@
 
 .card-3d-face:hover,
 .card-3d-face:focus-visible {
-  border-color: rgba(106, 168, 255, 0.85);
+  border-color: rgba(122, 150, 180, 0.85);
   box-shadow:
     0 16px 36px rgba(0, 0, 0, 0.5),
-    0 0 28px rgba(106, 168, 255, 0.35);
+    0 0 28px rgba(122, 150, 180, 0.35);
   outline: none;
   z-index: 2;
   filter: brightness(1.15) !important;
@@ -135,7 +135,7 @@
   font-family: var(--font-heading, "Syne", sans-serif);
   font-size: 0.55rem;
   letter-spacing: 0.14em;
-  color: var(--color-accent-light, #9ec5ff);
+  color: var(--color-accent-light, #a7bbc9);
   opacity: 0.9;
 }
 
@@ -156,9 +156,9 @@
   inset: 0;
   display: grid;
   place-items: center;
-  color: var(--color-accent-light, #9ec5ff);
+  color: var(--color-accent-light, #a7bbc9);
   font-size: 1.6rem;
-  background: linear-gradient(160deg, rgba(106, 168, 255, 0.18), rgba(20, 24, 36, 0.95));
+  background: linear-gradient(160deg, rgba(122, 150, 180, 0.18), rgba(20, 24, 36, 0.95));
 }
 
 /* Light theme */

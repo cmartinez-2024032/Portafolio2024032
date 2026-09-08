@@ -37,10 +37,12 @@ export default function Starfield() {
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReduced) return;
 
-    // Phones/tablets: cheaper canvas (dpr 1), fewer meteors, ~30fps throttle.
+    // Phones/tablets: skip meteors entirely — big FPS win while scrolling.
     const lowPower = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
-    const maxMeteors = lowPower ? 4 : 10;
-    const frameStep = lowPower ? 33 : 0; // ms between draws (0 = every frame)
+    if (lowPower) return;
+
+    const maxMeteors = 10;
+    const frameStep = 0; // ms between draws (0 = every frame)
 
     let raf = null;
     let w = 0;

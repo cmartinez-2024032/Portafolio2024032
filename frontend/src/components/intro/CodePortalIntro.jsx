@@ -324,14 +324,17 @@ export default function CodePortalIntro({
     return () => window.removeEventListener("pointermove", onMove);
   }, [isMobile]);
 
-  // Matrix rain
+  // Matrix rain (desktop only — too heavy on phones)
   useEffect(() => {
     const canvas = rainRef.current;
     if (!canvas) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.matchMedia("(max-width: 700px), (hover: none)").matches) {
+      canvas.style.display = "none";
+      return;
+    }
 
     const ctx = canvas.getContext("2d");
-    const isMobile = window.matchMedia("(max-width: 700px)").matches;
     let w = 0;
     let h = 0;
     let cols = [];
@@ -346,7 +349,7 @@ export default function CodePortalIntro({
       canvas.width = Math.floor(w * dpr);
       canvas.height = Math.floor(h * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      fontSize = isMobile ? 12 : 15;
+      fontSize = 15;
       cols = Array.from({ length: Math.ceil(w / fontSize) }, () => Math.random() * -50);
       ctx.font = `${fontSize}px "JetBrains Mono", monospace`;
     };
@@ -362,7 +365,7 @@ export default function CodePortalIntro({
         const ch = glyphs[(Math.random() * glyphs.length) | 0];
         const x = i * fontSize;
         const y = cols[i] * fontSize;
-        ctx.fillStyle = i % 5 === 0 ? "rgba(158,197,255,0.65)" : "rgba(106,168,255,0.2)";
+        ctx.fillStyle = i % 5 === 0 ? "rgba(167,187,201,0.55)" : "rgba(122,150,180,0.18)";
         ctx.fillText(ch, x, y);
         if (y > h && Math.random() > 0.972) cols[i] = 0;
         else cols[i] += 0.18 + Math.random() * 0.28;
@@ -379,22 +382,26 @@ export default function CodePortalIntro({
     };
   }, []);
 
-  // Particle FX canvas
+  // Particle FX canvas (desktop only)
   useEffect(() => {
     const canvas = fxRef.current;
     if (!canvas) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.matchMedia("(max-width: 700px), (hover: none)").matches) {
+      canvas.style.display = "none";
+      return;
+    }
 
     const ctx = canvas.getContext("2d");
     let raf = 0;
     let disposed = false;
-    let orbs = Array.from({ length: window.matchMedia("(max-width: 700px)").matches ? 5 : 10 }, () => ({
+    let orbs = Array.from({ length: 8 }, () => ({
       x: Math.random(),
       y: Math.random(),
       r: 20 + Math.random() * 60,
       vx: (Math.random() - 0.5) * 0.0004,
       vy: (Math.random() - 0.5) * 0.00035,
-      a: 0.08 + Math.random() * 0.12,
+      a: 0.05 + Math.random() * 0.08,
     }));
 
     const resize = () => {
