@@ -24,6 +24,8 @@ export const es = {
     ],
     langAria: "Cambiar idioma",
     accentAria: "Cambiar color de acento",
+    openMenu: "Abrir menú",
+    closeMenu: "Cerrar menú",
   },
   hero: {
     eyebrow: "Disponible para oportunidades",
@@ -220,6 +222,8 @@ export const en = {
     ],
     langAria: "Switch language",
     accentAria: "Change accent color",
+    openMenu: "Open menu",
+    closeMenu: "Close menu",
   },
   hero: {
     eyebrow: "Open to opportunities",
