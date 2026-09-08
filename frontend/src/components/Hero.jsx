@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import {
-  FiArrowDown,
   FiDownload,
   FiGithub,
   FiLinkedin,
@@ -13,7 +12,6 @@ import { useLanguage } from "../i18n/LanguageContext";
 
 const TYPING_SPEED = 42;
 const EASE = [0.16, 1, 0.3, 1];
-const KEYWORDS = ["JUNIOR", "FULL-STACK", "REACT", "NODE.JS", "C# .NET", "BACKEND"];
 
 export default function Hero({ data }) {
   const { t, locale } = useLanguage();
@@ -31,7 +29,6 @@ export default function Hero({ data }) {
 
   const magPrimary = useMagnetic(14);
   const magCv = useMagnetic(14);
-  const magGhost = useMagnetic(14);
 
   const startTyping = useCallback(() => {
     let i = 0;
@@ -82,14 +79,6 @@ export default function Hero({ data }) {
       </motion.div>
 
       <motion.div className="forge-hero-copy" style={{ y: nameY, opacity: fade }}>
-        <div className="forge-hero-keywords" aria-hidden="true">
-          <div className="forge-hero-keywords-track">
-            {[...KEYWORDS, ...KEYWORDS].map((k, i) => (
-              <span key={i}>{k}</span>
-            ))}
-          </div>
-        </div>
-
         <motion.p
           className="forge-eyebrow"
           initial={{ opacity: 0, x: -24 }}
@@ -180,17 +169,6 @@ export default function Hero({ data }) {
             >
               {t.hero.ctaCv} <FiDownload size={15} />
             </motion.a>
-            <motion.button
-              ref={magGhost.ref}
-              type="button"
-              className="btn-forge btn-forge-ghost"
-              style={magGhost.style}
-              onMouseMove={magGhost.onMouseMove}
-              onMouseLeave={magGhost.onMouseLeave}
-              onClick={() => document.getElementById("intro")?.scrollIntoView({ behavior: "smooth" })}
-            >
-              {t.hero.ctaContact} <FiArrowDown size={14} />
-            </motion.button>
           </motion.div>
         )}
 
