@@ -60,7 +60,7 @@
   height: var(--ch, 134px);
   margin: 0;
   padding: 0;
-  border: 1px solid rgba(255, 45, 45, 0.35);
+  border: 1px solid rgba(232, 90, 60, 0.35);
   border-radius: 0.65rem;
   background-color: rgba(20, 24, 36, 0.92);
   background-size: cover;
@@ -80,7 +80,7 @@
   -webkit-tap-highlight-color: transparent;
   box-shadow:
     0 12px 28px rgba(0, 0, 0, 0.45),
-    0 0 20px rgba(255, 45, 45, 0.12);
+    0 0 20px rgba(232, 90, 60, 0.12);
 }
 
 .card-3d-face::after {
@@ -108,10 +108,10 @@
 
 .card-3d-face:hover,
 .card-3d-face:focus-visible {
-  border-color: rgba(255, 45, 45, 0.85);
+  border-color: rgba(232, 90, 60, 0.85);
   box-shadow:
     0 16px 36px rgba(0, 0, 0, 0.5),
-    0 0 28px rgba(255, 45, 45, 0.35);
+    0 0 28px rgba(232, 90, 60, 0.35);
   outline: none;
   z-index: 2;
   filter: brightness(1.15) !important;
@@ -135,7 +135,7 @@
   font-family: var(--font-heading, "Syne", sans-serif);
   font-size: 0.55rem;
   letter-spacing: 0.14em;
-  color: var(--color-accent-light, #ff5a5a);
+  color: var(--color-accent-light, #ff7a5c);
   opacity: 0.9;
 }
 
@@ -156,9 +156,9 @@
   inset: 0;
   display: grid;
   place-items: center;
-  color: var(--color-accent-light, #ff5a5a);
+  color: var(--color-accent-light, #ff7a5c);
   font-size: 1.6rem;
-  background: linear-gradient(160deg, rgba(255, 45, 45, 0.18), rgba(20, 24, 36, 0.95));
+  background: linear-gradient(160deg, rgba(232, 90, 60, 0.18), rgba(20, 24, 36, 0.95));
 }
 
 /* Light theme */
@@ -167,18 +167,18 @@ html[data-theme="light"] .projects-orbit-hint {
 }
 
 html[data-theme="light"] .card-3d-face {
-  border-color: rgba(227, 28, 35, 0.35);
+  border-color: rgba(196, 67, 42, 0.35);
   box-shadow:
     0 14px 30px rgba(20, 21, 26, 0.18),
-    0 0 18px rgba(227, 28, 35, 0.12);
+    0 0 18px rgba(196, 67, 42, 0.12);
 }
 
 html[data-theme="light"] .card-3d-face:hover,
 html[data-theme="light"] .card-3d-face:focus-visible {
-  border-color: rgba(227, 28, 35, 0.7);
+  border-color: rgba(196, 67, 42, 0.7);
   box-shadow:
     0 16px 36px rgba(20, 21, 26, 0.22),
-    0 0 24px rgba(227, 28, 35, 0.28);
+    0 0 24px rgba(196, 67, 42, 0.28);
 }
 
 /* Mobile */

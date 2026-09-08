@@ -16,7 +16,7 @@ function readStoredTheme() {
 function applyTheme(theme) {
   document.documentElement.dataset.theme = theme;
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute("content", theme === "light" ? "#f2f2f0" : "#1c1c1c");
+  if (meta) meta.setAttribute("content", theme === "light" ? "#faf7f2" : "#2a241f");
 }
 
 export function ThemeProvider({ children }) {

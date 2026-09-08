@@ -88,9 +88,9 @@ export default function Starfield() {
         const tailY = m.y - m.vy * 5.5;
 
         const grad = ctx.createLinearGradient(tailX, tailY, m.x, m.y);
-        grad.addColorStop(0, "rgba(255,45,45,0)");
-        grad.addColorStop(0.55, `rgba(255,45,45,${0.25 * fade})`);
-        grad.addColorStop(1, `rgba(255,255,255,${0.75 * fade})`);
+        grad.addColorStop(0, "rgba(232,90,60,0)");
+        grad.addColorStop(0.55, `rgba(232,90,60,${0.22 * fade})`);
+        grad.addColorStop(1, `rgba(255,247,242,${0.7 * fade})`);
 
         ctx.strokeStyle = grad;
         ctx.lineWidth = m.width;
@@ -102,12 +102,12 @@ export default function Starfield() {
 
         ctx.beginPath();
         ctx.arc(m.x, m.y, 1.4, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255,255,255,${fade * 0.85})`;
+        ctx.fillStyle = `rgba(255,247,242,${fade * 0.8})`;
         ctx.fill();
 
         ctx.beginPath();
         ctx.arc(m.x, m.y, 3.2, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255,45,45,${fade * 0.15})`;
+        ctx.fillStyle = `rgba(232,90,60,${fade * 0.12})`;
         ctx.fill();
       }
     }
