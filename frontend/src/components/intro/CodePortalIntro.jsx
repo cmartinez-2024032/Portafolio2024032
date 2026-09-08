@@ -5,12 +5,12 @@ import "./code-portal.css";
 const STORAGE_KEY = "forge-portal-seen";
 
 const MODULES = [
-  { id: "react", label: "React", hue: 32 },
-  { id: "node", label: "Node", hue: 28 },
-  { id: "dotnet", label: ".NET", hue: 36 },
-  { id: "sql", label: "SQL", hue: 24 },
-  { id: "three", label: "Three", hue: 40 },
-  { id: "api", label: "API", hue: 30 },
+  { id: "react", label: "React", hue: 162 },
+  { id: "node", label: "Node", hue: 155 },
+  { id: "dotnet", label: ".NET", hue: 168 },
+  { id: "sql", label: "SQL", hue: 148 },
+  { id: "three", label: "Three", hue: 172 },
+  { id: "api", label: "API", hue: 158 },
 ];
 
 /**
@@ -75,7 +75,7 @@ export default function CodePortalIntro({
     }, 1600 * (returning ? 0.7 : 1));
   }, [returning]);
 
-  const spawnBurst = useCallback((x = 0.5, y = 0.45, color = "#c08a4f") => {
+  const spawnBurst = useCallback((x = 0.5, y = 0.45, color = "#3d8b74") => {
     burstsRef.current.push({
       x,
       y,
@@ -94,7 +94,7 @@ export default function CodePortalIntro({
       if (!moduleId) return;
       setActiveModules((prev) => new Set([...prev, moduleId]));
       const mod = MODULES.find((m) => m.id === moduleId);
-      spawnBurst(0.52, 0.58, `hsl(${mod?.hue ?? 32} 42% 55%)`);
+      spawnBurst(0.52, 0.58, `hsl(${mod?.hue ?? 162} 38% 48%)`);
       pushToast(`${mod?.label ?? moduleId} online`);
       setScanKick((k) => k + 1);
     },
@@ -108,9 +108,9 @@ export default function CodePortalIntro({
     setExiting(true);
     setProgress(100);
     setGlitch(true);
-    spawnBurst(0.5, 0.5, "#d4a574");
-    spawnBurst(0.35, 0.4, "#c08a4f");
-    spawnBurst(0.65, 0.55, "#9aaf8c");
+    spawnBurst(0.5, 0.5, "#6aada0");
+    spawnBurst(0.35, 0.4, "#3d8b74");
+    spawnBurst(0.65, 0.55, "#7eb89a");
     try {
       sessionStorage.setItem(STORAGE_KEY, "1");
     } catch {
@@ -182,21 +182,20 @@ export default function CodePortalIntro({
   // Phase machine timers — same on phone & desktop
   useEffect(() => {
     if (phase === "splash") {
-      // Hold the CM mark longer before CRT power-on
-      const t = window.setTimeout(() => setPhase("power"), 3400 * slow);
+      const t = window.setTimeout(() => setPhase("power"), 1800 * slow);
       return () => window.clearTimeout(t);
     }
     if (phase === "power") {
-      const t = window.setTimeout(() => setPhase("boot"), 900 * slow);
+      const t = window.setTimeout(() => setPhase("boot"), 480 * slow);
       return () => window.clearTimeout(t);
     }
     if (phase === "sync") {
       setGlitch(true);
       setActiveModules(new Set(MODULES.map((m) => m.id)));
-      spawnBurst(0.5, 0.5, "#c08a4f");
+      spawnBurst(0.5, 0.5, "#3d8b74");
       pushToast(t.portal.syncToast);
-      const a = window.setTimeout(() => setGlitch(false), 400 * slow);
-      const b = window.setTimeout(() => setPhase("compile"), 900 * slow);
+      const a = window.setTimeout(() => setGlitch(false), 220 * slow);
+      const b = window.setTimeout(() => setPhase("compile"), 480 * slow);
       return () => {
         window.clearTimeout(a);
         window.clearTimeout(b);
@@ -206,11 +205,11 @@ export default function CodePortalIntro({
       setGlitch(true);
       setProgress(96);
       pushToast(t.portal.buildToast);
-      const a = window.setTimeout(() => setProgress(100), 400 * slow);
+      const a = window.setTimeout(() => setProgress(100), 220 * slow);
       const b = window.setTimeout(() => {
         setGlitch(false);
         setPhase("launch");
-      }, 900 * slow);
+      }, 520 * slow);
       return () => {
         window.clearTimeout(a);
         window.clearTimeout(b);
@@ -222,12 +221,12 @@ export default function CodePortalIntro({
       const id = window.setInterval(() => {
         n -= 1;
         setCountdown(n);
-        spawnBurst(0.5, 0.42, n <= 0 ? "#9aaf8c" : "#d4a574");
+        spawnBurst(0.5, 0.42, n <= 0 ? "#7eb89a" : "#6aada0");
         if (n <= 0) {
           window.clearInterval(id);
-          window.setTimeout(finish, 1100 * slow);
+          window.setTimeout(finish, 550 * slow);
         }
-      }, 1300 * slow);
+      }, 650 * slow);
       return () => window.clearInterval(id);
     }
     return undefined;
@@ -242,21 +241,21 @@ export default function CodePortalIntro({
     }
 
     const entry = script[lineIndex];
-    const speed = returning ? 7 : entry.speed ?? 12;
+    const speed = returning ? 4 : Math.max(3, Math.round((entry.speed ?? 12) * 0.45));
     let i = 0;
     let raf = 0;
     let last = performance.now();
-    const delay = returning ? 45 : entry.delay ?? 90;
+    const delay = returning ? 20 : Math.max(25, Math.round((entry.delay ?? 90) * 0.4));
 
     const startTimer = window.setTimeout(() => {
       const tick = (now) => {
         if (now - last >= speed) {
           last = now;
           const step = entry.burst
-            ? Math.min(6, entry.text.length - i)
+            ? Math.min(8, entry.text.length - i)
             : entry.kind === "cmd"
-              ? 2
-              : 1;
+              ? 3
+              : 2;
           i = Math.min(entry.text.length, i + step);
           setTyped(entry.text.slice(0, i));
           if (i >= entry.text.length) {
@@ -365,7 +364,7 @@ export default function CodePortalIntro({
         const ch = glyphs[(Math.random() * glyphs.length) | 0];
         const x = i * fontSize;
         const y = cols[i] * fontSize;
-        ctx.fillStyle = i % 5 === 0 ? "rgba(212, 165, 116,0.55)" : "rgba(192, 138, 79,0.18)";
+        ctx.fillStyle = i % 5 === 0 ? "rgba(106, 173, 160,0.55)" : "rgba(61, 139, 116,0.18)";
         ctx.fillText(ch, x, y);
         if (y > h && Math.random() > 0.972) cols[i] = 0;
         else cols[i] += 0.18 + Math.random() * 0.28;
@@ -424,8 +423,8 @@ export default function CodePortalIntro({
         if (o.x < -0.1 || o.x > 1.1) o.vx *= -1;
         if (o.y < -0.1 || o.y > 1.1) o.vy *= -1;
         const g = ctx.createRadialGradient(o.x * w, o.y * h, 0, o.x * w, o.y * h, o.r);
-        g.addColorStop(0, `rgba(192, 138, 79,${o.a})`);
-        g.addColorStop(1, "rgba(192, 138, 79,0)");
+        g.addColorStop(0, `rgba(61, 139, 116,${o.a})`);
+        g.addColorStop(1, "rgba(61, 139, 116,0)");
         ctx.fillStyle = g;
         ctx.beginPath();
         ctx.arc(o.x * w, o.y * h, o.r, 0, Math.PI * 2);
