@@ -48,8 +48,13 @@ export default function CodePortalIntro({
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [wave, setWave] = useState(() => Array.from({ length: 16 }, () => 0.2));
 
+  const [toasts, setToasts] = useState([]);
+  const [scanKick, setScanKick] = useState(0);
+  const toastId = useRef(0);
+
   const script = useMemo(() => buildScript(name, t, locale, returning), [name, t, locale, returning]);
   const circumference = 2 * Math.PI * 54;
+  const slow = returning ? 0.55 : 1;
 
   useEffect(() => {
     lineIndexRef.current = lineIndex;
@@ -58,19 +63,39 @@ export default function CodePortalIntro({
     phaseRef.current = phase;
   }, [phase]);
 
+  const pushToast = useCallback((label) => {
+    const id = ++toastId.current;
+    setToasts((prev) => [...prev.slice(-3), { id, label }]);
+    window.setTimeout(() => {
+      setToasts((prev) => prev.filter((x) => x.id !== id));
+    }, 2200 * (returning ? 0.7 : 1));
+  }, [returning]);
+
   const spawnBurst = useCallback((x = 0.5, y = 0.45, color = "#6aa8ff") => {
     burstsRef.current.push({
       x,
       y,
       color,
       life: 1,
-      seeds: Array.from({ length: 18 }, () => ({
+      seeds: Array.from({ length: 26 }, () => ({
         a: Math.random() * Math.PI * 2,
-        s: 40 + Math.random() * 120,
-        r: 1 + Math.random() * 2.5,
+        s: 50 + Math.random() * 150,
+        r: 1.2 + Math.random() * 3,
       })),
     });
   }, []);
+
+  const unlockModule = useCallback(
+    (moduleId) => {
+      if (!moduleId) return;
+      setActiveModules((prev) => new Set([...prev, moduleId]));
+      const mod = MODULES.find((m) => m.id === moduleId);
+      spawnBurst(0.52, 0.58, `hsl(${mod?.hue ?? 200} 90% 65%)`);
+      pushToast(`${mod?.label ?? moduleId} online`);
+      setScanKick((k) => k + 1);
+    },
+    [spawnBurst, pushToast],
+  );
 
   const finish = useCallback(() => {
     if (completingRef.current) return;
@@ -85,7 +110,7 @@ export default function CodePortalIntro({
     } catch {
       /* ignore */
     }
-    window.setTimeout(() => onComplete?.(), 1500);
+    window.setTimeout(() => onComplete?.(), 1900);
   }, [onComplete, spawnBurst]);
 
   const skipAll = useCallback(() => {
@@ -97,7 +122,7 @@ export default function CodePortalIntro({
     setProgress(100);
     setActiveModules(new Set(MODULES.map((m) => m.id)));
     setCountdown(null);
-    window.setTimeout(finish, 320);
+    window.setTimeout(finish, 480);
   }, [script, finish]);
 
   // Boot + keyboard
@@ -132,11 +157,7 @@ export default function CodePortalIntro({
           setTyped("");
           setLineIndex(idx + 1);
           setProgress((prev) => Math.min(94, prev + 100 / (script.length + 2)));
-          if (current.module) {
-            setActiveModules((prev) => new Set([...prev, current.module]));
-            const mod = MODULES.find((m) => m.id === current.module);
-            spawnBurst(0.5 + (Math.random() * 0.2 - 0.1), 0.55, `hsl(${mod?.hue ?? 200} 90% 65%)`);
-          }
+          unlockModule(current.module);
           setFlashLine(idx);
         } else if (p === "boot") {
           setPhase("sync");
@@ -154,24 +175,25 @@ export default function CodePortalIntro({
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
     };
-  }, [finish, skipAll, script, spawnBurst]);
+  }, [finish, skipAll, script, unlockModule]);
 
-  // Phase machine timers
+  // Phase machine timers (slowed down)
   useEffect(() => {
     if (phase === "splash") {
-      const t = window.setTimeout(() => setPhase("power"), returning ? 350 : 1100);
+      const t = window.setTimeout(() => setPhase("power"), 2200 * slow);
       return () => window.clearTimeout(t);
     }
     if (phase === "power") {
-      const t = window.setTimeout(() => setPhase("boot"), returning ? 280 : 900);
+      const t = window.setTimeout(() => setPhase("boot"), 1600 * slow);
       return () => window.clearTimeout(t);
     }
     if (phase === "sync") {
       setGlitch(true);
       setActiveModules(new Set(MODULES.map((m) => m.id)));
       spawnBurst(0.5, 0.5, "#6aa8ff");
-      const a = window.setTimeout(() => setGlitch(false), 400);
-      const b = window.setTimeout(() => setPhase("compile"), returning ? 450 : 900);
+      pushToast(t.portal.syncToast);
+      const a = window.setTimeout(() => setGlitch(false), 700 * slow);
+      const b = window.setTimeout(() => setPhase("compile"), 2000 * slow);
       return () => {
         window.clearTimeout(a);
         window.clearTimeout(b);
@@ -180,11 +202,12 @@ export default function CodePortalIntro({
     if (phase === "compile") {
       setGlitch(true);
       setProgress(96);
-      const a = window.setTimeout(() => setProgress(100), 400);
+      pushToast(t.portal.buildToast);
+      const a = window.setTimeout(() => setProgress(100), 900 * slow);
       const b = window.setTimeout(() => {
         setGlitch(false);
         setPhase("launch");
-      }, returning ? 600 : 1100);
+      }, 2200 * slow);
       return () => {
         window.clearTimeout(a);
         window.clearTimeout(b);
@@ -199,15 +222,15 @@ export default function CodePortalIntro({
         spawnBurst(0.5, 0.42, n <= 0 ? "#9af0c7" : "#9ec5ff");
         if (n <= 0) {
           window.clearInterval(id);
-          finish();
+          window.setTimeout(finish, 700 * slow);
         }
-      }, returning ? 280 : 420);
+      }, 900 * slow);
       return () => window.clearInterval(id);
     }
     return undefined;
-  }, [phase, returning, finish, spawnBurst]);
+  }, [phase, slow, finish, spawnBurst, pushToast, t.portal.syncToast, t.portal.buildToast]);
 
-  // Typing
+  // Typing (slower)
   useEffect(() => {
     if (phase !== "boot") return;
     if (lineIndex >= script.length) {
@@ -216,17 +239,17 @@ export default function CodePortalIntro({
     }
 
     const entry = script[lineIndex];
-    const speed = returning ? 6 : entry.speed ?? 18;
+    const speed = (returning ? 14 : entry.speed ?? 38) ;
     let i = 0;
     let raf = 0;
     let last = performance.now();
-    const delay = entry.delay ?? (returning ? 50 : 140);
+    const delay = (returning ? 120 : entry.delay ?? 320);
 
     const startTimer = window.setTimeout(() => {
       const tick = (now) => {
         if (now - last >= speed) {
           last = now;
-          i += entry.burst ? Math.min(4, entry.text.length - i) : 1;
+          i += entry.burst ? Math.min(2, entry.text.length - i) : 1;
           setTyped(entry.text.slice(0, i));
           if (i >= entry.text.length) {
             setLines((prev) => [...prev, entry]);
@@ -234,14 +257,10 @@ export default function CodePortalIntro({
             setLineIndex((idx) => idx + 1);
             setProgress((p) => Math.min(90, p + 100 / (script.length + 1)));
             setFlashLine(lineIndex);
-            if (entry.module) {
-              setActiveModules((prev) => new Set([...prev, entry.module]));
-              const mod = MODULES.find((m) => m.id === entry.module);
-              spawnBurst(0.52, 0.58, `hsl(${mod?.hue ?? 200} 90% 65%)`);
-            }
+            unlockModule(entry.module);
             if (entry.glitch) {
               setGlitch(true);
-              window.setTimeout(() => setGlitch(false), 260);
+              window.setTimeout(() => setGlitch(false), 420);
             }
             return;
           }
@@ -255,7 +274,7 @@ export default function CodePortalIntro({
       window.clearTimeout(startTimer);
       cancelAnimationFrame(raf);
     };
-  }, [lineIndex, script, phase, returning, spawnBurst]);
+  }, [lineIndex, script, phase, returning, unlockModule]);
 
   // Telemetry + waveform
   useEffect(() => {
@@ -326,7 +345,7 @@ export default function CodePortalIntro({
         ctx.fillStyle = i % 5 === 0 ? "rgba(158,197,255,0.65)" : "rgba(106,168,255,0.2)";
         ctx.fillText(ch, x, y);
         if (y > h && Math.random() > 0.972) cols[i] = 0;
-        else cols[i] += 0.32 + Math.random() * 0.55;
+        else cols[i] += 0.18 + Math.random() * 0.28;
       }
     };
 
@@ -388,7 +407,7 @@ export default function CodePortalIntro({
 
       burstsRef.current = burstsRef.current.filter((b) => b.life > 0);
       for (const b of burstsRef.current) {
-        b.life -= 0.03;
+        b.life -= 0.018;
         for (const s of b.seeds) {
           const px = b.x * w + Math.cos(s.a) * s.s * (1 - b.life);
           const py = b.y * h + Math.sin(s.a) * s.s * (1 - b.life);
@@ -466,6 +485,39 @@ export default function CodePortalIntro({
         <span />
       </div>
       <div className="code-portal-hex" aria-hidden="true" />
+      <div className="code-portal-noise" aria-hidden="true" />
+      <div className="code-floaters" aria-hidden="true">
+        <span style={{ "--d": "0s" }}>const forge = true;</span>
+        <span style={{ "--d": "1.2s" }}>await loadIdentity()</span>
+        <span style={{ "--d": "2.4s" }}>export default Hero</span>
+        <span style={{ "--d": "0.6s" }}>{"{ status: \"ok\" }"}</span>
+        <span style={{ "--d": "1.8s" }}>npm run build</span>
+        <span style={{ "--d": "3s" }}>TLS handshake ✓</span>
+      </div>
+      <div className="code-ticker" aria-hidden="true">
+        <div className="code-ticker-track">
+          <span>FORGE RUNTIME</span>
+          <span>SECURE BOOT</span>
+          <span>CM · PORTFOLIO</span>
+          <span>FULL-STACK</span>
+          <span>REACT · NODE · .NET</span>
+          <span>ZERO ERRORS</span>
+          <span>FORGE RUNTIME</span>
+          <span>SECURE BOOT</span>
+          <span>CM · PORTFOLIO</span>
+          <span>FULL-STACK</span>
+          <span>REACT · NODE · .NET</span>
+          <span>ZERO ERRORS</span>
+        </div>
+      </div>
+      <div className="code-toasts" aria-live="polite">
+        {toasts.map((toast) => (
+          <div key={toast.id} className="code-toast">
+            <i />
+            {toast.label}
+          </div>
+        ))}
+      </div>
       <div className="code-portal-wipe" aria-hidden="true" />
       <div className="code-portal-flash" aria-hidden="true" />
       <div className="code-portal-shards" aria-hidden="true">
@@ -556,6 +608,9 @@ export default function CodePortalIntro({
             <span className="code-corner c-tr" />
             <span className="code-corner c-bl" />
             <span className="code-corner c-br" />
+            <div className="code-watermark" aria-hidden="true">
+              {pct}
+            </div>
 
             <svg className="code-ring" viewBox="0 0 120 120" aria-hidden="true">
               <circle cx="60" cy="60" r="54" className="code-ring-bg" />
@@ -579,18 +634,38 @@ export default function CodePortalIntro({
                 <span className={`code-portal-badge is-${String(badge).toLowerCase()}`}>{badge}</span>
               </div>
 
+              <div className="code-tabs" aria-hidden="true">
+                <span className="is-active">boot.log</span>
+                <span>stack.json</span>
+                <span>hero.jsx</span>
+              </div>
+
               <div className="code-portal-body" ref={bodyRef} role="log" aria-live="polite">
+                <div key={scanKick} className="code-scanbar" aria-hidden="true" />
                 {lines.map((line, idx) => (
                   <TerminalLine
                     key={`${idx}-${line.text.slice(0, 18)}`}
                     line={line}
                     flash={flashLine === idx}
+                    stamp={`0:${String(Math.min(59, idx + 1)).padStart(2, "0")}`}
                   />
                 ))}
                 {current && phase === "boot" && (
-                  <TerminalLine line={{ ...current, text: typed || "" }} caret />
+                  <TerminalLine
+                    line={{ ...current, text: typed || "" }}
+                    caret
+                    stamp={`0:${String(Math.min(59, lineIndex + 1)).padStart(2, "0")}`}
+                  />
                 )}
-                {(phase === "sync" || phase === "compile" || phase === "launch") && (
+                {phase === "sync" && (
+                  <p className="code-line code-line--info code-line--burst">
+                    <span className="code-prefix">
+                      <span className="code-spinner" />
+                    </span>
+                    <span>{t.portal.syncing} hologram mesh…</span>
+                  </p>
+                )}
+                {(phase === "compile" || phase === "launch") && (
                   <p className="code-line code-line--ok code-line--burst">
                     <span className="code-prefix">✔</span>
                     <span>{t.portal.compileOk}</span>
@@ -621,16 +696,39 @@ export default function CodePortalIntro({
           </div>
 
           <div className="code-modules" aria-hidden="true">
-            {MODULES.map((mod) => (
+            {MODULES.map((mod, i) => (
               <span
                 key={mod.id}
                 className={`code-module ${activeModules.has(mod.id) ? "is-on" : ""}`}
-                style={{ "--mod-hue": mod.hue }}
+                style={{ "--mod-hue": mod.hue, "--mi": i }}
               >
                 <i />
                 {mod.label}
               </span>
             ))}
+          </div>
+
+          <div className="code-phase-rail" aria-hidden="true">
+            {[
+              { label: "INIT", phases: ["splash", "power"] },
+              { label: "BOOT", phases: ["boot"] },
+              { label: "SYNC", phases: ["sync"] },
+              { label: "BUILD", phases: ["compile"] },
+              { label: "GO", phases: ["launch", "wipe"] },
+            ].map((step, i, arr) => {
+              const order = ["splash", "power", "boot", "sync", "compile", "launch", "wipe"];
+              const active = step.phases.includes(phase);
+              const phaseIdx = order.indexOf(phase);
+              const stepIdx = order.indexOf(step.phases[0]);
+              const done = phaseIdx > stepIdx + (step.phases.length - 1);
+              return (
+                <div key={step.label} className={`code-phase-step ${active ? "is-active" : ""} ${done ? "is-done" : ""}`}>
+                  <b />
+                  <span>{step.label}</span>
+                  {i < arr.length - 1 && <em />}
+                </div>
+              );
+            })}
           </div>
 
           <p className="code-portal-hint">{t.portal.hint}</p>
@@ -680,10 +778,11 @@ function HudMeter({ label, value, tone }) {
   );
 }
 
-function TerminalLine({ line, caret = false, flash = false }) {
+function TerminalLine({ line, caret = false, flash = false, stamp }) {
   const kind = line.kind || "cmd";
   return (
     <p className={`code-line code-line--${kind} ${flash ? "is-flash" : ""} ${caret ? "is-typing" : ""}`}>
+      {stamp != null && <span className="code-stamp">{stamp}</span>}
       {kind === "cmd" && <span className="code-prompt">{line.prompt || "$"}</span>}
       {kind === "out" && <span className="code-prefix">→</span>}
       {kind === "ok" && <span className="code-prefix">✔</span>}
@@ -719,39 +818,39 @@ function buildScript(name, t, _locale, returning) {
 
   if (returning) {
     return [
-      { kind: "info", text: L.restore, speed: 7, delay: 30 },
-      { kind: "cmd", text: "forge resume --session portfolio", speed: 7, delay: 25 },
-      { kind: "out", text: L.restoreOk, speed: 6, delay: 25 },
-      { kind: "cmd", text: "hydrate modules --hot", speed: 7, delay: 25, module: "react" },
-      { kind: "ok", text: L.ready, speed: 6, delay: 25 },
-      { kind: "cmd", text: "launch --target hero", speed: 7, delay: 25 },
+      { kind: "info", text: L.restore, speed: 16, delay: 90 },
+      { kind: "cmd", text: "forge resume --session portfolio", speed: 16, delay: 80 },
+      { kind: "out", text: L.restoreOk, speed: 14, delay: 80 },
+      { kind: "cmd", text: "hydrate modules --hot", speed: 16, delay: 80, module: "react" },
+      { kind: "ok", text: L.ready, speed: 14, delay: 80 },
+      { kind: "cmd", text: "launch --target hero", speed: 16, delay: 80 },
     ];
   }
 
   return [
-    { kind: "info", text: L.banner, speed: 11, delay: 100 },
-    { kind: "dim", text: L.kernel, speed: 8, delay: 60, burst: true },
-    { kind: "cmd", text: "forge init portfolio --secure", speed: 18, delay: 160 },
-    { kind: "out", text: L.init, speed: 10, delay: 70 },
-    { kind: "cmd", text: `load identity --user "${n}"`, speed: 14, delay: 130 },
-    { kind: "ok", text: L.identity, speed: 9, delay: 60 },
-    { kind: "cmd", text: "mount ./stack --watch", speed: 14, delay: 120, module: "react" },
-    { kind: "out", text: L.mount, speed: 9, delay: 55 },
-    { kind: "cmd", text: "import skills --from stack.json", speed: 13, delay: 120, module: "node" },
-    { kind: "out", text: L.skills, speed: 9, delay: 55, module: "dotnet" },
-    { kind: "cmd", text: "link database --engine sql", speed: 13, delay: 110, module: "sql" },
-    { kind: "ok", text: L.db, speed: 9, delay: 55 },
-    { kind: "cmd", text: "compile projects --release --optimize", speed: 12, delay: 120, module: "api", glitch: true },
-    { kind: "out", text: L.projects, speed: 9, delay: 55 },
-    { kind: "warn", text: L.warn, speed: 10, delay: 60 },
-    { kind: "cmd", text: "inject motion --lib three", speed: 12, delay: 100, module: "three" },
-    { kind: "ok", text: L.motion, speed: 9, delay: 55 },
-    { kind: "cmd", text: "audit security --quiet", speed: 12, delay: 100 },
-    { kind: "ok", text: L.audit, speed: 9, delay: 55 },
-    { kind: "cmd", text: "sync hologram --quality ultra", speed: 12, delay: 100, glitch: true },
-    { kind: "ok", text: L.hologram, speed: 9, delay: 60 },
-    { kind: "cmd", text: "launch --target hero --open", speed: 12, delay: 120 },
-    { kind: "ok", text: L.ready, speed: 9, delay: 70 },
+    { kind: "info", text: L.banner, speed: 28, delay: 420 },
+    { kind: "dim", text: L.kernel, speed: 18, delay: 280, burst: true },
+    { kind: "cmd", text: "forge init portfolio --secure", speed: 40, delay: 480 },
+    { kind: "out", text: L.init, speed: 24, delay: 260 },
+    { kind: "cmd", text: `load identity --user "${n}"`, speed: 36, delay: 420 },
+    { kind: "ok", text: L.identity, speed: 22, delay: 240 },
+    { kind: "cmd", text: "mount ./stack --watch", speed: 36, delay: 400, module: "react" },
+    { kind: "out", text: L.mount, speed: 22, delay: 220 },
+    { kind: "cmd", text: "import skills --from stack.json", speed: 34, delay: 400, module: "node" },
+    { kind: "out", text: L.skills, speed: 22, delay: 220, module: "dotnet" },
+    { kind: "cmd", text: "link database --engine sql", speed: 34, delay: 380, module: "sql" },
+    { kind: "ok", text: L.db, speed: 22, delay: 220 },
+    { kind: "cmd", text: "compile projects --release --optimize", speed: 32, delay: 420, module: "api", glitch: true },
+    { kind: "out", text: L.projects, speed: 22, delay: 240 },
+    { kind: "warn", text: L.warn, speed: 26, delay: 280 },
+    { kind: "cmd", text: "inject motion --lib three", speed: 32, delay: 380, module: "three" },
+    { kind: "ok", text: L.motion, speed: 22, delay: 220 },
+    { kind: "cmd", text: "audit security --quiet", speed: 32, delay: 380 },
+    { kind: "ok", text: L.audit, speed: 22, delay: 220 },
+    { kind: "cmd", text: "sync hologram --quality ultra", speed: 32, delay: 400, glitch: true },
+    { kind: "ok", text: L.hologram, speed: 22, delay: 260 },
+    { kind: "cmd", text: "launch --target hero --open", speed: 34, delay: 450 },
+    { kind: "ok", text: L.ready, speed: 22, delay: 300 },
   ];
 }
 

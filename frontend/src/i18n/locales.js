@@ -21,6 +21,8 @@ export const es = {
     online: "System online",
     tagline: "Junior Full-Stack · Forge Runtime",
     secure: "TLS · sealed",
+    syncToast: "Mesh sync started",
+    buildToast: "Release build locked",
     sys: "Sistema",
     pipeline: "Pipeline",
     pipelineSteps: [
@@ -260,6 +262,8 @@ export const en = {
     online: "System online",
     tagline: "Junior Full-Stack · Forge Runtime",
     secure: "TLS · sealed",
+    syncToast: "Mesh sync started",
+    buildToast: "Release build locked",
     sys: "System",
     pipeline: "Pipeline",
     pipelineSteps: [
