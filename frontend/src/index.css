@@ -2783,34 +2783,36 @@ section[id] { scroll-margin-top: 5.5rem; }
   100% { transform: translateX(-50%); }
 }
 
-/* Photo: compact circular portrait */
+/* Photo: larger circular portrait, centered in its column */
 .forge-hero-media {
   position: relative;
   z-index: 1;
-  width: min(52vw, 210px);
-  height: min(52vw, 210px);
-  margin: 5.75rem auto 0;
+  width: min(68vw, 260px);
+  height: min(68vw, 260px);
+  margin: 5.75rem auto 0.75rem;
+  justify-self: center;
   border-radius: 50%;
   overflow: hidden;
   border: 1px solid rgba(106, 168, 255, 0.45);
   box-shadow:
-    0 0 0 8px rgba(6, 8, 13, 0.55),
-    0 0 36px rgba(106, 168, 255, 0.18),
-    0 22px 50px -18px rgba(0, 0, 0, 0.75);
+    0 0 0 10px rgba(6, 8, 13, 0.55),
+    0 0 48px rgba(106, 168, 255, 0.22),
+    0 28px 60px -18px rgba(0, 0, 0, 0.8);
 }
 @media (min-width: 960px) {
   .forge-hero-media {
     order: 2;
-    width: min(28vw, 280px);
-    height: min(28vw, 280px);
-    margin: auto 3.5rem auto auto;
+    width: min(36vw, 380px);
+    height: min(36vw, 380px);
+    margin: auto;
     align-self: center;
+    justify-self: center;
   }
 }
 
 .forge-hero-media-frame {
   position: absolute;
-  inset: 0.55rem;
+  inset: 0.7rem;
   z-index: 2;
   border: 1px solid rgba(106, 168, 255, 0.28);
   border-radius: 50%;
@@ -2826,7 +2828,7 @@ section[id] { scroll-margin-top: 5.5rem; }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 18%;
+  object-position: center 22%;
   /* Photo stays natural — no accent tint / grayscale cast */
   filter: none;
   transform: scale(1.02);
@@ -2841,7 +2843,7 @@ section[id] { scroll-margin-top: 5.5rem; }
   align-items: center;
   justify-content: center;
   font-family: var(--font-heading);
-  font-size: 3.5rem;
+  font-size: 4.5rem;
   color: var(--color-accent);
   background: var(--color-surf);
   border-radius: 50%;
@@ -3716,9 +3718,9 @@ html, body {
   .project-cell-featured .project-stage { min-height: 210px; }
   .project-stage-deck { display: none; }
   .forge-hero-media {
-    width: min(46vw, 180px);
-    height: min(46vw, 180px);
-    margin: 5.25rem auto 0;
+    width: min(62vw, 240px);
+    height: min(62vw, 240px);
+    margin: 5.5rem auto 0.5rem;
   }
   .forge-hero-copy { padding: 1.5rem 1.1rem 5.5rem; }
   .contact-form { padding: 1.25rem 1rem 1.2rem; margin-top: 1.75rem; }
@@ -3739,8 +3741,8 @@ html, body {
 }
 @media (min-width: 640px) and (max-width: 959px) {
   .forge-hero-media {
-    width: min(40vw, 220px);
-    height: min(40vw, 220px);
+    width: min(52vw, 300px);
+    height: min(52vw, 300px);
   }
   .projects-grid-cinema { grid-template-columns: repeat(2, 1fr); }
 }
