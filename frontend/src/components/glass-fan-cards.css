@@ -103,13 +103,13 @@ html[data-theme="light"] .glass-fan-card {
   border-color: var(--color-accent);
   box-shadow: 0 20px 40px transparent,
     0 0 24px transparent;
-  color: #000000;
+  color: #121212;
 }
 
 html[data-theme="light"] .glass-fan-card::before {
   background: transparent;
   border-top-color: var(--color-accent);
-  color: #000000;
+  color: #121212;
 }
 
 html[data-theme="light"] .glass-fan-icon {

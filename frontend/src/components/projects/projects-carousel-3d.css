@@ -154,7 +154,7 @@
 
 /* Light theme */
 html[data-theme="light"] .projects-orbit-hint {
-  color: #000000;
+  color: #121212;
 }
 
 html[data-theme="light"] .card-3d-face {

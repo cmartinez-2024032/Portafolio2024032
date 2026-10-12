@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { useLanguage } from "../../i18n/LanguageContext";
 import "./code-portal.css";
 import "./code-portal-polish.css";
+import "./code-portal-colors.css";
 
 const STORAGE_KEY = "forge-portal-seen";
 

@@ -46,8 +46,8 @@ function Robot() {
         >
           <defs>
             <linearGradient id="robot-shell-gradient" x1="16" y1="12" x2="112" y2="128">
-              <stop offset="0" stopColor="#000000" />
-              <stop offset="1" stopColor="#000000" />
+              <stop offset="0" stopColor="#121212" />
+              <stop offset="1" stopColor="#121212" />
             </linearGradient>
             <linearGradient id="robot-edge-gradient" x1="20" y1="18" x2="108" y2="120">
               <stop offset="0" stopColor="#ffffff" />
