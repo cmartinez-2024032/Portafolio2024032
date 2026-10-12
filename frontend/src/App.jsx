@@ -12,7 +12,7 @@ import Achievements from "./components/Achievements";
 import CustomCursor from "./components/CustomCursor";
 import Robot from "./components/robot/Robot";
 import Starfield from "./components/background/Starfield";
-import CodePortalIntro, { hasSeenPortal, clearPortalSeen } from "./components/intro/CodePortalIntro";
+import CodeToPageIntro, { hasSeenPortal, clearPortalSeen } from "./components/intro/CodeToPageIntro";
 import { usePortfolioData } from "./hooks/useDataFetching";
 import { useLanguage } from "./i18n/LanguageContext";
 
@@ -133,8 +133,8 @@ export default function App() {
   return (
     <>
       {!introDone && (
-        <CodePortalIntro
-          name={data.personal?.name}
+        <CodeToPageIntro
+          personal={data.personal}
           returning={portalReturning}
           onComplete={() => {
             setPortalReturning(false);
