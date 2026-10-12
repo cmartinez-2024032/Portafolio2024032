@@ -41,22 +41,16 @@ export default function CodePortalIntro({
   const [phase, setPhase] = useState(returning ? "boot" : "splash");
   // splash | power | boot | sync | compile | launch | wipe
   const [exiting, setExiting] = useState(false);
-  const [glitch, setGlitch] = useState(false);
   const [activeModules, setActiveModules] = useState(() => new Set());
-  const [stats, setStats] = useState({ cpu: 8, mem: 22, net: 3, fps: 60 });
-  const [uptime, setUptime] = useState(0);
   const [flashLine, setFlashLine] = useState(-1);
   const [countdown, setCountdown] = useState(null);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
-  const [wave, setWave] = useState(() => Array.from({ length: 16 }, () => 0.2));
   const [isMobile, setIsMobile] = useState(() => {
     if (typeof window === "undefined") return false;
     return window.matchMedia("(max-width: 900px), (hover: none)").matches;
   });
 
-  const [toasts, setToasts] = useState([]);
   const [scanKick, setScanKick] = useState(0);
-  const toastId = useRef(0);
 
   const script = useMemo(() => buildScript(name, t, locale, returning), [name, t, locale, returning]);
   const circumference = 2 * Math.PI * 54;
@@ -68,14 +62,6 @@ export default function CodePortalIntro({
   useEffect(() => {
     phaseRef.current = phase;
   }, [phase]);
-
-  const pushToast = useCallback((label) => {
-    const id = ++toastId.current;
-    setToasts((prev) => [...prev.slice(-3), { id, label }]);
-    window.setTimeout(() => {
-      setToasts((prev) => prev.filter((x) => x.id !== id));
-    }, 1600 * (returning ? 0.7 : 1));
-  }, [returning]);
 
   const spawnBurst = useCallback((x = 0.5, y = 0.45, color = "#b4532a") => {
     burstsRef.current.push({
@@ -97,10 +83,9 @@ export default function CodePortalIntro({
       setActiveModules((prev) => new Set([...prev, moduleId]));
       const mod = MODULES.find((m) => m.id === moduleId);
       spawnBurst(0.52, 0.58, `hsl(${mod?.hue ?? 18} 55% 45%)`);
-      pushToast(`${mod?.label ?? moduleId} online`);
       setScanKick((k) => k + 1);
     },
-    [spawnBurst, pushToast],
+    [spawnBurst],
   );
 
   const finish = useCallback(() => {
@@ -109,7 +94,6 @@ export default function CodePortalIntro({
     setPhase("wipe");
     setExiting(true);
     setProgress(100);
-    setGlitch(true);
     spawnBurst(0.5, 0.5, "#c96a3d");
     spawnBurst(0.35, 0.4, "#b4532a");
     spawnBurst(0.65, 0.55, "#9aaf8c");
@@ -192,26 +176,15 @@ export default function CodePortalIntro({
       return () => window.clearTimeout(t);
     }
     if (phase === "sync") {
-      setGlitch(true);
       setActiveModules(new Set(MODULES.map((m) => m.id)));
       spawnBurst(0.5, 0.5, "#b4532a");
-      pushToast(t.portal.syncToast);
-      const a = window.setTimeout(() => setGlitch(false), 380 * slow);
       const b = window.setTimeout(() => setPhase("compile"), 1100 * slow);
-      return () => {
-        window.clearTimeout(a);
-        window.clearTimeout(b);
-      };
+      return () => window.clearTimeout(b);
     }
     if (phase === "compile") {
-      setGlitch(true);
       setProgress(96);
-      pushToast(t.portal.buildToast);
       const a = window.setTimeout(() => setProgress(100), 380 * slow);
-      const b = window.setTimeout(() => {
-        setGlitch(false);
-        setPhase("launch");
-      }, 1100 * slow);
+      const b = window.setTimeout(() => setPhase("launch"), 1100 * slow);
       return () => {
         window.clearTimeout(a);
         window.clearTimeout(b);
@@ -224,7 +197,7 @@ export default function CodePortalIntro({
       return () => window.clearTimeout(t);
     }
     return undefined;
-  }, [phase, slow, finish, spawnBurst, pushToast, t.portal.syncToast, t.portal.buildToast]);
+  }, [phase, slow, finish, spawnBurst]);
 
   // Typing — same speed on phone and desktop
   useEffect(() => {
@@ -259,10 +232,6 @@ export default function CodePortalIntro({
             setProgress((p) => Math.min(90, p + 100 / (script.length + 1)));
             setFlashLine(lineIndex);
             unlockModule(entry.module);
-            if (entry.glitch) {
-              setGlitch(true);
-              window.setTimeout(() => setGlitch(false), 260);
-            }
             return;
           }
         }
@@ -276,23 +245,6 @@ export default function CodePortalIntro({
       cancelAnimationFrame(raf);
     };
   }, [lineIndex, script, phase, returning, unlockModule]);
-
-  // Telemetry + waveform
-  useEffect(() => {
-    if (phase === "wipe") return;
-    const id = window.setInterval(() => {
-      setUptime((u) => u + 1);
-      const heat = phase === "compile" || phase === "launch" || phase === "sync" ? 18 : 0;
-      setStats((s) => ({
-        cpu: clamp(s.cpu + (Math.random() * 16 - 6) + heat, 6, 98),
-        mem: clamp(s.mem + (Math.random() * 9 - 3) + progress * 0.07, 16, 92),
-        net: clamp(s.net + (Math.random() * 12 - 4), 2, 72),
-        fps: 57 + Math.floor(Math.random() * 6),
-      }));
-      setWave(Array.from({ length: 16 }, () => 0.15 + Math.random() * (0.35 + heat * 0.02)));
-    }, 160);
-    return () => window.clearInterval(id);
-  }, [phase, progress]);
 
   // Parallax tilt (desktop only)
   useEffect(() => {
@@ -485,7 +437,6 @@ export default function CodePortalIntro({
         bootIn ? "is-booted" : "",
         exiting ? "is-exiting" : "",
         returning ? "is-returning" : "",
-        glitch ? "is-glitch" : "",
         `phase-${phase}`,
         isMobile ? "is-mobile" : "is-desktop",
       ]
@@ -510,38 +461,6 @@ export default function CodePortalIntro({
       </div>
       <div className="code-portal-hex" aria-hidden="true" />
       <div className="code-portal-noise" aria-hidden="true" />
-      <div className="code-floaters" aria-hidden="true">
-        <span style={{ "--d": "0s" }}>const forge = true;</span>
-        <span style={{ "--d": "1.2s" }}>await loadIdentity()</span>
-        <span style={{ "--d": "2.4s" }}>export default Hero</span>
-        <span style={{ "--d": "0.6s" }}>{"{ status: \"ok\" }"}</span>
-        <span style={{ "--d": "1.8s" }}>npm run build</span>
-        <span style={{ "--d": "3s" }}>TLS handshake ✓</span>
-      </div>
-      <div className="code-ticker" aria-hidden="true">
-        <div className="code-ticker-track">
-          <span>FORGE RUNTIME</span>
-          <span>SECURE BOOT</span>
-          <span>CM · PORTFOLIO</span>
-          <span>FULL-STACK</span>
-          <span>REACT · NODE · .NET</span>
-          <span>ZERO ERRORS</span>
-          <span>FORGE RUNTIME</span>
-          <span>SECURE BOOT</span>
-          <span>CM · PORTFOLIO</span>
-          <span>FULL-STACK</span>
-          <span>REACT · NODE · .NET</span>
-          <span>ZERO ERRORS</span>
-        </div>
-      </div>
-      <div className="code-toasts" aria-live="polite">
-        {toasts.map((toast) => (
-          <div key={toast.id} className="code-toast">
-            <i />
-            {toast.label}
-          </div>
-        ))}
-      </div>
       <div className="code-portal-wipe" aria-hidden="true" />
       <div className="code-portal-flash" aria-hidden="true" />
       <div className="code-portal-shards" aria-hidden="true">
@@ -594,31 +513,6 @@ export default function CodePortalIntro({
             : undefined,
         }}
       >
-        <aside className="code-hud code-hud--left" aria-hidden="true">
-          <p className="code-hud-label">{t.portal.sys}</p>
-          <div className="code-radar">
-            <i />
-            <i />
-            <b />
-          </div>
-          <HudMeter label="CPU" value={stats.cpu} />
-          <HudMeter label="MEM" value={stats.mem} />
-          <HudMeter label="NET" value={stats.net} tone="soft" />
-          <div className="code-wave" aria-hidden="true">
-            {wave.map((v, i) => (
-              <span key={i} style={{ transform: `scaleY(${v})` }} />
-            ))}
-          </div>
-          <div className="code-hud-row">
-            <span>FPS</span>
-            <strong>{stats.fps}</strong>
-          </div>
-          <div className="code-hud-row">
-            <span>UP</span>
-            <strong>00:{String(uptime % 60).padStart(2, "0")}</strong>
-          </div>
-        </aside>
-
         <div className="code-portal-stage">
           <div className="code-id-card" aria-hidden="true">
             <span className="code-id-avatar">CM</span>
@@ -627,19 +521,6 @@ export default function CodePortalIntro({
               <em>{t.portal.secure}</em>
             </div>
             <b>{pct}%</b>
-          </div>
-
-          <div className="code-mobile-strip" aria-hidden="true">
-            <span>
-              CPU <strong>{Math.round(stats.cpu)}%</strong>
-            </span>
-            <span>
-              MEM <strong>{Math.round(stats.mem)}%</strong>
-            </span>
-            <span>
-              NET <strong>{Math.round(stats.net)}%</strong>
-            </span>
-            <span className="code-mobile-strip-badge">{badge}</span>
           </div>
 
           <p className="code-portal-eyebrow">
@@ -799,20 +680,6 @@ export default function CodePortalIntro({
 
           <p className="code-portal-hint">{t.portal.hint}</p>
         </div>
-
-        <aside className="code-hud code-hud--right" aria-hidden="true">
-          <p className="code-hud-label">{t.portal.pipeline}</p>
-          {(t.portal.pipelineSteps || []).map((step, i) => {
-            const unlocked = progress > (i + 1) * (100 / 8) || ["sync", "compile", "launch", "wipe"].includes(phase);
-            return (
-              <div key={step} className={`code-pipe ${unlocked ? "is-on" : ""}`}>
-                <span className="code-pipe-mark">{unlocked ? "●" : "○"}</span>
-                <span>{step}</span>
-              </div>
-            );
-          })}
-          <div className="code-hud-chip">{t.portal.secure}</div>
-        </aside>
       </div>
     </div>
   );
@@ -823,20 +690,6 @@ function statusLabel(phase, t) {
   if (phase === "sync") return t.portal.syncing;
   if (phase === "compile") return t.portal.compiling;
   return t.portal.compiling;
-}
-
-function HudMeter({ label, value, tone }) {
-  return (
-    <div className={`code-meter ${tone === "soft" ? "is-soft" : ""}`}>
-      <div className="code-meter-top">
-        <span>{label}</span>
-        <strong>{Math.round(value)}%</strong>
-      </div>
-      <div className="code-meter-track">
-        <span style={{ transform: `scaleX(${Math.min(1, value / 100)})` }} />
-      </div>
-    </div>
-  );
 }
 
 function TerminalLine({ line, caret = false, flash = false, stamp }) {
@@ -880,10 +733,6 @@ function highlight(text, kind) {
   });
 }
 
-function clamp(n, a, b) {
-  return Math.max(a, Math.min(b, n));
-}
-
 function buildScript(name, t, _locale, returning) {
   const n = name || "Cristopher Martínez";
   const L = t.portal.lines;
@@ -905,7 +754,7 @@ function buildScript(name, t, _locale, returning) {
     { kind: "ok", text: L.identity, speed: 8, delay: 50, module: "react" },
     { kind: "cmd", text: "import skills --from stack.json", speed: 10, delay: 100, module: "node" },
     { kind: "ok", text: L.skills, speed: 8, delay: 50, module: "dotnet" },
-    { kind: "cmd", text: "compile projects --release", speed: 10, delay: 100, module: "api", glitch: true },
+    { kind: "cmd", text: "compile projects --release", speed: 10, delay: 100, module: "api" },
     { kind: "ok", text: L.projects, speed: 8, delay: 50, module: "sql" },
     { kind: "cmd", text: "launch --target hero --open", speed: 10, delay: 110, module: "three" },
     { kind: "ok", text: L.ready, speed: 8, delay: 60 },

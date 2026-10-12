@@ -16,6 +16,12 @@
 .code-portal-aurora,
 .code-bloom { display: none; }
 
+/* No side HUDs: the terminal is the single focal point */
+.code-portal-layout {
+  grid-template-columns: minmax(0, 1fr);
+  width: min(94vw, 880px);
+}
+
 .code-portal-tag { color: var(--color-fg); }
 .code-portal-hint { color: var(--color-fg); }
 .code-pipe { color: var(--color-fg); font-size: 0.6rem; }

@@ -15,7 +15,6 @@ html[data-theme="light"] .code-portal {
 }
 
 /* Surfaces stay black / white, independent of the site background */
-html[data-theme] .code-portal .code-hud,
 html[data-theme] .code-portal .code-online,
 html[data-theme] .code-portal .code-online-card { background: var(--c-paper); }
 
@@ -54,22 +53,6 @@ html[data-theme] .code-portal .code-portal-fill { background: var(--c-green); }
 html[data-theme] .code-portal .code-portal-fill-glow { display: none; }
 html[data-theme] .code-portal .code-portal-status-dot { background: var(--c-green); }
 html[data-theme] .code-portal .code-portal-pct { color: var(--c-ink); }
-
-/* Left HUD */
-html[data-theme] .code-portal .code-hud-label { color: var(--c-ink); }
-html[data-theme] .code-portal .code-radar b { background: var(--c-green); }
-html[data-theme] .code-portal .code-hud--left .code-meter:nth-child(3) .code-meter-track span { background: var(--c-ink); }
-html[data-theme] .code-portal .code-hud--left .code-meter:nth-child(4) .code-meter-track span { background: var(--c-red); }
-html[data-theme] .code-portal .code-hud--left .code-meter:nth-child(5) .code-meter-track span { background: var(--c-green); }
-html[data-theme] .code-portal .code-meter-track { border: 1px solid var(--c-ink); height: 6px; }
-html[data-theme] .code-portal .code-wave span { background: var(--c-ink); }
-html[data-theme] .code-portal .code-wave span:nth-child(4n + 2) { background: var(--c-green); }
-html[data-theme] .code-portal .code-wave span:nth-child(4n + 4) { background: var(--c-red); }
-
-/* Right HUD pipeline */
-html[data-theme] .code-portal .code-hud--right .code-hud-label { color: var(--c-ink); }
-html[data-theme] .code-portal .code-pipe.is-on .code-pipe-mark { color: var(--c-green); }
-html[data-theme] .code-portal .code-hud-chip { color: var(--c-green); border-color: var(--c-green); }
 
 /* Stack modules */
 html[data-theme] .code-portal .code-module.is-on { border-color: transparent; }
