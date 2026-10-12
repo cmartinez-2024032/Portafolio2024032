@@ -1,0 +1,123 @@
+/* Professional pass over the code portal: solid colors, no neon glow. */
+.code-portal {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(180, 83, 42, 0.12), transparent 70%),
+    var(--cp-bg);
+}
+.code-portal,
+.code-portal * {
+  text-shadow: none !important;
+}
+.code-letterbox { display: none; }
+.code-portal-scan,
+.code-portal-noise,
+.code-portal-hex { opacity: 0.35; }
+
+.code-portal-tag { color: rgba(243, 236, 228, 0.55); }
+.code-portal-hint { color: rgba(243, 236, 228, 0.5); }
+.code-pipe { color: rgba(243, 236, 228, 0.42); font-size: 0.6rem; }
+.code-pipe.is-on { color: #f3ece4; }
+.code-hud {
+  background: rgba(36, 29, 25, 0.92);
+  border-color: rgba(224, 180, 154, 0.14);
+  backdrop-filter: none;
+}
+.code-portal-dot { box-shadow: none; }
+
+.code-ring { opacity: 0.35; }
+.tok-flag { color: #d9b26f; }
+.tok-str { color: #e0a17c; }
+html[data-theme="light"] .tok-flag { color: #8a6418; }
+html[data-theme="light"] .tok-str { color: #8f3f1f; }
+
+.code-tabs span {
+  transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Final "online" moment: one centered card over a scrim */
+.code-online {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(33, 26, 22, 0.72);
+  animation: codeOnlineScrim 0.35s ease both;
+}
+.code-online-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 2rem 2.6rem 1.8rem;
+  border: 1px solid rgba(224, 180, 154, 0.22);
+  border-radius: 18px;
+  background: #2a211c;
+  box-shadow: 0 40px 90px -30px rgba(0, 0, 0, 0.6);
+  animation: codeOnlineCard 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.code-online-mark {
+  display: grid;
+  place-items: center;
+  width: 3.1rem;
+  height: 3.1rem;
+  margin-bottom: 0.4rem;
+  border-radius: 12px;
+  background: var(--cp-ice);
+  color: #fff;
+  font-family: var(--font-heading, "Bebas Neue", sans-serif);
+  font-size: 1.45rem;
+  letter-spacing: 0.04em;
+}
+.code-online .code-online-card p {
+  color: #9aaf8c;
+  font-size: 0.72rem;
+  letter-spacing: 0.32em;
+  animation: none;
+}
+.code-online .code-online-card strong {
+  margin-top: 0;
+  font-size: clamp(1.9rem, 5vw, 3rem);
+  line-height: 1;
+  color: #f3ece4;
+}
+.code-online-card em {
+  font-style: normal;
+  font-size: 0.66rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(243, 236, 228, 0.5);
+}
+@keyframes codeOnlineScrim {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes codeOnlineCard {
+  from { opacity: 0; transform: translateY(14px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+html[data-theme="light"] .code-portal {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(180, 83, 42, 0.08), transparent 70%),
+    #f3ede5;
+}
+html[data-theme="light"] .code-portal-tag,
+html[data-theme="light"] .code-portal-hint { color: rgba(33, 26, 22, 0.55); }
+html[data-theme="light"] .code-pipe { color: rgba(33, 26, 22, 0.42); }
+html[data-theme="light"] .code-pipe.is-on { color: #211a16; }
+html[data-theme="light"] .code-hud {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(110, 58, 36, 0.14);
+}
+html[data-theme="light"] .code-online { background: rgba(243, 237, 229, 0.78); }
+html[data-theme="light"] .code-online-card {
+  background: #ffffff;
+  border-color: rgba(110, 58, 36, 0.16);
+  box-shadow: 0 40px 90px -40px rgba(33, 26, 22, 0.35);
+}
+html[data-theme="light"] .code-online .code-online-card strong { color: #211a16; }
+html[data-theme="light"] .code-online .code-online-card p { color: #5b8a52; }
+html[data-theme="light"] .code-online-card em { color: rgba(33, 26, 22, 0.5); }
+
+@media (max-width: 700px) {
+  .code-online-card { padding: 1.5rem 1.4rem 1.3rem; margin: 0 1rem; }
+}

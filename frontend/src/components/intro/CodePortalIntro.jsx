@@ -1,16 +1,17 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { useLanguage } from "../../i18n/LanguageContext";
 import "./code-portal.css";
+import "./code-portal-polish.css";
 
 const STORAGE_KEY = "forge-portal-seen";
 
 const MODULES = [
-  { id: "react", label: "React", hue: 214 },
-  { id: "node", label: "Node", hue: 210 },
-  { id: "dotnet", label: ".NET", hue: 218 },
-  { id: "sql", label: "SQL", hue: 206 },
-  { id: "three", label: "Three", hue: 220 },
-  { id: "api", label: "API", hue: 212 },
+  { id: "react", label: "React", hue: 18 },
+  { id: "node", label: "Node", hue: 22 },
+  { id: "dotnet", label: ".NET", hue: 14 },
+  { id: "sql", label: "SQL", hue: 26 },
+  { id: "three", label: "Three", hue: 12 },
+  { id: "api", label: "API", hue: 20 },
 ];
 
 /**
@@ -75,7 +76,7 @@ export default function CodePortalIntro({
     }, 1600 * (returning ? 0.7 : 1));
   }, [returning]);
 
-  const spawnBurst = useCallback((x = 0.5, y = 0.45, color = "#2b4c7e") => {
+  const spawnBurst = useCallback((x = 0.5, y = 0.45, color = "#b4532a") => {
     burstsRef.current.push({
       x,
       y,
@@ -94,7 +95,7 @@ export default function CodePortalIntro({
       if (!moduleId) return;
       setActiveModules((prev) => new Set([...prev, moduleId]));
       const mod = MODULES.find((m) => m.id === moduleId);
-      spawnBurst(0.52, 0.58, `hsl(${mod?.hue ?? 214} 45% 45%)`);
+      spawnBurst(0.52, 0.58, `hsl(${mod?.hue ?? 18} 55% 45%)`);
       pushToast(`${mod?.label ?? moduleId} online`);
       setScanKick((k) => k + 1);
     },
@@ -108,8 +109,8 @@ export default function CodePortalIntro({
     setExiting(true);
     setProgress(100);
     setGlitch(true);
-    spawnBurst(0.5, 0.5, "#3d6aa3");
-    spawnBurst(0.35, 0.4, "#2b4c7e");
+    spawnBurst(0.5, 0.5, "#c96a3d");
+    spawnBurst(0.35, 0.4, "#b4532a");
     spawnBurst(0.65, 0.55, "#9aaf8c");
     try {
       sessionStorage.setItem(STORAGE_KEY, "1");
@@ -192,7 +193,7 @@ export default function CodePortalIntro({
     if (phase === "sync") {
       setGlitch(true);
       setActiveModules(new Set(MODULES.map((m) => m.id)));
-      spawnBurst(0.5, 0.5, "#2b4c7e");
+      spawnBurst(0.5, 0.5, "#b4532a");
       pushToast(t.portal.syncToast);
       const a = window.setTimeout(() => setGlitch(false), 380 * slow);
       const b = window.setTimeout(() => setPhase("compile"), 800 * slow);
@@ -350,13 +351,13 @@ export default function CodePortalIntro({
       if (disposed) return;
       raf = requestAnimationFrame(draw);
       const intens = phaseRef.current === "compile" || phaseRef.current === "launch" ? 0.08 : 0.13;
-      ctx.fillStyle = `rgba(21, 34, 56, ${intens})`;
+      ctx.fillStyle = `rgba(33, 26, 22, ${intens})`;
       ctx.fillRect(0, 0, w, h);
       for (let i = 0; i < cols.length; i++) {
         const ch = glyphs[(Math.random() * glyphs.length) | 0];
         const x = i * fontSize;
         const y = cols[i] * fontSize;
-        ctx.fillStyle = i % 5 === 0 ? "rgba(61, 106, 163,0.55)" : "rgba(43, 76, 126,0.18)";
+        ctx.fillStyle = i % 5 === 0 ? "rgba(201, 106, 61,0.55)" : "rgba(180, 83, 42,0.18)";
         ctx.fillText(ch, x, y);
         if (y > h && Math.random() > 0.972) cols[i] = 0;
         else cols[i] += 0.18 + Math.random() * 0.28;
@@ -415,8 +416,8 @@ export default function CodePortalIntro({
         if (o.x < -0.1 || o.x > 1.1) o.vx *= -1;
         if (o.y < -0.1 || o.y > 1.1) o.vy *= -1;
         const g = ctx.createRadialGradient(o.x * w, o.y * h, 0, o.x * w, o.y * h, o.r);
-        g.addColorStop(0, `rgba(43, 76, 126,${o.a})`);
-        g.addColorStop(1, "rgba(43, 76, 126,0)");
+        g.addColorStop(0, `rgba(180, 83, 42,${o.a})`);
+        g.addColorStop(1, "rgba(180, 83, 42,0)");
         ctx.fillStyle = g;
         ctx.beginPath();
         ctx.arc(o.x * w, o.y * h, o.r, 0, Math.PI * 2);
@@ -574,8 +575,12 @@ export default function CodePortalIntro({
       {/* Launch flash — no 3-2-1 countdown */}
       {phase === "launch" && (
         <div className="code-online" aria-hidden="true">
-          <p>{t.portal.online}</p>
-          <strong>{name}</strong>
+          <div className="code-online-card">
+            <span className="code-online-mark">CM</span>
+            <p>{t.portal.online}</p>
+            <strong>{name}</strong>
+            <em>{t.portal.tagline}</em>
+          </div>
         </div>
       )}
 
@@ -617,8 +622,8 @@ export default function CodePortalIntro({
           <div className="code-id-card" aria-hidden="true">
             <span className="code-id-avatar">CM</span>
             <div>
-              <strong>{name}</strong>
-              <em>{t.portal.tagline}</em>
+              <strong>forge@portfolio</strong>
+              <em>{t.portal.secure}</em>
             </div>
             <b>{pct}%</b>
           </div>
@@ -682,9 +687,14 @@ export default function CodePortalIntro({
               </div>
 
               <div className="code-tabs" aria-hidden="true">
-                <span className="is-active">boot.log</span>
-                <span>stack.json</span>
-                <span>hero.jsx</span>
+                {["boot.log", "stack.json", "hero.jsx"].map((tab, i) => {
+                  const activeTab = phase === "sync" ? 1 : phase === "compile" || phase === "launch" ? 2 : 0;
+                  return (
+                    <span key={tab} className={i === activeTab ? "is-active" : ""}>
+                      {tab}
+                    </span>
+                  );
+                })}
               </div>
 
               <div className="code-portal-body" ref={bodyRef} role="log" aria-live="polite">

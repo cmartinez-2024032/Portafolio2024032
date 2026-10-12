@@ -38,6 +38,36 @@ html:not([data-theme="light"]) .roll-text-alt { color: var(--color-accent-blue);
 p.scroll-words { color: var(--color-fg); }
 .scroll-word { will-change: opacity; }
 
+/* ── Spotlight cards (pointer-follow highlight) ── */
+@media (hover: hover) and (pointer: fine) {
+  .ability-card,
+  .forge-skill-card,
+  .timeline-card,
+  .contact-form { position: relative; }
+
+  .ability-card::after,
+  .forge-skill-card::after,
+  .timeline-card::after,
+  .contact-form::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(
+      340px circle at var(--mx, 50%) var(--my, 50%),
+      rgba(180, 83, 42, 0.13),
+      transparent 65%
+    );
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+  .ability-card:hover::after,
+  .forge-skill-card:hover::after,
+  .timeline-card:hover::after,
+  .contact-form:hover::after { opacity: 1; }
+}
+
 /* ── Theme switch: circular reveal (View Transitions API) ── */
 ::view-transition-old(root),
 ::view-transition-new(root) {
