@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
+import { flushSync } from "react-dom";
 import { useScrollProgress } from "../hooks/useScrollProgress";
+import RollText from "./fx/RollText";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiDownload, FiGlobe, FiMenu, FiX, FiMoon, FiSun } from "react-icons/fi";
 import { useLanguage } from "../i18n/LanguageContext";
@@ -58,6 +60,36 @@ export default function Navbar() {
     }, 60);
   };
 
+  const switchTheme = (next, e) => {
+    if (next === theme) return;
+    const root = document.documentElement;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!document.startViewTransition || reduce) {
+      setTheme(next);
+      return;
+    }
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX || rect.left + rect.width / 2;
+    const y = e.clientY || rect.top + rect.height / 2;
+    const radius = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y));
+
+    root.classList.add("theme-vt");
+    const transition = document.startViewTransition(() => {
+      root.dataset.theme = next;
+      flushSync(() => setTheme(next));
+    });
+    transition.ready
+      .then(() => {
+        root.animate(
+          { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
+          { duration: 650, easing: "cubic-bezier(0.16, 1, 0.3, 1)", pseudoElement: "::view-transition-new(root)" },
+        );
+      })
+      .catch(() => {});
+    transition.finished.finally(() => root.classList.remove("theme-vt"));
+  };
+
   const langToggle = (
     <div className="nav-lang-toggle" role="group" aria-label={t.nav.langAria}>
       <FiGlobe className="nav-lang-globe" aria-hidden="true" />
@@ -88,7 +120,7 @@ export default function Navbar() {
         className={theme === "dark" ? "is-active" : ""}
         aria-pressed={theme === "dark"}
         aria-label={t.nav.themeDark}
-        onClick={() => setTheme("dark")}
+        onClick={(e) => switchTheme("dark", e)}
       >
         <FiMoon size={14} aria-hidden="true" />
         <span>{t.nav.themeDark}</span>
@@ -98,7 +130,7 @@ export default function Navbar() {
         className={theme === "light" ? "is-active" : ""}
         aria-pressed={theme === "light"}
         aria-label={t.nav.themeLight}
-        onClick={() => setTheme("light")}
+        onClick={(e) => switchTheme("light", e)}
       >
         <FiSun size={14} aria-hidden="true" />
         <span>{t.nav.themeLight}</span>
@@ -130,8 +162,8 @@ export default function Navbar() {
 
         <div className="nav-links nav-links-desktop">
           {t.nav.sections.map((s) => (
-            <button key={s.id} type="button" onClick={() => scrollTo(s.id)}>
-              {s.label}
+            <button key={s.id} type="button" className="roll-host" onClick={() => scrollTo(s.id)}>
+              <RollText text={s.label} />
             </button>
           ))}
           {langToggle}

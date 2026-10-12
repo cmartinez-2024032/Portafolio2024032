@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import ScrollReveal from "./ScrollReveal";
 import Counter from "./Counter";
+import ScrollWords from "./fx/ScrollWords";
 import { useTilt } from "../hooks/useTilt";
 import { FiMapPin, FiMail, FiGithub, FiLinkedin, FiCalendar, FiBook, FiDownload } from "react-icons/fi";
 import { useLanguage } from "../i18n/LanguageContext";
@@ -68,7 +69,7 @@ export default function About({ data }) {
         transition={{ duration: 0.7, ease: EASE }}
       >
         <span className="forge-panel-tag">{data.title}</span>
-        <p className="forge-about-bio">{bio}</p>
+        <ScrollWords text={bio} className="forge-about-bio" />
         <p className="forge-about-goals">&ldquo;{goals}&rdquo;</p>
         <a href="/cv/Cristopher-Martinez-CV.pdf" download className="btn-forge btn-forge-cv">
           {t.hero.ctaCv} <FiDownload size={14} />

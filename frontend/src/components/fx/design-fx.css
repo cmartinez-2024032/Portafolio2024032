@@ -1,0 +1,52 @@
+/* ── Rolling text (nav links) ── */
+.roll-text {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  line-height: 1.25;
+  vertical-align: middle;
+}
+.roll-text-row {
+  display: block;
+  white-space: nowrap;
+}
+.roll-text-row > span {
+  display: inline-block;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: calc(var(--i) * 16ms);
+}
+.roll-text-alt {
+  position: absolute;
+  inset: 0;
+  color: var(--color-accent);
+}
+html:not([data-theme="light"]) .roll-text-alt { color: var(--color-accent-blue); }
+.roll-text-alt > span { transform: translateY(115%); }
+
+@media (hover: hover) {
+  .roll-host:hover .roll-text-row > span,
+  .roll-host:focus-visible .roll-text-row > span { transform: translateY(-115%); }
+  .roll-host:hover .roll-text-alt > span,
+  .roll-host:focus-visible .roll-text-alt > span { transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .roll-text-row > span { transition: none; }
+}
+
+/* ── Scroll-lit paragraph ── */
+p.scroll-words { color: var(--color-fg); }
+.scroll-word { will-change: opacity; }
+
+/* ── Theme switch: circular reveal (View Transitions API) ── */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-new(root) { z-index: 2; }
+html.theme-vt *,
+html.theme-vt *::before,
+html.theme-vt *::after {
+  transition: none !important;
+}
