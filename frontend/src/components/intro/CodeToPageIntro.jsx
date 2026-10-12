@@ -1,23 +1,26 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageContext";
 // code-portal.css still carries light-theme rules for the rest of the site.
 import "./code-portal.css";
 import "./code-to-page.css";
 
 const STORAGE_KEY = "forge-portal-seen";
-const CHAR_MS = 14;
+const CHAR_MS = 10;
 const LINE_PAUSE_MS = 90;
 const BLANK_PAUSE_MS = 60;
-const COMPILE_MS = 1200;
+const COMPILE_MS = 1300;
 const EXPAND_MS = 1150;
 const FADE_MS = 500;
+const INSPECT_MS = 1200;
 
+const TAGS = { photo: "img", eyebrow: "Badge", name: "h1", role: "h2", phrase: "p", cta: "Button" };
 const KEYWORDS = new Set(["import", "from", "export", "default", "function", "return"]);
 const TOKEN = /("[^"]*"?|<\/?[A-Za-z][\w.]*|\/?>|\b[A-Za-z]+\b)/;
 
 /**
- * Intro: the hero's source is typed in an editor while a live preview renders each element,
- * then the build succeeds and the preview grows into the real page.
+ * Intro: the hero's source is typed (with autocomplete and a corrected typo) while a live preview
+ * renders each element — a connector links every finished line to what it produced — then the build
+ * passes and the preview grows into the real page.
  */
 export default function CodeToPageIntro({ personal, onComplete, returning = false }) {
   const { t, locale } = useLanguage();
@@ -25,10 +28,13 @@ export default function CodeToPageIntro({ personal, onComplete, returning = fals
   const photo = personal?.photo || null;
   const phrase = locale === "en" ? t.personalFallback.phrase : personal?.phrase || t.hero.phraseFallback;
   const speed = returning ? 0.45 : 1;
+  const [isTouch] = useState(() => window.matchMedia("(hover: none)").matches);
 
   const lines = useMemo(
     () =>
       buildLines({
+        greeting: greetingFor(new Date().getHours(), t.portal.greet),
+        thanks: t.portal.thanks,
         first: name.split(" ")[0],
         eyebrow: t.hero.eyebrow,
         name,
@@ -36,15 +42,19 @@ export default function CodeToPageIntro({ personal, onComplete, returning = fals
         phrase,
         cta: t.hero.ctaProjects,
       }),
-    [name, phrase, t.hero.eyebrow, t.hero.title, t.hero.ctaProjects],
+    [name, phrase, t.portal.greet, t.portal.thanks, t.hero.eyebrow, t.hero.title, t.hero.ctaProjects],
   );
   const timeline = useMemo(() => buildTimeline(lines, speed), [lines, speed]);
 
   const [elapsed, setElapsed] = useState(0);
   const [phase, setPhase] = useState("type");
+  const [link, setLink] = useState(null);
+  const [inspect, setInspect] = useState(null);
   const boostRef = useRef(0);
   const phaseRef = useRef(phase);
   const onCompleteRef = useRef(onComplete);
+  const windowRef = useRef(null);
+  const codeRef = useRef(null);
 
   useEffect(() => {
     phaseRef.current = phase;
@@ -98,10 +108,12 @@ export default function CodeToPageIntro({ personal, onComplete, returning = fals
     };
     const onKey = (e) => {
       if (e.key !== "Enter" && e.key !== " ") return;
+      if (e.target?.closest?.("button")) return;
       e.preventDefault();
       advance();
     };
     const onPointer = (e) => {
+      if (e.target?.closest?.("button")) return;
       if (e.pointerType === "touch" || e.pointerType === "pen") advance();
     };
     window.addEventListener("keydown", onKey);
@@ -114,27 +126,90 @@ export default function CodeToPageIntro({ personal, onComplete, returning = fals
   }, []);
 
   const shown = [];
-  const revealed = new Set();
+  const revealOrder = [];
   for (let i = 0; i < lines.length; i++) {
-    const { start, end } = timeline.lines[i];
-    if (elapsed < start) break;
-    const done = elapsed >= end;
-    const cols = done ? lines[i].text.length : Math.floor((elapsed - start) / timeline.charMs);
-    shown.push({ i, text: lines[i].text.slice(0, cols) });
-    if (done && lines[i].reveal) revealed.add(lines[i].reveal);
+    const lt = timeline.lines[i];
+    if (elapsed < lt.start) break;
+    shown.push({ i, step: stepAt(lt.steps, elapsed) });
+    if (elapsed >= lt.end && lines[i].reveal) revealOrder.push(lines[i].reveal);
   }
+  const revealed = new Set(revealOrder);
+  const lastReveal = revealOrder[revealOrder.length - 1];
   const currentLine = shown.length ? shown[shown.length - 1].i : 0;
   const typing = phase === "type";
-  const built = phase !== "type" && phase !== "compile";
-  const on = (key) => (revealed.has(key) ? "is-on" : "");
+  const built = phase === "expand" || phase === "fade";
+  const live = phase === "type" || phase === "compile";
+
+  // Keep the line being typed in view when the editor is short (phones)
+  useLayoutEffect(() => {
+    const el = codeRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  });
+
+  // Connector + inspector for the element that was just rendered
+  useLayoutEffect(() => {
+    if (!lastReveal) return undefined;
+    const root = windowRef.current;
+    const lineEl = root?.querySelector(`[data-line="${lines.findIndex((l) => l.reveal === lastReveal)}"]`);
+    const el = root?.querySelector(`[data-el="${lastReveal}"]`);
+    if (!root || !lineEl || !el) return undefined;
+    const box = root.getBoundingClientRect();
+    const a = lineEl.getBoundingClientRect();
+    const rect = el.getBoundingClientRect();
+    const transform = getComputedStyle(el).transform;
+    const shift = transform && transform !== "none" ? new DOMMatrixReadOnly(transform).m42 : 0;
+    const b = { left: rect.left, top: rect.top - shift, width: rect.width, height: rect.height };
+    const code = codeRef.current.getBoundingClientRect();
+    let d;
+    let end;
+    if (b.top >= code.bottom - 1) {
+      // Stacked layout: run like a circuit trace down the left edge, clear of the content
+      const x = a.left - box.left + 5;
+      const y1 = a.top + a.height / 2 - box.top;
+      const y2 = b.top + b.height / 2 - box.top;
+      const x2 = b.left - box.left - 8;
+      d = `M${x + 16},${y1} H${x + 6} Q${x},${y1} ${x},${y1 + 6} V${y2 - 6} Q${x},${y2} ${x + 6},${y2} H${x2}`;
+      end = [x2, y2];
+    } else {
+      const x1 = code.right - box.left - 8;
+      const y1 = a.top + a.height / 2 - box.top;
+      const x2 = b.left - box.left - 8;
+      const y2 = b.top + b.height / 2 - box.top;
+      const dx = (x2 - x1) / 2;
+      d = `M${x1},${y1} C${x1 + dx},${y1} ${x2 - dx},${y2} ${x2},${y2}`;
+      end = [x2, y2];
+    }
+    setLink({ id: lastReveal, d, end });
+    setInspect({ key: lastReveal, label: `${TAGS[lastReveal]} · ${Math.round(b.width)}×${Math.round(b.height)}` });
+    const id = window.setTimeout(() => setInspect(null), INSPECT_MS);
+    return () => window.clearTimeout(id);
+  }, [lastReveal, lines]);
+
+  const terminal = [{ k: "cmd", text: "npm run dev" }];
+  if (elapsed > 450 * speed) terminal.push({ k: "ok", text: "VITE v6.4.3  ready in 412 ms" });
+  if (elapsed > 650 * speed) terminal.push({ k: "dim", text: "➜  Local:   http://localhost:5173/" });
+  revealOrder.forEach((key) =>
+    terminal.push({ k: "hmr", text: `[vite] hmr update /src/Hero.jsx  <${TAGS[key]}>` }),
+  );
+  if (!typing) terminal.push({ k: "cmd", text: "npm run build" });
+  if (built) terminal.push({ k: "ok", text: "✓ 42 modules transformed · built in 0.41s" });
+
+  const elClass = (key) =>
+    `ctp-el ${revealed.has(key) ? "is-on" : ""} ${inspect?.key === key && live ? "is-inspect" : ""}`;
+  const inspectTag = (key) =>
+    inspect?.key === key && live ? <span className="ctp-inspect">{inspect.label}</span> : null;
 
   return (
     <div
-      className={`ctp ${phase === "expand" || phase === "fade" ? "is-expanding" : ""} ${phase === "fade" ? "is-fading" : ""}`}
+      className={`ctp ${built ? "is-expanding" : ""} ${phase === "fade" ? "is-fading" : ""}`}
       role="dialog"
       aria-label={t.portal.aria}
     >
-      <div className="ctp-window">
+      <button type="button" className="ctp-skip" onClick={() => setPhase("fade")}>
+        {t.portal.skip} <span aria-hidden="true">→</span>
+      </button>
+
+      <div className="ctp-window" ref={windowRef}>
         <div className="ctp-body">
           <section className="ctp-editor" aria-hidden="true">
             <div className="ctp-tabs">
@@ -146,16 +221,43 @@ export default function CodeToPageIntro({ personal, onComplete, returning = fals
               <span className="ctp-tab">index.css</span>
             </div>
 
-            <div className="ctp-code">
-              {shown.map((line) => (
-                <div key={line.i} className={`ctp-line ${line.i === currentLine ? "is-current" : ""}`}>
-                  <span className="ctp-ln">{line.i + 1}</span>
-                  <span className="ctp-src">
-                    {highlight(line.text)}
-                    {line.i === currentLine && <i className={`ctp-caret ${typing ? "" : "is-idle"}`} />}
-                  </span>
-                </div>
-              ))}
+            <div className="ctp-code" ref={codeRef}>
+              {shown.map(({ i, step }) => {
+                const text = lines[i].text.slice(0, step.len) + step.extra;
+                const isCurrent = i === currentLine;
+                return (
+                  <div key={i} data-line={i} className={`ctp-line ${isCurrent ? "is-current" : ""}`}>
+                    <span className="ctp-ln">{i + 1}</span>
+                    <span className="ctp-src">
+                      {highlight(text)}
+                      {isCurrent && <i className={`ctp-caret ${typing ? "" : "is-idle"}`} />}
+                      {isCurrent && typing && step.popup && (
+                        <span className="ctp-suggest" style={{ "--col": step.len }}>
+                          {step.popup.map((item, n) => (
+                            <span key={item} className={`ctp-suggest-item ${n === 0 ? "is-active" : ""}`}>
+                              <b>{"</>"}</b>
+                              {item}
+                              <em>component</em>
+                            </span>
+                          ))}
+                        </span>
+                      )}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="ctp-term">
+              <p className="ctp-term-head">TERMINAL</p>
+              <div className="ctp-term-body">
+                {terminal.map((row, n) => (
+                  <p key={n} className={`ctp-term-line is-${row.k}`}>
+                    {row.k === "cmd" && <span className="ctp-term-prompt">$</span>}
+                    {row.text}
+                  </p>
+                ))}
+              </div>
             </div>
 
             <div className="ctp-status">
@@ -185,62 +287,139 @@ export default function CodeToPageIntro({ personal, onComplete, returning = fals
             </div>
 
             <div className="ctp-page">
-              <div className={`ctp-el ctp-photo ${on("photo")}`}>
-                {photo ? <img src={photo} alt="" /> : <span>{name.charAt(0)}</span>}
+              <div data-el="photo" className={`${elClass("photo")} ctp-photo`}>
+                <span className="ctp-photo-frame">
+                  {photo ? <img src={photo} alt="" /> : <span>{name.charAt(0)}</span>}
+                </span>
+                {inspectTag("photo")}
               </div>
-              <p className={`ctp-el ctp-eyebrow ${on("eyebrow")}`}>
+              <p data-el="eyebrow" className={`${elClass("eyebrow")} ctp-eyebrow`}>
                 <i />
                 {t.hero.eyebrow}
+                {inspectTag("eyebrow")}
               </p>
-              <h2 className={`ctp-el ctp-name ${on("name")}`}>{name}</h2>
-              <p className={`ctp-el ctp-role ${on("role")}`}>{t.hero.title}</p>
-              <p className={`ctp-el ctp-phrase ${on("phrase")}`}>{phrase}</p>
-              <div className={`ctp-el ctp-cta ${on("cta")}`}>
+              <h2 data-el="name" className={`${elClass("name")} ctp-name`}>
+                {name}
+                {inspectTag("name")}
+              </h2>
+              <p data-el="role" className={`${elClass("role")} ctp-role`}>
+                {t.hero.title}
+                {inspectTag("role")}
+              </p>
+              <p data-el="phrase" className={`${elClass("phrase")} ctp-phrase`}>
+                {phrase}
+                {inspectTag("phrase")}
+              </p>
+              <div data-el="cta" className={`${elClass("cta")} ctp-cta`}>
                 <span className="ctp-btn is-primary">{t.hero.ctaProjects}</span>
                 <span className="ctp-btn">{t.hero.ctaCv}</span>
+                {inspectTag("cta")}
               </div>
             </div>
           </section>
         </div>
+
+        {link && live && (
+          <svg className="ctp-link" aria-hidden="true">
+            <path key={`p-${link.id}`} className="ctp-link-path" d={link.d} pathLength="1" />
+            <circle key={`c-${link.id}`} className="ctp-link-dot" cx={link.end[0]} cy={link.end[1]} r="3.5" />
+          </svg>
+        )}
       </div>
 
-      <p className="ctp-hint">{t.portal.hint}</p>
+      <p className="ctp-hint">{isTouch ? t.portal.hintTouch : t.portal.hintKeys}</p>
     </div>
   );
 }
 
-function buildLines({ first, eyebrow, name, role, phrase, cta }) {
+function greetingFor(hour, greet) {
+  if (hour < 12) return greet.morning;
+  if (hour < 19) return greet.afternoon;
+  return greet.evening;
+}
+
+function buildLines({ greeting, thanks, first, eyebrow, name, role, phrase, cta }) {
+  const pad = "      ";
+  const h1 = `${pad}<h1>`;
+  const slip = Math.min(5, Math.max(1, name.length - 2));
+  const wrongChar = name[slip + 1] && name[slip + 1] !== name[slip] ? name[slip + 1] : "x";
   return [
+    { text: `// ${greeting} — ${thanks}` },
     { text: 'import { motion } from "framer-motion";' },
     { text: "" },
     { text: "export default function Hero() {" },
     { text: "  return (" },
     { text: '    <motion.section className="hero">' },
-    { text: `      <img src="/img/me.jpg" alt="${first}" />`, reveal: "photo" },
-    { text: `      <Badge>${eyebrow}</Badge>`, reveal: "eyebrow" },
-    { text: `      <h1>${name}</h1>`, reveal: "name" },
-    { text: `      <h2>${role}</h2>`, reveal: "role" },
-    { text: `      <p>${phrase}</p>`, reveal: "phrase" },
-    { text: `      <Button>${cta}</Button>`, reveal: "cta" },
+    { text: `${pad}<img src="/img/me.jpg" alt="${first}" />`, reveal: "photo" },
+    {
+      text: `${pad}<Badge>${eyebrow}</Badge>`,
+      reveal: "eyebrow",
+      suggest: { from: `${pad}<Bad`.length, to: `${pad}<Badge`.length, items: ["Badge", "BadgeGroup", "BadgeDot"] },
+    },
+    { text: `${h1}${name}</h1>`, reveal: "name", typo: { at: h1.length + slip, wrong: wrongChar } },
+    { text: `${pad}<h2>${role}</h2>`, reveal: "role" },
+    { text: `${pad}<p>${phrase}</p>`, reveal: "phrase" },
+    {
+      text: `${pad}<Button>${cta}</Button>`,
+      reveal: "cta",
+      suggest: { from: `${pad}<But`.length, to: `${pad}<Button`.length, items: ["Button", "ButtonGroup", "ButtonLink"] },
+    },
     { text: "    </motion.section>" },
     { text: "  );" },
     { text: "}" },
   ];
 }
 
+/** Keystroke timeline: variable per-key delay, auto-indent, one typo + backspace, autocomplete accepts. */
 function buildTimeline(lines, speed) {
-  const charMs = CHAR_MS * speed;
-  let cursor = 250 * speed;
+  let t = 250 * speed;
   const out = lines.map((line) => {
-    const start = cursor;
-    const end = start + line.text.length * charMs;
-    cursor = end + (line.text.trim() ? LINE_PAUSE_MS : BLANK_PAUSE_MS) * speed;
-    return { start, end };
+    const steps = [];
+    const mark = (len, extra = "", popup = null) => steps.push({ t, len, extra, popup });
+    let len = line.text.length - line.text.trimStart().length;
+    let typoDone = false;
+    mark(len);
+    while (len < line.text.length) {
+      if (line.typo && !typoDone && len === line.typo.at) {
+        typoDone = true;
+        t += 80 * speed;
+        mark(len, line.typo.wrong);
+        t += 340 * speed;
+        mark(len);
+        continue;
+      }
+      if (line.suggest && len === line.suggest.from) {
+        t += 90 * speed;
+        mark(len, "", line.suggest.items);
+        t += 520 * speed;
+        len = line.suggest.to;
+        mark(len);
+        continue;
+      }
+      const ch = line.text[len];
+      len += 1;
+      t += (CHAR_MS + (ch.charCodeAt(0) % 4) * 3 + (ch === " " ? 8 : 0)) * speed;
+      mark(len);
+    }
+    const start = steps[0].t;
+    const end = t;
+    t += (line.text.trim() ? LINE_PAUSE_MS : BLANK_PAUSE_MS) * speed;
+    return { start, end, steps };
   });
-  return { lines: out, total: cursor, charMs };
+  return { lines: out, total: t };
+}
+
+function stepAt(steps, elapsed) {
+  let current = steps[0];
+  for (const step of steps) {
+    if (step.t > elapsed) break;
+    current = step;
+  }
+  return current;
 }
 
 function highlight(text) {
+  if (text.trimStart().startsWith("//")) return <span className="ctp-com">{text}</span>;
   const parts = text.split(TOKEN);
   return parts.map((part, i) => {
     if (!part) return null;
