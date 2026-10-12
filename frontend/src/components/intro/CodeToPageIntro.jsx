@@ -125,6 +125,30 @@ export default function CodeToPageIntro({ personal, onComplete, returning = fals
     };
   }, []);
 
+  // The window floats in 3D and leans toward the mouse; the glare follows it
+  useEffect(() => {
+    const win = windowRef.current;
+    if (!win || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return undefined;
+    let raf = 0;
+    const onMove = (e) => {
+      if (e.pointerType !== "mouse") return;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const nx = e.clientX / window.innerWidth - 0.5;
+        const ny = e.clientY / window.innerHeight - 0.5;
+        win.style.setProperty("--rx", `${(-ny * 9).toFixed(2)}deg`);
+        win.style.setProperty("--ry", `${(nx * 12).toFixed(2)}deg`);
+        win.style.setProperty("--gx", `${((nx + 0.5) * 100).toFixed(1)}%`);
+        win.style.setProperty("--gy", `${((ny + 0.5) * 100).toFixed(1)}%`);
+      });
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("pointermove", onMove);
+    };
+  }, []);
+
   const shown = [];
   const revealOrder = [];
   for (let i = 0; i < lines.length; i++) {
@@ -153,28 +177,25 @@ export default function CodeToPageIntro({ personal, onComplete, returning = fals
     const lineEl = root?.querySelector(`[data-line="${lines.findIndex((l) => l.reveal === lastReveal)}"]`);
     const el = root?.querySelector(`[data-el="${lastReveal}"]`);
     if (!root || !lineEl || !el) return undefined;
-    const box = root.getBoundingClientRect();
-    const a = lineEl.getBoundingClientRect();
-    const rect = el.getBoundingClientRect();
-    const transform = getComputedStyle(el).transform;
-    const shift = transform && transform !== "none" ? new DOMMatrixReadOnly(transform).m42 : 0;
-    const b = { left: rect.left, top: rect.top - shift, width: rect.width, height: rect.height };
-    const code = codeRef.current.getBoundingClientRect();
+    // Layout coordinates inside the window, so the 3D tilt and the reveal transform don't skew them
+    const a = localBox(lineEl, root);
+    const b = localBox(el, root);
+    const code = localBox(codeRef.current, root);
     let d;
     let end;
     if (b.top >= code.bottom - 1) {
       // Stacked layout: run like a circuit trace down the left edge, clear of the content
-      const x = a.left - box.left + 5;
-      const y1 = a.top + a.height / 2 - box.top;
-      const y2 = b.top + b.height / 2 - box.top;
-      const x2 = b.left - box.left - 8;
+      const x = a.left + 5;
+      const y1 = a.top + a.height / 2;
+      const y2 = b.top + b.height / 2;
+      const x2 = b.left - 8;
       d = `M${x + 16},${y1} H${x + 6} Q${x},${y1} ${x},${y1 + 6} V${y2 - 6} Q${x},${y2} ${x + 6},${y2} H${x2}`;
       end = [x2, y2];
     } else {
-      const x1 = code.right - box.left - 8;
-      const y1 = a.top + a.height / 2 - box.top;
-      const x2 = b.left - box.left - 8;
-      const y2 = b.top + b.height / 2 - box.top;
+      const x1 = code.right - 8;
+      const y1 = a.top + a.height / 2;
+      const x2 = b.left - 8;
+      const y2 = b.top + b.height / 2;
       const dx = (x2 - x1) / 2;
       d = `M${x1},${y1} C${x1 + dx},${y1} ${x2 - dx},${y2} ${x2},${y2}`;
       end = [x2, y2];
@@ -201,15 +222,18 @@ export default function CodeToPageIntro({ personal, onComplete, returning = fals
 
   return (
     <div
-      className={`ctp ${built ? "is-expanding" : ""} ${phase === "fade" ? "is-fading" : ""}`}
+      className={`ctp ${built ? "is-expanding" : ""} ${phase === "fade" ? "is-fading" : ""} ${typing ? "" : "is-flat"}`}
       role="dialog"
       aria-label={t.portal.aria}
     >
+      <div className="ctp-floor" aria-hidden="true" />
+
       <button type="button" className="ctp-skip" onClick={() => setPhase("fade")}>
         {t.portal.skip} <span aria-hidden="true">→</span>
       </button>
 
       <div className="ctp-window" ref={windowRef}>
+        <div className="ctp-glare" aria-hidden="true" />
         <div className="ctp-body">
           <section className="ctp-editor" aria-hidden="true">
             <div className="ctp-tabs">
@@ -330,6 +354,26 @@ export default function CodeToPageIntro({ personal, onComplete, returning = fals
       <p className="ctp-hint">{isTouch ? t.portal.hintTouch : t.portal.hintKeys}</p>
     </div>
   );
+}
+
+function localBox(el, root) {
+  let left = 0;
+  let top = 0;
+  for (let n = el; n && n !== root; n = n.offsetParent) {
+    left += n.offsetLeft;
+    top += n.offsetTop;
+    if (n.offsetParent && n.offsetParent !== root) {
+      left += n.offsetParent.clientLeft;
+      top += n.offsetParent.clientTop;
+    }
+  }
+  for (let p = el.parentElement; p && p !== root; p = p.parentElement) {
+    left -= p.scrollLeft;
+    top -= p.scrollTop;
+  }
+  const width = el.offsetWidth;
+  const height = el.offsetHeight;
+  return { left, top, width, height, right: left + width, bottom: top + height };
 }
 
 function greetingFor(hour, greet) {

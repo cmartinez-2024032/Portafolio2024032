@@ -8,7 +8,9 @@ import {
   FiArrowUpRight,
 } from "react-icons/fi";
 import { useMagnetic } from "../hooks/useMagnetic";
+import { useTilt } from "../hooks/useTilt";
 import { useLanguage } from "../i18n/LanguageContext";
+import "./hero-3d.css";
 
 const TYPING_SPEED = 42;
 const EASE = [0.16, 1, 0.3, 1];
@@ -27,6 +29,7 @@ export default function Hero({ data }) {
   const nameY = useTransform(scrollYProgress, [0, 1], ["0%", "28%"]);
   const fade = useTransform(scrollYProgress, [0, 0.55], [1, 0]);
 
+  const tilt = useTilt(10);
   const magPrimary = useMagnetic(14);
   const magCv = useMagnetic(14);
 
@@ -61,21 +64,40 @@ export default function Hero({ data }) {
       : data?.phrase || t.hero.phraseFallback;
 
   return (
-    <section id="hero" className="forge-hero" ref={sectionRef}>
-      <motion.div
-        className="forge-hero-media"
-        style={{ y: photoY }}
-        aria-hidden={!photo}
-        data-robot-portrait
-      >
-        {photo ? (
-          <img src={photo} alt="" className="forge-hero-img" />
-        ) : (
-          <div className="forge-hero-img-fallback">{name.charAt(0)}</div>
-        )}
-        <div className="forge-hero-media-shade" />
-        <div className="forge-hero-media-scan" />
-        <div className="forge-hero-media-frame" />
+    <section
+      id="hero"
+      className="forge-hero"
+      ref={sectionRef}
+      onMouseMove={tilt.onMouseMove}
+      onMouseLeave={tilt.onMouseLeave}
+    >
+      <motion.div className="hero-3d" style={{ y: photoY }}>
+        <div className="hero-3d-shadow" aria-hidden="true" />
+        <motion.div className="hero-3d-rig" ref={tilt.ref} style={{ ...tilt.style, ...tilt.glowStyle }}>
+          <div className="hero-orbit hero-orbit-a" aria-hidden="true">
+            <div className="hero-orbit-spin">
+              <span className="hero-planet is-blue" />
+              <span className="hero-planet is-yellow is-opposite" />
+            </div>
+          </div>
+          <div className="hero-orbit hero-orbit-b" aria-hidden="true">
+            <div className="hero-orbit-spin">
+              <span className="hero-planet is-green" />
+              <span className="hero-planet is-red is-opposite" />
+            </div>
+          </div>
+          <div className="forge-hero-media" aria-hidden={!photo} data-robot-portrait>
+            {photo ? (
+              <img src={photo} alt="" className="forge-hero-img" />
+            ) : (
+              <div className="forge-hero-img-fallback">{name.charAt(0)}</div>
+            )}
+            <div className="forge-hero-media-shade" />
+            <div className="forge-hero-media-scan" />
+            <div className="forge-hero-media-glare" />
+            <div className="forge-hero-media-frame" />
+          </div>
+        </motion.div>
       </motion.div>
 
       <motion.div className="forge-hero-copy" style={{ y: nameY, opacity: fade }}>

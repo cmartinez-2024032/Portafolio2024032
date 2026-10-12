@@ -12,6 +12,7 @@ import Achievements from "./components/Achievements";
 import CustomCursor from "./components/CustomCursor";
 import Robot from "./components/robot/Robot";
 import Starfield from "./components/background/Starfield";
+import Spotlight from "./components/fx/Spotlight";
 import CodeToPageIntro, { hasSeenPortal, clearPortalSeen } from "./components/intro/CodeToPageIntro";
 import { usePortfolioData } from "./hooks/useDataFetching";
 import { useLanguage } from "./i18n/LanguageContext";
@@ -155,6 +156,7 @@ export default function App() {
         aria-hidden={!introDone}
       >
         <Starfield />
+        <Spotlight />
         <CustomCursor />
         {introDone && <Robot />}
         <Navbar />

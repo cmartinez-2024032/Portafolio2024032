@@ -1,0 +1,152 @@
+/* Hero portrait in 3D: tilts with the mouse, two orbits pass in front of and behind the photo */
+.hero-3d {
+  --orbit-edge: rgba(255, 255, 255, 0.2);
+  --orbit-edge-soft: rgba(255, 255, 255, 0.1);
+  --ground: rgba(0, 0, 0, 0.55);
+
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  margin: 5.75rem auto 0.75rem;
+}
+html[data-theme="light"] .hero-3d {
+  --orbit-edge: rgba(18, 18, 18, 0.22);
+  --orbit-edge-soft: rgba(18, 18, 18, 0.12);
+  --ground: rgba(18, 18, 18, 0.2);
+}
+.hero-3d .forge-hero-media {
+  margin: 0;
+}
+@media (min-width: 960px) {
+  .hero-3d {
+    order: 2;
+    margin: auto;
+    align-self: center;
+    justify-self: center;
+  }
+}
+@media (max-width: 639px) {
+  .hero-3d {
+    margin: 5.5rem auto 0.5rem;
+  }
+}
+
+.hero-3d-rig {
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.hero-3d-shadow {
+  position: absolute;
+  left: 50%;
+  bottom: -9%;
+  width: 72%;
+  height: 9%;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--ground), transparent);
+  filter: blur(6px);
+  pointer-events: none;
+}
+
+.hero-orbit {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--size);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border: 1px solid var(--orbit-edge);
+  border-radius: 50%;
+  transform-style: preserve-3d;
+  transform: rotateY(var(--oy)) rotateX(var(--ox));
+  pointer-events: none;
+}
+.hero-orbit-a {
+  --size: 136%;
+  --ox: 72deg;
+  --oy: -16deg;
+  --d: 14s;
+}
+.hero-orbit-b {
+  --size: 118%;
+  --ox: 78deg;
+  --oy: 24deg;
+  --d: 19s;
+  border-color: var(--orbit-edge-soft);
+  border-style: dashed;
+}
+.hero-orbit-spin {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  animation: heroOrbitSpin var(--d) linear infinite;
+}
+.hero-orbit-b .hero-orbit-spin {
+  animation-direction: reverse;
+}
+@keyframes heroOrbitSpin {
+  to { transform: rotateZ(360deg); }
+}
+
+/* Small shaded spheres; the counter-rotation keeps them facing the camera */
+.hero-planet {
+  --s: 14px;
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: var(--s);
+  height: var(--s);
+  margin: calc(var(--s) / -2) 0 0 calc(var(--s) / -2);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 32% 30%,
+    #fff 0 7%,
+    var(--c) 32%,
+    color-mix(in srgb, var(--c) 40%, #000) 100%
+  );
+  box-shadow: 0 0 16px color-mix(in srgb, var(--c) 55%, transparent);
+  animation: heroPlanetFace var(--d) linear infinite;
+}
+.hero-orbit-b .hero-planet {
+  animation-direction: reverse;
+}
+.hero-planet.is-opposite {
+  top: 100%;
+  --s: 9px;
+}
+.hero-planet.is-blue { --c: var(--c-blue, #2563eb); }
+.hero-planet.is-green { --c: var(--c-green, #16a34a); }
+.hero-planet.is-yellow { --c: var(--c-yellow, #eab308); }
+.hero-planet.is-red { --c: var(--c-red, #dc2626); }
+@keyframes heroPlanetFace {
+  from { transform: rotateZ(0deg) rotateX(calc(-1 * var(--ox))) rotateY(calc(-1 * var(--oy))); }
+  to { transform: rotateZ(-360deg) rotateX(calc(-1 * var(--ox))) rotateY(calc(-1 * var(--oy))); }
+}
+
+/* Light catching the glass over the photo */
+.forge-hero-media-glare {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at var(--glow-x, 30%) var(--glow-y, 20%),
+    rgba(255, 255, 255, 0.35),
+    transparent 55%
+  );
+  mix-blend-mode: soft-light;
+}
+
+.forge-hero {
+  overflow-x: clip;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-orbit-spin,
+  .hero-planet {
+    animation: none;
+  }
+}

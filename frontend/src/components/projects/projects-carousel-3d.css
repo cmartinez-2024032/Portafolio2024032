@@ -86,6 +86,23 @@
   content: none;
 }
 
+/* Soft pool of light on the floor under the carousel */
+.projects-orbit::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0.6rem;
+  width: min(560px, 92%);
+  height: 70px;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255, 255, 255, 0.08), transparent);
+  pointer-events: none;
+}
+html[data-theme="light"] .projects-orbit::after {
+  background: radial-gradient(closest-side, rgba(18, 18, 18, 0.08), transparent);
+}
+
 .card-3d:hover,
 .card-3d:focus-within {
   animation-play-state: paused !important;

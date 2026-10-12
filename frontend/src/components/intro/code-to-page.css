@@ -8,6 +8,9 @@
   --ctp-dim: #8a8a8a;
   --ctp-green: #22c55e;
   --ctp-red: #ef4444;
+  --ctp-light: rgba(255, 255, 255, 0.07);
+  --ctp-grid: rgba(255, 255, 255, 0.07);
+  --ctp-shadow: rgba(0, 0, 0, 0.6);
   --ctp-ease: cubic-bezier(0.16, 1, 0.3, 1);
   --ctp-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
@@ -16,10 +19,48 @@
   z-index: 1000;
   display: grid;
   place-items: center;
+  overflow: hidden;
+  perspective: 1800px;
   background: var(--ctp-bg);
   color: var(--ctp-ink);
   transition: opacity 0.5s ease;
   -webkit-tap-highlight-color: transparent;
+}
+/* Studio light from above */
+.ctp::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 70% 55% at 50% -10%, var(--ctp-light), transparent 70%);
+  transition: opacity 0.6s ease;
+}
+
+/* Perspective floor drifting toward the viewer */
+.ctp-floor {
+  position: absolute;
+  left: -50%;
+  right: -50%;
+  bottom: -2%;
+  height: 58%;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--ctp-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--ctp-grid) 1px, transparent 1px);
+  background-size: 64px 64px;
+  transform: perspective(520px) rotateX(68deg);
+  transform-origin: 50% 100%;
+  -webkit-mask-image: linear-gradient(to top, #000 10%, transparent 85%);
+  mask-image: linear-gradient(to top, #000 10%, transparent 85%);
+  animation: ctpFloor 3.2s linear infinite;
+  transition: opacity 0.6s ease;
+}
+@keyframes ctpFloor {
+  to { background-position: 0 64px; }
+}
+.ctp.is-expanding::before,
+.ctp.is-expanding .ctp-floor {
+  opacity: 0;
 }
 html[data-theme="light"] .ctp {
   --ctp-bg: #ffffff;
@@ -30,6 +71,9 @@ html[data-theme="light"] .ctp {
   --ctp-dim: #737373;
   --ctp-green: #16a34a;
   --ctp-red: #dc2626;
+  --ctp-light: rgba(18, 18, 18, 0.04);
+  --ctp-grid: rgba(18, 18, 18, 0.08);
+  --ctp-shadow: rgba(18, 18, 18, 0.18);
 }
 .ctp.is-fading {
   opacity: 0;
@@ -78,12 +122,23 @@ html[data-theme="light"] .ctp {
   border: 1px solid var(--ctp-edge);
   border-radius: 14px;
   background: var(--ctp-panel);
-  animation: ctpWindowIn 0.7s var(--ctp-ease) both;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 2px 6px var(--ctp-shadow),
+    0 40px 90px -30px var(--ctp-shadow),
+    0 80px 140px -60px var(--ctp-shadow);
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  animation: ctpWindowIn 1.2s var(--ctp-ease) both;
   transition:
+    transform 0.9s var(--ctp-ease),
     width 1.1s var(--ctp-ease),
     height 1.1s var(--ctp-ease),
     border-radius 1.1s var(--ctp-ease),
-    border-color 0.6s ease;
+    border-color 0.6s ease,
+    box-shadow 0.6s ease;
+}
+.ctp.is-flat .ctp-window {
+  transform: none;
 }
 .ctp.is-expanding .ctp-window {
   width: 100vw;
@@ -91,9 +146,48 @@ html[data-theme="light"] .ctp {
   height: 100dvh;
   border-radius: 0;
   border-color: transparent;
+  box-shadow: none;
 }
+/* Swings up from the floor into place */
 @keyframes ctpWindowIn {
-  from { opacity: 0; transform: translateY(18px) scale(0.98); }
+  from {
+    opacity: 0;
+    translate: 0 70px;
+    rotate: x 34deg;
+    scale: 0.88;
+  }
+}
+@media (hover: hover) and (min-width: 821px) {
+  .ctp-window {
+    -webkit-box-reflect: below 22px linear-gradient(transparent 74%, rgba(255, 255, 255, 0.16));
+  }
+  .ctp.is-expanding .ctp-window {
+    -webkit-box-reflect: none;
+  }
+}
+/* Specular highlight that slides with the tilt */
+.ctp-glare {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+  background: radial-gradient(
+    circle 520px at var(--gx, 30%) var(--gy, 0%),
+    rgba(255, 255, 255, 0.07),
+    transparent 70%
+  );
+  transition: opacity 0.6s ease;
+}
+html[data-theme="light"] .ctp-glare {
+  background: radial-gradient(
+    circle 520px at var(--gx, 30%) var(--gy, 0%),
+    rgba(255, 255, 255, 0.5),
+    transparent 70%
+  );
+  mix-blend-mode: soft-light;
+}
+.ctp.is-flat .ctp-glare {
+  opacity: 0;
 }
 .ctp-body {
   flex: 1;

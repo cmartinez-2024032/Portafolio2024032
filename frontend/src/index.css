@@ -4619,10 +4619,12 @@ html[data-theme="light"] .nav-mobile-panel {
 :root {
   --color-glass: rgba(255, 255, 255, 0.04);
   --color-glass-edge: rgba(255, 255, 255, 0.16);
+  --color-spot: rgba(255, 255, 255, 0.09);
 }
 html[data-theme="light"] {
   --color-glass: rgba(255, 255, 255, 0.72);
   --color-glass-edge: rgba(18, 18, 18, 0.16);
+  --color-spot: rgba(18, 18, 18, 0.06);
 }
 .glass,
 .card,
@@ -4637,7 +4639,14 @@ html[data-theme="light"] {
 .forge-strip-item,
 .about-float-chip,
 .card-3d-label {
-  background: var(--color-glass) !important;
+  /* --mx / --my come from the Spotlight component: a soft light under the cursor */
+  background:
+    radial-gradient(
+      380px circle at var(--mx, -999px) var(--my, -999px),
+      var(--color-spot),
+      transparent 60%
+    ),
+    var(--color-glass) !important;
   border-color: var(--color-glass-edge);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
