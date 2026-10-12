@@ -197,7 +197,7 @@ export default function CodePortalIntro({
       spawnBurst(0.5, 0.5, "#b4532a");
       pushToast(t.portal.syncToast);
       const a = window.setTimeout(() => setGlitch(false), 380 * slow);
-      const b = window.setTimeout(() => setPhase("compile"), 800 * slow);
+      const b = window.setTimeout(() => setPhase("compile"), 1100 * slow);
       return () => {
         window.clearTimeout(a);
         window.clearTimeout(b);
@@ -211,7 +211,7 @@ export default function CodePortalIntro({
       const b = window.setTimeout(() => {
         setGlitch(false);
         setPhase("launch");
-      }, 800 * slow);
+      }, 1100 * slow);
       return () => {
         window.clearTimeout(a);
         window.clearTimeout(b);
@@ -220,7 +220,7 @@ export default function CodePortalIntro({
     if (phase === "launch") {
       setCountdown(0);
       spawnBurst(0.5, 0.42, "#9aaf8c");
-      const t = window.setTimeout(finish, 900 * slow);
+      const t = window.setTimeout(finish, 1200 * slow);
       return () => window.clearTimeout(t);
     }
     return undefined;
@@ -239,7 +239,7 @@ export default function CodePortalIntro({
     let i = 0;
     let raf = 0;
     let last = performance.now();
-    const delay = returning ? 35 : Math.max(50, Math.round((entry.delay ?? 90) * 0.78));
+    const delay = returning ? 35 : Math.max(50, Math.round((entry.delay ?? 90) * 0.78)) + 100;
 
     const startTimer = window.setTimeout(() => {
       const tick = (now) => {
