@@ -4,6 +4,7 @@ import { projectCategories } from "../data/siteConfig";
 import ProjectDetail from "./projects/ProjectDetail";
 import ProjectsCarousel3D from "./projects/ProjectsCarousel3D";
 import ScrollReveal from "./ScrollReveal";
+import SectionHeading from "./fx/SectionHeading";
 import { useLanguage } from "../i18n/LanguageContext";
 
 export default function Projects({ projects }) {
@@ -20,12 +21,7 @@ export default function Projects({ projects }) {
     <section id="projects" className="section-wrap-wide projects-section">
       <div className="section-wrap projects-header">
         <ScrollReveal>
-          <p className="section-comment">{t.projects.comment}</p>
-          <h2 className="section-title">
-            {t.projects.title}
-            <span className="text-accent">.</span>
-          </h2>
-          <p className="section-title-serif">{t.projects.serif}</p>
+          <SectionHeading comment={t.projects.comment} title={t.projects.title} phrase={t.projects.serif} />
         </ScrollReveal>
 
         <ScrollReveal delay={0.1} className="projects-filters">

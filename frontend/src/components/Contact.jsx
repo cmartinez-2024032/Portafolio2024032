@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FiMapPin, FiDownload, FiSend } from "react-icons/fi";
 import ScrollReveal from "./ScrollReveal";
+import SectionHeading from "./fx/SectionHeading";
 import GlassFanCards, { buildContactFanItems } from "./GlassFanCards";
 import { useLanguage } from "../i18n/LanguageContext";
 
@@ -74,12 +75,7 @@ export default function Contact({ data }) {
         <div className="contact-cinema-glow" aria-hidden="true" />
 
         <ScrollReveal>
-          <p className="section-comment">{t.contact.comment}</p>
-          <h2 className="section-title">
-            {t.contact.title}
-            <span className="text-accent">.</span>
-          </h2>
-          <p className="section-title-serif">{t.contact.serif}</p>
+          <SectionHeading comment={t.contact.comment} title={t.contact.title} phrase={t.contact.serif} />
         </ScrollReveal>
 
         <ScrollReveal delay={0.08}>

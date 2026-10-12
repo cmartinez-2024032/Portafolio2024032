@@ -38,6 +38,61 @@ html:not([data-theme="light"]) .roll-text-alt { color: var(--color-accent-blue);
 p.scroll-words { color: var(--color-fg); }
 .scroll-word { will-change: opacity; }
 
+/* ── Scroll discovery: typed comments, decrypted titles, rising words ── */
+.fx-type {
+  display: inline-grid;
+}
+.fx-type > [aria-hidden] {
+  grid-area: 1 / 1;
+}
+.fx-type-ghost {
+  visibility: hidden;
+}
+.fx-caret {
+  display: inline-block;
+  width: 0.5em;
+  height: 1.05em;
+  margin-left: 0.12em;
+  vertical-align: text-bottom;
+  background: currentColor;
+  animation: fxCaret 0.9s steps(1) infinite;
+}
+@keyframes fxCaret {
+  50% { opacity: 0; }
+}
+.fx-scramble {
+  font-variant-numeric: tabular-nums;
+}
+.fx-word {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+/* Title underline draws in once the heading has been revealed */
+.section-title.is-drawn::after {
+  animation: fxUnderline 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.5s backwards;
+}
+@keyframes fxUnderline {
+  from { transform: scaleX(0); }
+}
+
+/* Timeline path fills in as the reader scrolls through it */
+.timeline-track .timeline-line {
+  width: 2px;
+  background: var(--color-glass-edge, var(--color-edge));
+}
+.timeline-line-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--sec, var(--color-accent));
+  transform-origin: top;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fx-caret { animation: none; }
+  .section-title.is-drawn::after { animation: none; }
+}
+
 /* ── Theme switch: circular reveal (View Transitions API) ── */
 ::view-transition-old(root),
 ::view-transition-new(root) {

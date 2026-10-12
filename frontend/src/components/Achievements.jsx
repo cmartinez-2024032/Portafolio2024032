@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ScrollReveal from "./ScrollReveal";
+import SectionHeading from "./fx/SectionHeading";
 import Marquee from "./Marquee";
 import { useLanguage } from "../i18n/LanguageContext";
 
@@ -16,12 +17,11 @@ export default function Achievements() {
     <section id="achievements" className="forge-achievements">
       <div className="section-wrap achievements-wrap">
         <ScrollReveal>
-          <p className="section-comment">{t.achievements.comment}</p>
-          <h2 className="section-title">
-            {t.achievements.title}
-            <span className="text-accent">.</span>
-          </h2>
-          <p className="section-title-serif">{t.achievements.serif}</p>
+          <SectionHeading
+            comment={t.achievements.comment}
+            title={t.achievements.title}
+            phrase={t.achievements.serif}
+          />
         </ScrollReveal>
 
         <motion.article

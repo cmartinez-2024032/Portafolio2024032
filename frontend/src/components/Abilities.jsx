@@ -11,6 +11,7 @@ import {
   FiBookOpen,
 } from "react-icons/fi";
 import ScrollReveal from "./ScrollReveal";
+import SectionHeading from "./fx/SectionHeading";
 import { useLanguage } from "../i18n/LanguageContext";
 
 const EASE = [0.16, 1, 0.3, 1];
@@ -34,12 +35,7 @@ export default function Abilities() {
   return (
     <section id="abilities" className="section-wrap abilities-section">
       <ScrollReveal>
-        <p className="section-comment">{t.abilities.comment}</p>
-        <h2 className="section-title">
-          {t.abilities.title}
-          <span className="text-accent">.</span>
-        </h2>
-        <p className="section-title-serif">{t.abilities.serif}</p>
+        <SectionHeading comment={t.abilities.comment} title={t.abilities.title} phrase={t.abilities.serif} />
       </ScrollReveal>
 
       <div className="abilities-grid">

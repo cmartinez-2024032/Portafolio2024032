@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ScrollReveal from "./ScrollReveal";
+import SectionHeading from "./fx/SectionHeading";
 import { useTilt } from "../hooks/useTilt";
 import { skillCategories } from "../data/siteConfig";
 import { resolveTechIcon } from "../data/techIcons";
@@ -67,12 +68,7 @@ export default function Skills({ skills }) {
   return (
     <div className="section-wrap forge-skills">
       <ScrollReveal>
-        <p className="section-comment">{t.skills.comment}</p>
-        <h2 className="section-title">
-          {t.skills.title}
-          <span className="text-accent">.</span>
-        </h2>
-        <p className="section-title-serif">{t.skills.serif}</p>
+        <SectionHeading comment={t.skills.comment} title={t.skills.title} phrase={t.skills.serif} />
       </ScrollReveal>
 
       <ScrollReveal className="skills-pills">

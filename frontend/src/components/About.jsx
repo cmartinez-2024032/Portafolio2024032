@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import ScrollReveal from "./ScrollReveal";
 import Counter from "./Counter";
 import ScrollWords from "./fx/ScrollWords";
+import SectionHeading from "./fx/SectionHeading";
 import { useTilt } from "../hooks/useTilt";
 import { FiMapPin, FiMail, FiGithub, FiLinkedin, FiCalendar, FiBook, FiDownload } from "react-icons/fi";
 import { useLanguage } from "../i18n/LanguageContext";
@@ -48,12 +49,12 @@ export default function About({ data }) {
   return (
     <div className="section-wrap forge-about">
       <ScrollReveal className="forge-bento-kicker">
-        <p className="section-comment">{t.about.comment}</p>
-        <h2 className="section-title">
-          {t.about.title}
-          <span className="text-accent">.</span>
-        </h2>
-        <p className="forge-about-kicker">{phrase}</p>
+        <SectionHeading
+          comment={t.about.comment}
+          title={t.about.title}
+          phrase={phrase}
+          phraseClassName="forge-about-kicker"
+        />
       </ScrollReveal>
 
       <motion.div
