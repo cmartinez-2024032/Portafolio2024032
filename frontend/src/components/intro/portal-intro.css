@@ -2,8 +2,8 @@
   position: fixed;
   inset: 0;
   z-index: 200000;
-  background: #050506;
-  color: var(--color-fg, #f3ede5);
+  background: var(--color-base);
+  color: var(--color-fg, var(--color-fg));
   overflow: hidden;
   display: grid;
   place-items: center;
@@ -33,18 +33,16 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background:
-    radial-gradient(ellipse at center, transparent 18%, rgba(5, 5, 6, 0.5) 68%, rgba(5, 5, 6, 0.94) 100%),
-    linear-gradient(180deg, rgba(5, 5, 6, 0.4) 0%, transparent 22%, transparent 68%, rgba(5, 5, 6, 0.75) 100%);
+  background: radial-gradient(ellipse at center, transparent 18%, var(--color-base) 68%, var(--color-base) 100%),
+    linear-gradient(180deg, transparent 0%, transparent 22%, transparent 68%, var(--color-base) 100%);
 }
 
 .portal-intro-warp {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background:
-    radial-gradient(circle at 50% 48%, transparent 8%, rgba(110, 58, 36, 0.12) 42%, rgba(5, 5, 6, 0.55) 78%),
-    repeating-conic-gradient(from 0deg at 50% 48%, transparent 0deg, rgba(201, 106, 61, 0.035) 4deg, transparent 10deg);
+  background: radial-gradient(circle at 50% 48%, transparent 8%, transparent 42%, var(--color-base) 78%),
+    repeating-conic-gradient(from 0deg at 50% 48%, transparent 0deg, transparent 4deg, transparent 10deg);
   mix-blend-mode: screen;
   opacity: 0;
   transition: opacity 0.2s linear;
@@ -54,8 +52,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background:
-    radial-gradient(circle at 50% 48%, rgba(255, 252, 248, 0.7), rgba(201, 106, 61, 0.35) 28%, rgba(180, 83, 42, 0.12) 55%, transparent 78%);
+  background: radial-gradient(circle at 50% 48%, var(--color-fg), transparent 28%, transparent 55%, transparent 78%);
   mix-blend-mode: screen;
 }
 
@@ -77,7 +74,7 @@
   font-weight: 700;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: var(--color-accent, #b4532a);
+  color: var(--color-accent, var(--color-accent));
   margin-bottom: 1.25rem;
 }
 
@@ -85,8 +82,8 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--color-accent, #b4532a);
-  box-shadow: 0 0 14px rgba(180, 83, 42, 0.9);
+  background: var(--color-accent, var(--color-accent));
+  box-shadow: 0 0 14px transparent;
   animation: portalDot 1.6s ease-in-out infinite;
 }
 
@@ -103,14 +100,14 @@
 }
 
 .portal-intro-title-accent {
-  background: linear-gradient(135deg, #b4532a 0%, #c96a3d 100%);
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
 .portal-intro-sub {
-  color: var(--color-dim, rgba(243, 237, 229, 0.64));
+  color: var(--color-dim, var(--color-fg));
   font-size: 0.95rem;
   margin: 0 0 1.75rem;
 }
@@ -119,7 +116,7 @@
   width: min(100%, 280px);
   height: 2px;
   margin: 0 auto 1.75rem;
-  background: rgba(243, 237, 229, 0.12);
+  background: transparent;
   border-radius: 999px;
   overflow: hidden;
 }
@@ -129,8 +126,8 @@
   height: 100%;
   width: 100%;
   transform-origin: left center;
-  background: linear-gradient(90deg, #b4532a, #c96a3d);
-  box-shadow: 0 0 18px rgba(180, 83, 42, 0.65);
+  background: linear-gradient(90deg, var(--color-accent), var(--color-accent));
+  box-shadow: 0 0 18px transparent;
   will-change: transform;
 }
 
@@ -142,7 +139,7 @@
   font-size: 0.62rem;
   letter-spacing: 0.32em;
   text-transform: uppercase;
-  color: var(--color-dim-more, rgba(243, 237, 229, 0.38));
+  color: var(--color-dim-more, var(--color-fg));
   opacity: 0;
   transition: opacity 0.5s ease;
 }
@@ -155,15 +152,15 @@
 .portal-intro-hint-line {
   width: 1px;
   height: 42px;
-  background: linear-gradient(180deg, var(--color-accent, #b4532a), transparent);
+  background: linear-gradient(180deg, var(--color-accent, var(--color-accent)), transparent);
 }
 
 .portal-intro-skip {
   pointer-events: auto;
   margin-top: 2rem;
   background: transparent;
-  border: 1px solid rgba(180, 83, 42, 0.35);
-  color: var(--color-dim, rgba(243, 237, 229, 0.64));
+  border: 1px solid var(--color-accent);
+  color: var(--color-dim, var(--color-fg));
   font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.22em;
@@ -175,9 +172,9 @@
 
 .portal-intro-skip:hover,
 .portal-intro-skip:focus-visible {
-  color: #fff;
-  border-color: rgba(180, 83, 42, 0.8);
-  background: rgba(180, 83, 42, 0.12);
+  color: var(--color-fg);
+  border-color: var(--color-accent);
+  background: transparent;
   outline: none;
 }
 

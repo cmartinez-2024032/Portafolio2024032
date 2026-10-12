@@ -46,20 +46,16 @@ function Robot() {
         >
           <defs>
             <linearGradient id="robot-shell-gradient" x1="16" y1="12" x2="112" y2="128">
-              <stop offset="0" stopColor="#3a3432" />
-              <stop offset="0.45" stopColor="#161618" />
-              <stop offset="1" stopColor="#070708" />
+              <stop offset="0" stopColor="#000000" />
+              <stop offset="1" stopColor="#000000" />
             </linearGradient>
             <linearGradient id="robot-edge-gradient" x1="20" y1="18" x2="108" y2="120">
-              <stop offset="0" stopColor="#f0c3a3" stopOpacity="0.95" />
-              <stop offset="0.5" stopColor="#e09a6c" stopOpacity="0.35" />
-              <stop offset="1" stopColor="#e09a6c" stopOpacity="0.08" />
+              <stop offset="0" stopColor="#ffffff" />
+              <stop offset="1" stopColor="#ffffff" />
             </linearGradient>
             <radialGradient id="robot-core-gradient" cx="50%" cy="50%" r="50%">
-              <stop offset="0" stopColor="#fff7f2" />
-              <stop offset="0.35" stopColor="#f0c3a3" />
-              <stop offset="0.75" stopColor="#e09a6c" />
-              <stop offset="1" stopColor="#7a3517" />
+              <stop offset="0" stopColor="#ffffff" />
+              <stop offset="1" stopColor="#ffffff" />
             </radialGradient>
             <filter id="robot-core-glow" x="-120%" y="-120%" width="340%" height="340%">
               <feGaussianBlur stdDeviation="3.5" result="blur" />

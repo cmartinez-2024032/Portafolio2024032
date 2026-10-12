@@ -11,10 +11,8 @@ import Footer from "./components/Footer";
 import Achievements from "./components/Achievements";
 import CustomCursor from "./components/CustomCursor";
 import Robot from "./components/robot/Robot";
-import Starfield from "./components/background/Starfield";
 import CodePortalIntro, { hasSeenPortal, clearPortalSeen } from "./components/intro/CodePortalIntro";
 import { usePortfolioData } from "./hooks/useDataFetching";
-import { useSpotlight } from "./hooks/useSpotlight";
 import { useLanguage } from "./i18n/LanguageContext";
 
 export default function App() {
@@ -22,8 +20,6 @@ export default function App() {
   const { t } = useLanguage();
   const [introDone, setIntroDone] = useState(() => hasSeenPortal());
   const [portalReturning, setPortalReturning] = useState(false);
-  useSpotlight();
-
   // At the top of the site, scroll-up reopens the code portal.
   useEffect(() => {
     if (!introDone) return;
@@ -122,7 +118,6 @@ export default function App() {
         }}
         aria-hidden={!introDone}
       >
-        <Starfield />
         <CustomCursor />
         {introDone && <Robot />}
         <Navbar />
