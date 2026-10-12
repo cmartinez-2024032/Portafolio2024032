@@ -129,6 +129,59 @@ export const es = {
     success: "Mensaje enviado. Te respondo pronto.",
     error: "No se pudo enviar. Intenta de nuevo.",
   },
+  workflow: {
+    comment: "proceso",
+    title: "Cómo construyo",
+    serif: "Del primer commit a producción",
+    feedTitle: "Del commit a producción",
+    feedBody: "Trabajo con Git, pull requests y despliegues continuos. Cada cambio llega a producción en minutos.",
+    feed: [
+      { label: "Cambios commiteados y pusheados", source: "Git", time: "hace 2 min" },
+      { label: "Pull request fusionado", source: "GitHub", time: "hace 9 min" },
+      { label: "Desplegado a producción", source: "Vercel", time: "hace 12 min" },
+    ],
+    apiTitle: "APIs limpias y seguras",
+    apiBody: "Rutas validadas, JWT y errores claros. Backend pensado para crecer.",
+    teamTitle: "Comunicación directa",
+    teamBody: "Hablo claro con el equipo y cierro el ciclo cuando algo queda listo.",
+    chat: [
+      { who: "Equipo", text: "¿Podemos tener el login con JWT antes del demo?" },
+      { who: "Cristopher", text: "Listo, ya está en producción ✓" },
+    ],
+    qualityTitle: "Hecho para cualquier pantalla",
+    qualityBody: "Interfaces responsivas, rápidas en el teléfono y fáciles de usar.",
+    qualityRows: [
+      ["Responsive", "Modo claro / oscuro", "Bilingüe ES · EN", "Accesible"],
+      ["Rápido en móvil", "REST API", "Código mantenible", "Deploy continuo"],
+    ],
+  },
+  faq: {
+    comment: "dudas",
+    title: "Preguntas",
+    serif: "Lo que suelen preguntarme",
+    items: [
+      {
+        q: "¿Estás disponible para trabajar?",
+        a: "Sí. Busco mi primera oportunidad como Junior Full-Stack: empleo, prácticas o proyectos freelance. Puedo empezar de inmediato.",
+      },
+      {
+        q: "¿Cuál es tu stack principal?",
+        a: "En backend uso Node.js con Express y C# .NET; en frontend, React y Tailwind. Para datos trabajo con PostgreSQL, MySQL y MongoDB.",
+      },
+      {
+        q: "¿Trabajas de forma remota?",
+        a: "Sí, me adapto a trabajo remoto, híbrido o presencial en Guatemala. Uso Git, GitHub y comunicación constante para coordinar.",
+      },
+      {
+        q: "¿Qué tipo de proyectos te interesan?",
+        a: "APIs REST, sistemas con autenticación, paneles administrativos y aplicaciones que resuelvan problemas reales, como Aditus.",
+      },
+      {
+        q: "¿Cómo puedo contactarte?",
+        a: "Desde el formulario de abajo, por correo o LinkedIn. Respondo lo antes posible.",
+      },
+    ],
+  },
   footer: {
     rights: "Todos los derechos reservados.",
   },
@@ -369,6 +422,59 @@ export const en = {
     sending: "Sending…",
     success: "Message sent. I'll get back to you soon.",
     error: "Could not send. Please try again.",
+  },
+  workflow: {
+    comment: "process",
+    title: "How I build",
+    serif: "From the first commit to production",
+    feedTitle: "From commit to production",
+    feedBody: "I work with Git, pull requests and continuous deployment. Every change reaches production in minutes.",
+    feed: [
+      { label: "Changes committed and pushed", source: "Git", time: "2 min ago" },
+      { label: "Pull request merged", source: "GitHub", time: "9 min ago" },
+      { label: "Deployed to production", source: "Vercel", time: "12 min ago" },
+    ],
+    apiTitle: "Clean, secure APIs",
+    apiBody: "Validated routes, JWT and clear errors. A backend built to grow.",
+    teamTitle: "Direct communication",
+    teamBody: "I talk clearly with the team and close the loop when something ships.",
+    chat: [
+      { who: "Team", text: "Can we have JWT login before the demo?" },
+      { who: "Cristopher", text: "Done, it's live in production ✓" },
+    ],
+    qualityTitle: "Made for any screen",
+    qualityBody: "Responsive interfaces that are fast on phones and easy to use.",
+    qualityRows: [
+      ["Responsive", "Light / dark mode", "Bilingual ES · EN", "Accessible"],
+      ["Fast on mobile", "REST API", "Maintainable code", "Continuous deploy"],
+    ],
+  },
+  faq: {
+    comment: "questions",
+    title: "FAQ",
+    serif: "What people usually ask me",
+    items: [
+      {
+        q: "Are you available for work?",
+        a: "Yes. I'm looking for my first opportunity as a Junior Full-Stack developer: a job, internship or freelance projects. I can start right away.",
+      },
+      {
+        q: "What's your main stack?",
+        a: "On the backend I use Node.js with Express and C# .NET; on the frontend, React and Tailwind. For data I work with PostgreSQL, MySQL and MongoDB.",
+      },
+      {
+        q: "Do you work remotely?",
+        a: "Yes, I adapt to remote, hybrid or on-site work in Guatemala. I use Git, GitHub and constant communication to coordinate.",
+      },
+      {
+        q: "What kind of projects interest you?",
+        a: "REST APIs, systems with authentication, admin dashboards and apps that solve real problems, like Aditus.",
+      },
+      {
+        q: "How can I reach you?",
+        a: "Through the form below, by email or LinkedIn. I reply as soon as I can.",
+      },
+    ],
   },
   footer: {
     rights: "All rights reserved.",
