@@ -5,26 +5,26 @@
   --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Manrope", ui-sans-serif, system-ui, sans-serif;
 
-  /* Pure black & white — solid colors only, no greys or transparency */
-  --color-accent: #ffffff;
-  --color-accent-light: #ffffff;
-  --color-accent-dark: #ffffff;
-  --color-accent-blue: #ffffff;
+  /* Solid neutrals: carbon base, off-white text, grey for secondary text */
+  --color-accent: #f5f5f5;
+  --color-accent-light: #f5f5f5;
+  --color-accent-dark: #f5f5f5;
+  --color-accent-blue: #f5f5f5;
   --color-on-accent: #121212;
   --color-amber-soft: transparent;
   --color-glow: transparent;
-  --gradient-accent: #ffffff;
+  --gradient-accent: #f5f5f5;
 
   --color-base: #121212;
   --color-surf: #121212;
   --color-card: #121212;
   --color-card-hover: #121212;
-  --color-edge: #ffffff;
-  --color-edge-light: #ffffff;
+  --color-edge: #f5f5f5;
+  --color-edge-light: #f5f5f5;
 
-  --color-fg: #ffffff;
-  --color-dim: #ffffff;
-  --color-dim-more: #ffffff;
+  --color-fg: #f5f5f5;
+  --color-dim: #a3a3a3;
+  --color-dim-more: #8a8a8a;
 }
 
 html {
@@ -44,8 +44,8 @@ html[data-theme="light"] {
   --color-edge-light: #121212;
 
   --color-fg: #121212;
-  --color-dim: #121212;
-  --color-dim-more: #121212;
+  --color-dim: #525252;
+  --color-dim-more: #737373;
 
   --color-accent: #121212;
   --color-accent-light: #121212;
@@ -4592,29 +4592,25 @@ html[data-theme="light"] .nav-mobile-panel {
   --c-green: #16a34a;
   --c-yellow: #eab308;
   --c-red: #dc2626;
-  --c-violet: #7c3aed;
-  --c-pink: #db2777;
 }
 #intro { --sec: var(--c-blue); }
 #skills { --sec: var(--c-green); }
-#abilities { --sec: var(--c-violet); }
-#timeline { --sec: var(--c-yellow); }
-#achievements { --sec: var(--c-pink); }
-#projects { --sec: var(--c-red); }
-#contact { --sec: var(--c-blue); }
+#abilities { --sec: var(--c-yellow); }
+#timeline { --sec: var(--c-red); }
+#achievements { --sec: var(--c-blue); }
+#projects { --sec: var(--c-green); }
+#contact { --sec: var(--c-yellow); }
 
 .section-title .text-accent { color: var(--sec, var(--color-accent)); }
 .section-title::after { background: var(--sec, var(--color-accent)) !important; }
 
-.abilities-grid > :nth-child(6n + 1) .ability-orb { --orb: var(--c-blue); }
-.abilities-grid > :nth-child(6n + 2) .ability-orb { --orb: var(--c-green); }
-.abilities-grid > :nth-child(6n + 3) .ability-orb { --orb: var(--c-violet); }
-.abilities-grid > :nth-child(6n + 4) .ability-orb { --orb: var(--c-yellow); }
-.abilities-grid > :nth-child(6n + 5) .ability-orb { --orb: var(--c-pink); }
-.abilities-grid > :nth-child(6n + 6) .ability-orb { --orb: var(--c-red); }
+.abilities-grid > :nth-child(4n + 1) .ability-orb { --orb: var(--c-blue); }
+.abilities-grid > :nth-child(4n + 2) .ability-orb { --orb: var(--c-green); }
+.abilities-grid > :nth-child(4n + 3) .ability-orb { --orb: var(--c-yellow); }
+.abilities-grid > :nth-child(4n + 4) .ability-orb { --orb: var(--c-red); }
 .ability-orb {
   background: var(--orb, var(--color-accent)) !important;
   border-color: var(--orb, var(--color-accent)) !important;
   color: #ffffff !important;
 }
-.abilities-grid > :nth-child(6n + 4) .ability-orb { color: #121212 !important; }
+.abilities-grid > :nth-child(4n + 3) .ability-orb { color: #121212 !important; }

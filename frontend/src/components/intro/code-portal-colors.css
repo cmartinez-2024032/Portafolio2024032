@@ -5,15 +5,12 @@
   --c-green: #22c55e;
   --c-yellow: #facc15;
   --c-red: #ef4444;
-  --c-violet: #8b5cf6;
-  --c-pink: #ec4899;
   --c-stripes: linear-gradient(
     90deg,
-    var(--c-blue) 0 20%,
-    var(--c-green) 20% 40%,
-    var(--c-yellow) 40% 60%,
-    var(--c-red) 60% 80%,
-    var(--c-violet) 80% 100%
+    var(--c-blue) 0 25%,
+    var(--c-green) 25% 50%,
+    var(--c-yellow) 50% 75%,
+    var(--c-red) 75% 100%
   );
 }
 html[data-theme="light"] .code-portal {
@@ -21,8 +18,6 @@ html[data-theme="light"] .code-portal {
   --c-green: #16a34a;
   --c-yellow: #eab308;
   --c-red: #dc2626;
-  --c-violet: #7c3aed;
-  --c-pink: #db2777;
 }
 
 /* Splash */
@@ -39,8 +34,8 @@ html[data-theme] .code-portal .code-prompt { color: var(--c-blue); }
 html[data-theme] .code-portal .code-line--ok .code-prefix { color: var(--c-green); }
 html[data-theme] .code-portal .code-line--warn .code-prefix,
 html[data-theme] .code-portal .code-line--warn .code-text { color: var(--c-yellow); }
-html[data-theme] .code-portal .code-line--info .code-prefix { color: var(--c-violet); }
-html[data-theme] .code-portal .code-line--out .code-prefix { color: var(--c-pink); }
+html[data-theme] .code-portal .code-line--info .code-prefix { color: var(--c-blue); }
+html[data-theme] .code-portal .code-line--out .code-prefix { color: var(--c-red); }
 html[data-theme] .code-portal .tok-flag { color: var(--c-yellow); }
 html[data-theme] .code-portal .tok-str { color: var(--c-green); }
 html[data-theme] .code-portal .code-tabs span.is-active {
@@ -51,7 +46,7 @@ html[data-theme] .code-portal .code-tabs span.is-active {
 
 /* Phase badge in the title bar */
 html[data-theme] .code-portal .code-portal-badge { color: var(--c-blue); border-color: var(--c-blue); }
-html[data-theme] .code-portal .code-portal-badge.is-sync { color: var(--c-violet); border-color: var(--c-violet); }
+html[data-theme] .code-portal .code-portal-badge.is-sync { color: var(--c-red); border-color: var(--c-red); }
 html[data-theme] .code-portal .code-portal-badge.is-build { color: var(--c-yellow); border-color: var(--c-yellow); }
 html[data-theme] .code-portal .code-portal-badge.is-go,
 html[data-theme] .code-portal .code-portal-badge.is-live { color: var(--c-green); border-color: var(--c-green); }
@@ -66,40 +61,35 @@ html[data-theme] .code-portal .code-portal-pct { color: var(--c-blue); }
 html[data-theme] .code-portal .code-hud-label { color: var(--c-blue); }
 html[data-theme] .code-portal .code-radar b { background: var(--c-green); }
 html[data-theme] .code-portal .code-hud--left .code-meter:nth-child(3) .code-meter-track span { background: var(--c-blue); }
-html[data-theme] .code-portal .code-hud--left .code-meter:nth-child(4) .code-meter-track span { background: var(--c-violet); }
+html[data-theme] .code-portal .code-hud--left .code-meter:nth-child(4) .code-meter-track span { background: var(--c-yellow); }
 html[data-theme] .code-portal .code-hud--left .code-meter:nth-child(5) .code-meter-track span { background: var(--c-green); }
 html[data-theme] .code-portal .code-meter-track { border: 1px solid var(--color-fg); height: 6px; }
-html[data-theme] .code-portal .code-wave span:nth-child(5n + 1) { background: var(--c-blue); }
-html[data-theme] .code-portal .code-wave span:nth-child(5n + 2) { background: var(--c-green); }
-html[data-theme] .code-portal .code-wave span:nth-child(5n + 3) { background: var(--c-yellow); }
-html[data-theme] .code-portal .code-wave span:nth-child(5n + 4) { background: var(--c-red); }
-html[data-theme] .code-portal .code-wave span:nth-child(5n + 5) { background: var(--c-violet); }
+html[data-theme] .code-portal .code-wave span:nth-child(4n + 1) { background: var(--c-blue); }
+html[data-theme] .code-portal .code-wave span:nth-child(4n + 2) { background: var(--c-green); }
+html[data-theme] .code-portal .code-wave span:nth-child(4n + 3) { background: var(--c-yellow); }
+html[data-theme] .code-portal .code-wave span:nth-child(4n + 4) { background: var(--c-red); }
 
 /* Right HUD pipeline */
-html[data-theme] .code-portal .code-hud--right .code-hud-label { color: var(--c-violet); }
-html[data-theme] .code-portal .code-pipe.is-on:nth-of-type(6n + 1) .code-pipe-mark { color: var(--c-blue); }
-html[data-theme] .code-portal .code-pipe.is-on:nth-of-type(6n + 2) .code-pipe-mark { color: var(--c-green); }
-html[data-theme] .code-portal .code-pipe.is-on:nth-of-type(6n + 3) .code-pipe-mark { color: var(--c-yellow); }
-html[data-theme] .code-portal .code-pipe.is-on:nth-of-type(6n + 4) .code-pipe-mark { color: var(--c-red); }
-html[data-theme] .code-portal .code-pipe.is-on:nth-of-type(6n + 5) .code-pipe-mark { color: var(--c-violet); }
-html[data-theme] .code-portal .code-pipe.is-on:nth-of-type(6n + 6) .code-pipe-mark { color: var(--c-pink); }
+html[data-theme] .code-portal .code-hud--right .code-hud-label { color: var(--c-green); }
+html[data-theme] .code-portal .code-pipe.is-on:nth-of-type(4n + 1) .code-pipe-mark { color: var(--c-blue); }
+html[data-theme] .code-portal .code-pipe.is-on:nth-of-type(4n + 2) .code-pipe-mark { color: var(--c-green); }
+html[data-theme] .code-portal .code-pipe.is-on:nth-of-type(4n + 3) .code-pipe-mark { color: var(--c-yellow); }
+html[data-theme] .code-portal .code-pipe.is-on:nth-of-type(4n + 4) .code-pipe-mark { color: var(--c-red); }
 html[data-theme] .code-portal .code-hud-chip { color: var(--c-green); border-color: var(--c-green); }
 
 /* Stack modules: each lights up in its own colour */
 html[data-theme] .code-portal .code-module.is-on { border-color: transparent; color: #ffffff; }
 html[data-theme] .code-portal .code-module.is-on i { box-shadow: none; }
-html[data-theme] .code-portal .code-module:nth-child(1).is-on { background: var(--c-blue); }
-html[data-theme] .code-portal .code-module:nth-child(2).is-on { background: var(--c-green); }
-html[data-theme] .code-portal .code-module:nth-child(3).is-on { background: var(--c-violet); }
-html[data-theme] .code-portal .code-module:nth-child(4).is-on { background: var(--c-yellow); color: #121212; }
-html[data-theme] .code-portal .code-module:nth-child(5).is-on { background: var(--c-pink); }
-html[data-theme] .code-portal .code-module:nth-child(6).is-on { background: var(--c-red); }
+html[data-theme] .code-portal .code-module:nth-child(4n + 1).is-on { background: var(--c-blue); }
+html[data-theme] .code-portal .code-module:nth-child(4n + 2).is-on { background: var(--c-green); }
+html[data-theme] .code-portal .code-module:nth-child(4n + 3).is-on { background: var(--c-yellow); color: #121212; }
+html[data-theme] .code-portal .code-module:nth-child(4n + 4).is-on { background: var(--c-red); }
 
 /* Phase rail */
 html[data-theme] .code-portal .code-phase-step:nth-child(1).is-active b { background: var(--c-blue); }
-html[data-theme] .code-portal .code-phase-step:nth-child(2).is-active b { background: var(--c-violet); }
+html[data-theme] .code-portal .code-phase-step:nth-child(2).is-active b { background: var(--c-red); }
 html[data-theme] .code-portal .code-phase-step:nth-child(3).is-active b { background: var(--c-yellow); }
-html[data-theme] .code-portal .code-phase-step:nth-child(4).is-active b { background: var(--c-pink); }
+html[data-theme] .code-portal .code-phase-step:nth-child(4).is-active b { background: var(--c-blue); }
 html[data-theme] .code-portal .code-phase-step:nth-child(5).is-active b { background: var(--c-green); }
 html[data-theme] .code-portal .code-phase-step.is-done b { background: var(--c-green); border-color: var(--c-green); }
 
