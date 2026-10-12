@@ -9,8 +9,6 @@ import Projects from "./components/Projects";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 import Achievements from "./components/Achievements";
-import WorkflowBento from "./components/WorkflowBento";
-import Faq from "./components/Faq";
 import CustomCursor from "./components/CustomCursor";
 import Robot from "./components/robot/Robot";
 import Starfield from "./components/background/Starfield";
@@ -139,8 +137,6 @@ export default function App() {
 
           <Abilities />
 
-          <WorkflowBento />
-
           <section id="timeline">
             <Timeline />
           </section>
@@ -148,8 +144,6 @@ export default function App() {
           <Achievements />
 
           <Projects projects={data.projects} />
-
-          <Faq />
 
           <section id="contact">
             <Contact data={data.personal} />
