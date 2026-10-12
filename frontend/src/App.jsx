@@ -11,6 +11,7 @@ import Footer from "./components/Footer";
 import Achievements from "./components/Achievements";
 import CustomCursor from "./components/CustomCursor";
 import Robot from "./components/robot/Robot";
+import Starfield from "./components/background/Starfield";
 import CodePortalIntro, { hasSeenPortal, clearPortalSeen } from "./components/intro/CodePortalIntro";
 import { usePortfolioData } from "./hooks/useDataFetching";
 import { useLanguage } from "./i18n/LanguageContext";
@@ -20,41 +21,76 @@ export default function App() {
   const { t } = useLanguage();
   const [introDone, setIntroDone] = useState(() => hasSeenPortal());
   const [portalReturning, setPortalReturning] = useState(false);
-  // At the top of the site, scroll-up reopens the code portal.
+  // At the top of the site, a long, deliberate scroll-up reopens the code portal.
+  // Momentum from scrolling back to the top must not trigger it, so the user has
+  // to rest at the top first and then keep pulling up past a threshold.
   useEffect(() => {
     if (!introDone) return;
 
-    const onWheel = (e) => {
-      if (window.scrollY > 12) return;
-      if (e.deltaY >= -18) return;
-      e.preventDefault();
+    const TOP = 12;
+    const REST_MS = 1000;
+    const WHEEL_PULL = 700;
+    const WHEEL_GAP_MS = 350;
+    const TOUCH_PULL = 180;
+
+    let atTopSince = window.scrollY <= TOP ? performance.now() : null;
+    let pull = 0;
+    let lastWheel = 0;
+
+    const reopen = () => {
       clearPortalSeen();
       setPortalReturning(true);
       setIntroDone(false);
       window.scrollTo(0, 0);
     };
 
-    let touchY = null;
-    const onTouchStart = (e) => {
-      touchY = e.touches[0]?.clientY ?? null;
-    };
-    const onTouchMove = (e) => {
-      if (window.scrollY > 12 || touchY == null) return;
-      const y = e.touches[0]?.clientY ?? touchY;
-      const delta = y - touchY;
-      if (delta > 28) {
-        e.preventDefault();
-        clearPortalSeen();
-        setPortalReturning(true);
-        setIntroDone(false);
-        touchY = null;
+    const rested = () => atTopSince != null && performance.now() - atTopSince >= REST_MS;
+
+    const onScroll = () => {
+      if (window.scrollY > TOP) {
+        atTopSince = null;
+        pull = 0;
+      } else if (atTopSince == null) {
+        atTopSince = performance.now();
       }
     };
 
+    const onWheel = (e) => {
+      const now = performance.now();
+      if (window.scrollY > TOP || e.deltaY >= 0 || !rested()) {
+        pull = 0;
+        lastWheel = now;
+        return;
+      }
+      if (now - lastWheel > WHEEL_GAP_MS) pull = 0;
+      lastWheel = now;
+      pull += -e.deltaY;
+      if (pull < WHEEL_PULL) return;
+      e.preventDefault();
+      pull = 0;
+      reopen();
+    };
+
+    let touchY = null;
+    const onTouchStart = (e) => {
+      touchY = rested() ? e.touches[0]?.clientY ?? null : null;
+    };
+    const onTouchMove = (e) => {
+      if (window.scrollY > TOP || touchY == null) return;
+      const y = e.touches[0]?.clientY ?? touchY;
+      if (y - touchY > TOUCH_PULL) {
+        e.preventDefault();
+        touchY = null;
+        reopen();
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("wheel", onWheel, { passive: false });
     window.addEventListener("touchstart", onTouchStart, { passive: true });
     window.addEventListener("touchmove", onTouchMove, { passive: false });
     return () => {
+      window.removeEventListener("scroll", onScroll);
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("touchmove", onTouchMove);
@@ -118,6 +154,7 @@ export default function App() {
         }}
         aria-hidden={!introDone}
       >
+        <Starfield />
         <CustomCursor />
         {introDone && <Robot />}
         <Navbar />

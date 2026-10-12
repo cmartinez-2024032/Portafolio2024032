@@ -4108,7 +4108,7 @@ html[data-theme="light"] .nav-lang-toggle button.is-active {
 }
 
 html[data-theme="light"] .signal-field {
-  opacity: 0.35;
+  opacity: 0.7;
 }
 
 html[data-theme="light"] .cursor-aura {

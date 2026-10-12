@@ -4,6 +4,8 @@ function rand(min, max) {
   return Math.random() * (max - min) + min;
 }
 
+const TAILS = ["59,130,246", "34,197,94", "250,204,21", "239,68,68"];
+
 /** Occasional falling streak — diagonal meteor across the viewport. */
 function spawnMeteor(w, h) {
   const startX = rand(-w * 0.05, w * 0.95);
@@ -18,11 +20,12 @@ function spawnMeteor(w, h) {
     life: 0,
     maxLife: rand(32, 52),
     width: rand(1.4, 2.2),
+    tail: TAILS[Math.floor(Math.random() * TAILS.length)],
   };
 }
 
 /**
- * Solid black sky with occasional falling meteors (shooting streaks).
+ * Solid sky with occasional falling meteors (shooting streaks) tinted in the site palette.
  * No static starfield — only intermittent background trails while browsing.
  */
 export default function Starfield() {
@@ -70,6 +73,7 @@ export default function Starfield() {
 
       t += 1;
       ctx.clearRect(0, 0, w, h);
+      const head = document.documentElement.dataset.theme === "light" ? "18,18,18" : "245,245,245";
 
       if (t > nextAt && meteors.length < maxMeteors) {
         const burst = 1 + Math.floor(Math.random() * 3); // 1–3 per wave
@@ -88,9 +92,9 @@ export default function Starfield() {
         const tailY = m.y - m.vy * 5.5;
 
         const grad = ctx.createLinearGradient(tailX, tailY, m.x, m.y);
-        grad.addColorStop(0, "rgba(180,83,42,0)");
-        grad.addColorStop(0.55, `rgba(201,106,61,${0.22 * fade})`);
-        grad.addColorStop(1, `rgba(243,236,228,${0.7 * fade})`);
+        grad.addColorStop(0, `rgba(${m.tail},0)`);
+        grad.addColorStop(0.55, `rgba(${m.tail},${0.35 * fade})`);
+        grad.addColorStop(1, `rgba(${head},${0.75 * fade})`);
 
         ctx.strokeStyle = grad;
         ctx.lineWidth = m.width;
@@ -102,12 +106,12 @@ export default function Starfield() {
 
         ctx.beginPath();
         ctx.arc(m.x, m.y, 1.4, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(243,236,228,${fade * 0.8})`;
+        ctx.fillStyle = `rgba(${head},${fade * 0.8})`;
         ctx.fill();
 
         ctx.beginPath();
         ctx.arc(m.x, m.y, 3.2, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(180,83,42,${fade * 0.14})`;
+        ctx.fillStyle = `rgba(${m.tail},${fade * 0.18})`;
         ctx.fill();
       }
     }
