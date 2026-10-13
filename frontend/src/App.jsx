@@ -145,6 +145,8 @@ export default function App() {
           minHeight: "100vh",
           color: "var(--color-fg)",
           opacity: introDone ? 1 : 0,
+          // Hidden, not just transparent, so the browser skips painting the site under the intro.
+          visibility: introDone ? "visible" : "hidden",
           pointerEvents: introDone ? "auto" : "none",
           transition: "opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1)",
         }}

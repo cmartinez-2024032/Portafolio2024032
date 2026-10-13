@@ -46,19 +46,26 @@ let rectLightsReady = false;
  * `onFrame` reports where it actually is.
  */
 export function createRoomScene(canvas, { content, onLoadProgress, onFrame }) {
-  if (!rectLightsReady) {
+  const small = Math.min(window.innerWidth, window.innerHeight) < 700;
+  // Phones get a lighter pipeline: no post-processing, point lights instead of area
+  // lights, shadows rendered once, and a resolution that drops if frames run slow.
+  const lite = small && window.matchMedia("(pointer: coarse)").matches;
+  if (!lite && !rectLightsReady) {
     RectAreaLightUniformsLib.init();
     rectLightsReady = true;
   }
-  const small = Math.min(window.innerWidth, window.innerHeight) < 700;
+  const LITE_RATIOS = [1.25, 1, 0.85].map((r) => Math.min(window.devicePixelRatio, r));
+  let liteStep = 0;
 
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: "high-performance" });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, small ? 1.5 : 1.75));
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: lite, powerPreference: "high-performance" });
+  renderer.setPixelRatio(lite ? LITE_RATIOS[0] : Math.min(window.devicePixelRatio, small ? 1.5 : 1.75));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.45;
   renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.type = lite ? THREE.PCFShadowMap : THREE.PCFSoftShadowMap;
+  // The room is static, so on phones the shadow map is drawn once after furnishing.
+  if (lite) renderer.shadowMap.autoUpdate = false;
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x050506);
@@ -79,7 +86,7 @@ export function createRoomScene(canvas, { content, onLoadProgress, onFrame }) {
       const t = texLoader.load(`${ASSETS}/textures/${id}/${map}.jpg`);
       t.wrapS = t.wrapT = THREE.RepeatWrapping;
       t.repeat.set(repeat, repeat);
-      t.anisotropy = 8;
+      t.anisotropy = lite ? 2 : 8;
       if (color) t.colorSpace = THREE.SRGBColorSpace;
       return t;
     };
@@ -107,7 +114,14 @@ export function createRoomScene(canvas, { content, onLoadProgress, onFrame }) {
     return m;
   }
 
-  function rectLight(color, intensity, w, h, pos, look) {
+  function rectLight(color, intensity, w, h, pos, look, { liteScale = 1 } = {}) {
+    if (lite) {
+      if (!liteScale) return null;
+      const p = new THREE.PointLight(color, intensity * w * h * liteScale, 3, 2);
+      p.position.copy(pos).addScaledVector(look.clone().sub(pos).normalize(), 0.12);
+      scene.add(p);
+      return p;
+    }
     const l = new THREE.RectAreaLight(color, intensity, w, h);
     l.position.copy(pos);
     l.lookAt(look);
@@ -215,7 +229,7 @@ export function createRoomScene(canvas, { content, onLoadProgress, onFrame }) {
   moon.shadow.normalBias = 0.025;
   moon.shadow.radius = 2;
   scene.add(moon, moon.target);
-  rectLight(0x8ea0d8, 0.9, winW, winH, v(RIGHT - 0.02, wy, wz), v(0, wy, wz));
+  rectLight(0x8ea0d8, 0.9, winW, winH, v(RIGHT - 0.02, wy, wz), v(0, wy, wz), { liteScale: 0 });
   scene.add(new THREE.HemisphereLight(0x5a6890, 0x120c0c, 0.2));
 
   // ── Desk setup ──────────────────────────────────────────
@@ -253,13 +267,13 @@ export function createRoomScene(canvas, { content, onLoadProgress, onFrame }) {
   scene.add(keyboard, pc, mug, headphones, chair, hex);
 
   // LED strips: wall wash behind the desk, under the desk, the hex cluster and a ceiling cove.
-  rectLight(RED, 14, 1.5, 0.08, v(0, top + 0.02, BACK + 0.2), v(0, top + 0.5, BACK));
+  rectLight(RED, 14, 1.5, 0.08, v(0, top + 0.02, BACK + 0.2), v(0, top + 0.5, BACK), { liteScale: 1.5 });
   rectLight(RED, 4, 1.4, 0.05, v(0, top - 0.04, deskZ + 0.3), v(0, 0, deskZ + 0.45));
-  rectLight(RED, 2.2, 1.1, 0.5, v(-0.12, 1.88, BACK + 0.03), v(-0.12, 1.6, 0));
-  rectLight(0xdfe4f2, 1.6, ROOM.w - 0.2, 0.05, v(0, ROOM.h - 0.06, BACK + 0.06), v(0, ROOM.h, 0.6));
+  rectLight(RED, 2.2, 1.1, 0.5, v(-0.12, 1.88, BACK + 0.03), v(-0.12, 1.6, 0), { liteScale: 0.45 });
+  rectLight(0xdfe4f2, 1.6, ROOM.w - 0.2, 0.05, v(0, ROOM.h - 0.06, BACK + 0.06), v(0, ROOM.h, 0.6), { liteScale: 0 });
   mesh(new THREE.BoxGeometry(ROOM.w - 0.2, 0.012, 0.012), glow(0xdfe4f2, 0.9), 0, ROOM.h - 0.07, BACK + 0.05, { cast: false });
   mesh(new THREE.BoxGeometry(ROOM.w - 0.2, 0.04, 0.05), trimMat, 0, ROOM.h - 0.1, BACK + 0.04);
-  rectLight(0xb4c2ff, 1.4, 0.72, 0.45, v(-0.12, top + 0.42, deskZ - 0.1), v(-0.12, top + 0.2, deskZ + 1.5));
+  rectLight(0xb4c2ff, 1.4, 0.72, 0.45, v(-0.12, top + 0.42, deskZ - 0.1), v(-0.12, top + 0.2, deskZ + 1.5), { liteScale: 0 });
 
   const rugTex = rugTexture();
   const rug = mesh(
@@ -273,19 +287,23 @@ export function createRoomScene(canvas, { content, onLoadProgress, onFrame }) {
   rug.rotation.x = -Math.PI / 2;
 
   // ── Post-processing ─────────────────────────────────────
-  const target = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: small ? 0 : 4 });
-  const composer = new EffectComposer(renderer, target);
-  composer.addPass(new RenderPass(scene, camera));
+  let composer = null;
   let gtao = null;
-  if (!small) {
-    gtao = new GTAOPass(scene, camera, 1, 1);
-    gtao.updateGtaoMaterial({ radius: 0.3, distanceExponent: 1.5, thickness: 1.5, scale: 1.1, samples: 16 });
-    gtao.blendIntensity = 0.8;
-    composer.addPass(gtao);
+  let bloom = null;
+  if (!lite) {
+    const target = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: small ? 0 : 4 });
+    composer = new EffectComposer(renderer, target);
+    composer.addPass(new RenderPass(scene, camera));
+    if (!small) {
+      gtao = new GTAOPass(scene, camera, 1, 1);
+      gtao.updateGtaoMaterial({ radius: 0.3, distanceExponent: 1.5, thickness: 1.5, scale: 1.1, samples: 16 });
+      gtao.blendIntensity = 0.8;
+      composer.addPass(gtao);
+    }
+    bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.4, 0.25, 1.0);
+    composer.addPass(bloom);
+    composer.addPass(new OutputPass());
   }
-  const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.4, 0.25, 1.0);
-  composer.addPass(bloom);
-  composer.addPass(new OutputPass());
 
   // ── Camera path ─────────────────────────────────────────
   const { panel } = main.userData;
@@ -341,9 +359,9 @@ export function createRoomScene(canvas, { content, onLoadProgress, onFrame }) {
     camera.fov = camera.aspect < 1 ? 64 : 50;
     camera.updateProjectionMatrix();
     renderer.setSize(w, h, false);
-    composer.setSize(w, h);
+    composer?.setSize(w, h);
     gtao?.setSize(w, h);
-    bloom.setSize(w, h);
+    bloom?.setSize(w, h);
     buildPath();
   }
   resize();
@@ -359,10 +377,30 @@ export function createRoomScene(canvas, { content, onLoadProgress, onFrame }) {
   let goal = 0;
   let current = 0;
   let disposed = false;
+  let sampleFrames = -30;
+  let sampleTime = 0;
+
+  // Phones: after warm-up, average 60 frames; under ~40 fps, step the resolution down.
+  function adaptResolution(rawDt) {
+    if (!lite || liteStep >= LITE_RATIOS.length - 1) return;
+    if (sampleFrames++ < 0) return;
+    sampleTime += Math.min(rawDt, 0.25);
+    if (sampleFrames < 60) return;
+    if (sampleTime / sampleFrames > 1 / 40) {
+      liteStep += 1;
+      renderer.setPixelRatio(LITE_RATIOS[liteStep]);
+      sampleFrames = -10;
+    } else {
+      liteStep = LITE_RATIOS.length;
+    }
+    sampleTime = 0;
+  }
 
   function frame() {
-    const dt = Math.min(clock.getDelta(), 0.05);
+    const rawDt = clock.getDelta();
+    const dt = Math.min(rawDt, 0.05);
     const t = clock.elapsedTime;
+    adaptResolution(rawDt);
     current = THREE.MathUtils.damp(current, goal, 3.2, dt);
     if (Math.abs(goal - current) < 0.0005) current = goal;
     const k = THREE.MathUtils.smoothstep(current, 0, 1);
@@ -375,9 +413,12 @@ export function createRoomScene(canvas, { content, onLoadProgress, onFrame }) {
     camera.lookAt(look);
 
     for (const rotor of fans) rotor.rotation.x += dt * 14;
-    editor.draw(0.12 + 0.88 * segment(current, 0.2, 0.72), t);
-    preview.draw(0.3 + 0.7 * segment(current, 0.45, 0.88), t);
-    composer.render();
+    // Each screen redraw re-uploads its texture; phones refresh the idle animation less often.
+    const screenTime = lite ? Math.floor(t * 2) / 2 : t;
+    editor.draw(0.12 + 0.88 * segment(current, 0.2, 0.72), screenTime);
+    preview.draw(0.3 + 0.7 * segment(current, 0.45, 0.88), screenTime);
+    if (composer) composer.render();
+    else renderer.render(scene, camera);
     onFrame?.(current);
   }
 
@@ -388,6 +429,7 @@ export function createRoomScene(canvas, { content, onLoadProgress, onFrame }) {
     );
     if (disposed) return;
     furnish(Object.fromEntries(entries));
+    renderer.shadowMap.needsUpdate = true;
     renderer.setAnimationLoop(frame);
   })();
 
@@ -464,9 +506,9 @@ export function createRoomScene(canvas, { content, onLoadProgress, onFrame }) {
       preview.texture.dispose();
       envTarget.dispose();
       pmrem.dispose();
-      composer.dispose();
+      composer?.dispose();
       gtao?.dispose();
-      bloom.dispose();
+      bloom?.dispose();
       renderer.dispose();
       renderer.forceContextLoss();
     },
