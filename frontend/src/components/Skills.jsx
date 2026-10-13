@@ -23,7 +23,7 @@ function SkillCard({ skill, index, active, onHover }) {
       data-robot-index={index}
       data-robot-label={skill.name}
       className={`forge-skill-card ${active ? "is-active" : ""}`}
-      style={{ "--skill-color": "var(--color-accent)", ...tilt.style }}
+      style={{ "--skill-color": "var(--color-led)", ...tilt.style }}
       initial={{ opacity: 0, y: 28, scale: 0.96 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, margin: "-40px" }}

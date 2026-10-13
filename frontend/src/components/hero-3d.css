@@ -116,10 +116,9 @@ html[data-theme="light"] .hero-3d {
   top: 100%;
   --s: 9px;
 }
-.hero-planet.is-blue { --c: var(--c-blue, #2563eb); }
-.hero-planet.is-green { --c: var(--c-green, #16a34a); }
-.hero-planet.is-yellow { --c: var(--c-yellow, #eab308); }
-.hero-planet.is-red { --c: var(--c-red, #dc2626); }
+.hero-planet.is-led { --c: var(--color-led); }
+.hero-planet.is-ink { --c: #e5e5e5; }
+html[data-theme="light"] .hero-planet.is-ink { --c: #3f3f46; }
 @keyframes heroPlanetFace {
   from { transform: rotateZ(0deg) rotateX(calc(-1 * var(--ox))) rotateY(calc(-1 * var(--oy))); }
   to { transform: rotateZ(-360deg) rotateX(calc(-1 * var(--ox))) rotateY(calc(-1 * var(--oy))); }
@@ -144,9 +143,56 @@ html[data-theme="light"] .hero-3d {
   overflow-x: clip;
 }
 
+/* Hexagon wall panels, as in the intro setup */
+.hero-hex {
+  position: absolute;
+  top: -16%;
+  right: -26%;
+  width: 52%;
+  z-index: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+.hero-hex-cell {
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.hero-hex-cell.is-line {
+  fill: none;
+  stroke: var(--orbit-edge);
+}
+.hero-hex-cell.is-led {
+  fill: var(--color-led);
+  filter: drop-shadow(0 0 6px var(--color-led-glow));
+}
+.hero-hex-cell.is-ink {
+  fill: #f2f2f2;
+  opacity: 0.85;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.35));
+}
+html[data-theme="light"] .hero-hex-cell.is-ink {
+  fill: #121212;
+  filter: none;
+}
+.hero-hex-cell.is-pulse {
+  animation: heroHexPulse 3.6s ease-in-out infinite;
+}
+@keyframes heroHexPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+@media (max-width: 639px) {
+  .hero-hex {
+    top: -10%;
+    right: -14%;
+    width: 40%;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero-orbit-spin,
-  .hero-planet {
+  .hero-planet,
+  .hero-hex-cell.is-pulse {
     animation: none;
   }
 }

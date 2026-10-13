@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import About from "./components/About";
@@ -13,16 +13,17 @@ import CustomCursor from "./components/CustomCursor";
 import Robot from "./components/robot/Robot";
 import Starfield from "./components/background/Starfield";
 import Spotlight from "./components/fx/Spotlight";
-import CodeToPageIntro, { hasSeenPortal, clearPortalSeen } from "./components/intro/CodeToPageIntro";
+import { hasSeenPortal, clearPortalSeen } from "./components/intro/introSession";
 import { usePortfolioData } from "./hooks/useDataFetching";
 import { useLanguage } from "./i18n/LanguageContext";
+
+const RoomIntro = lazy(() => import("./components/intro/room/RoomIntro"));
 
 export default function App() {
   const { data, loading, error } = usePortfolioData();
   const { t } = useLanguage();
   const [introDone, setIntroDone] = useState(() => hasSeenPortal());
-  const [portalReturning, setPortalReturning] = useState(false);
-  // At the top of the site, a long, deliberate scroll-up reopens the code portal.
+  // At the top of the site, a long, deliberate scroll-up reopens the intro.
   // Momentum from scrolling back to the top must not trigger it, so the user has
   // to rest at the top first and then keep pulling up past a threshold.
   useEffect(() => {
@@ -40,7 +41,6 @@ export default function App() {
 
     const reopen = () => {
       clearPortalSeen();
-      setPortalReturning(true);
       setIntroDone(false);
       window.scrollTo(0, 0);
     };
@@ -134,14 +134,9 @@ export default function App() {
   return (
     <>
       {!introDone && (
-        <CodeToPageIntro
-          personal={data.personal}
-          returning={portalReturning}
-          onComplete={() => {
-            setPortalReturning(false);
-            setIntroDone(true);
-          }}
-        />
+        <Suspense fallback={<div className="room-intro-fallback" />}>
+          <RoomIntro personal={data.personal} onComplete={() => setIntroDone(true)} />
+        </Suspense>
       )}
 
       <div

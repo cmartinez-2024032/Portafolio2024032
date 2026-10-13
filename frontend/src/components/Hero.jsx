@@ -16,6 +16,28 @@ import "./hero-3d.css";
 const TYPING_SPEED = 42;
 const EASE = [0.16, 1, 0.3, 1];
 
+const HEX = "0,-20 17.32,-10 17.32,10 0,20 -17.32,10 -17.32,-10";
+const HEX_CELLS = [
+  [0, 0, "line"],
+  [38.64, 0, "line"],
+  [-19.32, 33.5, "line"],
+  [19.32, 33.5, "led"],
+  [57.96, 33.5, "ink"],
+  [0, 67, "line"],
+  [38.64, 67, "led is-pulse"],
+];
+
+/** The lit hexagon wall panels from the intro room, behind the portrait. */
+function HexPanels() {
+  return (
+    <svg className="hero-hex" viewBox="-42 -24 124 116" aria-hidden="true">
+      {HEX_CELLS.map(([x, y, kind]) => (
+        <polygon key={`${x}-${y}`} points={HEX} transform={`translate(${x} ${y})`} className={`hero-hex-cell is-${kind}`} />
+      ))}
+    </svg>
+  );
+}
+
 export default function Hero({ data }) {
   const { t, locale } = useLanguage();
   const TITLE = t.hero.title;
@@ -89,18 +111,19 @@ export default function Hero({ data }) {
       onMouseLeave={tilt.onMouseLeave}
     >
       <div className="hero-3d">
+        <HexPanels />
         <div className="hero-3d-shadow" aria-hidden="true" />
         <motion.div className="hero-3d-rig" ref={tilt.ref} style={{ ...tilt.style, ...tilt.glowStyle }}>
           <div className="hero-orbit hero-orbit-a" aria-hidden="true">
             <div className="hero-orbit-spin">
-              <span className="hero-planet is-blue" />
-              <span className="hero-planet is-yellow is-opposite" />
+              <span className="hero-planet is-led" />
+              <span className="hero-planet is-ink is-opposite" />
             </div>
           </div>
           <div className="hero-orbit hero-orbit-b" aria-hidden="true">
             <div className="hero-orbit-spin">
-              <span className="hero-planet is-green" />
-              <span className="hero-planet is-red is-opposite" />
+              <span className="hero-planet is-ink" />
+              <span className="hero-planet is-led is-opposite" />
             </div>
           </div>
           <div className="forge-hero-media" aria-hidden={!photo} data-robot-portrait>

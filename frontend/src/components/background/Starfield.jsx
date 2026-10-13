@@ -4,7 +4,7 @@ function rand(min, max) {
   return Math.random() * (max - min) + min;
 }
 
-const TAILS = ["59,130,246", "34,197,94", "250,204,21", "239,68,68"];
+const TAILS = ["232,19,43", "232,19,43", "200,200,205"];
 
 /** Occasional falling streak — diagonal meteor across the viewport. */
 function spawnMeteor(w, h) {

@@ -10,13 +10,13 @@ function readStoredTheme() {
   } catch {
     /* ignore */
   }
-  return "light";
+  return "dark";
 }
 
 function applyTheme(theme) {
   document.documentElement.dataset.theme = theme;
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute("content", theme === "light" ? "#ffffff" : "#0d1117");
+  if (meta) meta.setAttribute("content", theme === "light" ? "#ffffff" : "#0a0a0c");
 }
 
 export function ThemeProvider({ children }) {

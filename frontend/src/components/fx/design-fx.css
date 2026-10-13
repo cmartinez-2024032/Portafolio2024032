@@ -20,7 +20,7 @@
   inset: 0;
   color: var(--color-accent);
 }
-html:not([data-theme="light"]) .roll-text-alt { color: var(--color-accent-blue); }
+html:not([data-theme="light"]) .roll-text-alt { color: var(--color-led); }
 .roll-text-alt > span { transform: translateY(115%); }
 
 @media (hover: hover) {

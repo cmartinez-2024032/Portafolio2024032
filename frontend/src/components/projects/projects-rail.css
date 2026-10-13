@@ -60,7 +60,7 @@ html[data-theme="light"] .rail-card-body {
 }
 .rail-card-body:hover,
 .rail-card-body:focus-within {
-  border-color: var(--c-blue);
+  border-color: var(--color-led);
 }
 
 .rail-shot {
@@ -181,8 +181,8 @@ html[data-theme="light"] .rail-card-body {
 }
 .rail-card-body:hover .rail-open,
 .rail-open:focus-visible {
-  background: var(--c-blue);
-  border-color: var(--c-blue);
+  background: var(--color-led);
+  border-color: var(--color-led);
   color: #fff;
   rotate: 45deg;
 }
@@ -215,7 +215,7 @@ html[data-theme="light"] .rail-card-body {
 .rail-bar i {
   position: absolute;
   inset: 0;
-  background: var(--c-blue);
+  background: var(--color-led);
   transform: scaleX(0);
   transform-origin: left center;
 }
