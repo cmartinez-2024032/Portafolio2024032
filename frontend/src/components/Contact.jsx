@@ -75,7 +75,7 @@ export default function Contact({ data }) {
         <div className="contact-cinema-glow" aria-hidden="true" />
 
         <ScrollReveal>
-          <SectionHeading comment={t.contact.comment} title={t.contact.title} phrase={t.contact.serif} />
+          <SectionHeading title={t.contact.title} phrase={t.contact.serif} />
         </ScrollReveal>
 
         <ScrollReveal delay={0.08}>
@@ -86,7 +86,6 @@ export default function Contact({ data }) {
           <form className="contact-form" onSubmit={onSubmit} noValidate>
             <div className="contact-form-header">
               <h3>{t.contact.send}</h3>
-              <p>{t.contact.serif}</p>
             </div>
 
             <div className="contact-form-grid">

@@ -108,7 +108,7 @@ export const es = {
   },
   timeline: {
     comment: "recorrido",
-    title: "Timeline",
+    title: "Trayectoria",
     serif: "Formación y experiencia",
   },
   achievements: {
@@ -212,11 +212,6 @@ export const es = {
       },
     ],
   },
-  achievementsMarquee: [
-    "Perito en Desarrollo",
-    "1er lugar Hackathon x Tec · Aditus",
-    "Trabajo en equipo",
-  ],
   ember: {
     lines: {
       hero: "¡Hola! Soy Ember. Te acompaño mientras exploras el portafolio.",
@@ -460,11 +455,6 @@ export const en = {
       },
     ],
   },
-  achievementsMarquee: [
-    "Software Development Diploma",
-    "1st place Hackathon x Tec · Aditus",
-    "Teamwork",
-  ],
   ember: {
     lines: {
       hero: "Hi! I'm Ember. I'll keep you company while you explore the portfolio.",

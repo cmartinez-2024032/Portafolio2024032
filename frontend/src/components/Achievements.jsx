@@ -2,7 +2,6 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ScrollReveal from "./ScrollReveal";
 import SectionHeading from "./fx/SectionHeading";
-import Marquee from "./Marquee";
 import { useLanguage } from "../i18n/LanguageContext";
 
 const EASE = [0.16, 1, 0.3, 1];
@@ -17,11 +16,7 @@ export default function Achievements() {
     <section id="achievements" className="forge-achievements">
       <div className="section-wrap achievements-wrap">
         <ScrollReveal>
-          <SectionHeading
-            comment={t.achievements.comment}
-            title={t.achievements.title}
-            phrase={t.achievements.serif}
-          />
+          <SectionHeading title={t.achievements.title} phrase={t.achievements.serif} />
         </ScrollReveal>
 
         <motion.article
@@ -117,8 +112,6 @@ export default function Achievements() {
           )}
         </motion.article>
       </div>
-
-      {t.achievementsMarquee?.length > 0 && <Marquee items={t.achievementsMarquee} />}
     </section>
   );
 }

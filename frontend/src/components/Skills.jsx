@@ -68,7 +68,7 @@ export default function Skills({ skills }) {
   return (
     <div className="section-wrap forge-skills">
       <ScrollReveal>
-        <SectionHeading comment={t.skills.comment} title={t.skills.title} phrase={t.skills.serif} />
+        <SectionHeading title={t.skills.title} phrase={t.skills.serif} />
       </ScrollReveal>
 
       <ScrollReveal className="skills-pills">

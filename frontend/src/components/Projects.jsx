@@ -21,7 +21,7 @@ export default function Projects({ projects }) {
     <section id="projects" className="section-wrap-wide projects-section">
       <div className="section-wrap projects-header">
         <ScrollReveal>
-          <SectionHeading comment={t.projects.comment} title={t.projects.title} phrase={t.projects.serif} />
+          <SectionHeading title={t.projects.title} phrase={t.projects.serif} />
         </ScrollReveal>
 
         <ScrollReveal delay={0.1} className="projects-filters">

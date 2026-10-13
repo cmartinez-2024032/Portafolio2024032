@@ -56,7 +56,7 @@ export default function Timeline() {
   return (
     <div className="section-wrap timeline-section">
       <ScrollReveal>
-        <SectionHeading comment={t.timeline.comment} title={t.timeline.title} phrase={t.timeline.serif} />
+        <SectionHeading title={t.timeline.title} phrase={t.timeline.serif} />
       </ScrollReveal>
 
       <div ref={trackRef} className="timeline-track timeline-track-zigzag">

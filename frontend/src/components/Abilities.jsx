@@ -35,7 +35,7 @@ export default function Abilities() {
   return (
     <section id="abilities" className="section-wrap abilities-section">
       <ScrollReveal>
-        <SectionHeading comment={t.abilities.comment} title={t.abilities.title} phrase={t.abilities.serif} />
+        <SectionHeading title={t.abilities.title} phrase={t.abilities.serif} />
       </ScrollReveal>
 
       <div className="abilities-grid">
@@ -63,17 +63,8 @@ export default function Abilities() {
               >
                 <Icon size={22} />
               </motion.span>
-              <span className="ability-index">{String(i + 1).padStart(2, "0")}</span>
               <h3>{skill.name}</h3>
               <p>{skill.blurb}</p>
-              <div className="ability-bar" aria-hidden="true">
-                <motion.span
-                  initial={{ scaleX: 0 }}
-                  whileInView={{ scaleX: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.2 + i * 0.08, duration: 0.9, ease: EASE }}
-                />
-              </div>
             </motion.article>
           );
         })}

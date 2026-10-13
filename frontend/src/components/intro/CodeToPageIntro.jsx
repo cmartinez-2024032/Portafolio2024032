@@ -229,7 +229,7 @@ export default function CodeToPageIntro({ personal, onComplete, returning = fals
       <div className="ctp-floor" aria-hidden="true" />
 
       <button type="button" className="ctp-skip" onClick={() => setPhase("fade")}>
-        {t.portal.skip} <span aria-hidden="true">→</span>
+        {t.portal.skip}
       </button>
 
       <div className="ctp-window" ref={windowRef}>
