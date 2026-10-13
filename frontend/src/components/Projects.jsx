@@ -2,7 +2,7 @@ import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { projectCategories } from "../data/siteConfig";
 import ProjectDetail from "./projects/ProjectDetail";
-import ProjectsCarousel3D from "./projects/ProjectsCarousel3D";
+import ProjectsRail from "./projects/ProjectsRail";
 import ScrollReveal from "./ScrollReveal";
 import SectionHeading from "./fx/SectionHeading";
 import { useLanguage } from "../i18n/LanguageContext";
@@ -39,13 +39,12 @@ export default function Projects({ projects }) {
       </div>
 
       {filtered.length > 0 ? (
-        <ScrollReveal delay={0.12}>
-          <ProjectsCarousel3D
-            key={filter}
-            projects={filtered}
-            onSelect={setSelected}
-          />
-        </ScrollReveal>
+        <ProjectsRail
+          key={filter}
+          projects={filtered}
+          onSelect={setSelected}
+          openLabel={t.projects.open}
+        />
       ) : (
         <div className="section-wrap text-center">
           <p className="text-dim-more text-sm" style={{ letterSpacing: "0.15em" }}>

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   FiDownload,
   FiGithub,
@@ -10,6 +10,7 @@ import {
 import { useMagnetic } from "../hooks/useMagnetic";
 import { useTilt } from "../hooks/useTilt";
 import { useLanguage } from "../i18n/LanguageContext";
+import { gsap, useGSAP, MOTION_OK } from "../lib/gsap";
 import "./hero-3d.css";
 
 const TYPING_SPEED = 42;
@@ -21,13 +22,29 @@ export default function Hero({ data }) {
   const [displayed, setDisplayed] = useState("");
   const [typingDone, setTypingDone] = useState(false);
   const sectionRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end start"],
-  });
-  const photoY = useTransform(scrollYProgress, [0, 1], ["0%", "8%"]);
-  const nameY = useTransform(scrollYProgress, [0, 1], ["0%", "28%"]);
-  const fade = useTransform(scrollYProgress, [0, 0.55], [1, 0]);
+
+  // Scrolling away pushes the portrait toward the viewer while the copy lifts off and fades.
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add(MOTION_OK, () => {
+        gsap
+          .timeline({
+            defaults: { ease: "none" },
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top top",
+              end: "bottom top",
+              scrub: 0.5,
+            },
+          })
+          .to(".hero-3d", { scale: 1.4, yPercent: 24, opacity: 0.55, duration: 1 }, 0)
+          .to(".forge-hero-copy", { yPercent: -14, autoAlpha: 0, duration: 0.55 }, 0)
+          .to(".forge-scroll", { autoAlpha: 0, duration: 0.15 }, 0);
+      });
+    },
+    { scope: sectionRef }
+  );
 
   const tilt = useTilt(10);
   const magPrimary = useMagnetic(14);
@@ -71,7 +88,7 @@ export default function Hero({ data }) {
       onMouseMove={tilt.onMouseMove}
       onMouseLeave={tilt.onMouseLeave}
     >
-      <motion.div className="hero-3d" style={{ y: photoY }}>
+      <div className="hero-3d">
         <div className="hero-3d-shadow" aria-hidden="true" />
         <motion.div className="hero-3d-rig" ref={tilt.ref} style={{ ...tilt.style, ...tilt.glowStyle }}>
           <div className="hero-orbit hero-orbit-a" aria-hidden="true">
@@ -98,9 +115,9 @@ export default function Hero({ data }) {
             <div className="forge-hero-media-frame" />
           </div>
         </motion.div>
-      </motion.div>
+      </div>
 
-      <motion.div className="forge-hero-copy" style={{ y: nameY, opacity: fade }}>
+      <div className="forge-hero-copy">
         <motion.p
           className="forge-eyebrow"
           initial={{ opacity: 0, x: -24 }}
@@ -218,7 +235,7 @@ export default function Hero({ data }) {
             )}
           </motion.div>
         )}
-      </motion.div>
+      </div>
 
       <div className="forge-scroll" aria-hidden="true">
         <span>{t.hero.scroll}</span>
